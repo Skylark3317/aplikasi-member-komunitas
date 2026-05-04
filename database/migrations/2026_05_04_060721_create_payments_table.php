@@ -6,19 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->decimal('amount', 12, 2)->default(0);
-            $table->enum('status', ['diterima', 'ditolak', 'menunggu'])->default('menunggu');
-            $table->string('month')->nullable(); // e.g. "Jan", "Feb"
-            $table->year('year')->nullable();
+            $table->foreignId('invoice_id')->constrained('invoices');
+            $table->string('payment_proof_url');
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('payments');
