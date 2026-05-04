@@ -19,12 +19,8 @@ class DatabaseSeeder extends Seeder
             'name'        => 'Jo Bejo',
             'email'       => 'ketua@amk.com',
             'password'    => Hash::make('password'),
-            'role'        => 'ketua',
-            'is_active'   => true,
-            'phone'       => '081200000001',
-            'institution' => 'AMK',
-            'department'  => 'Pimpinan',
-            'address'     => 'Gedung Cipta Karya, Jl. Pahlawan Sejahtera No. 5, Surabaya',
+            'role'        => 'leader',
+            'telephone'       => '081200000001',
             'email_verified_at' => now(),
         ]);
 
@@ -41,7 +37,7 @@ class DatabaseSeeder extends Seeder
                 'email'             => $m['email'],
                 'password'          => Hash::make('password'),
                 'role'              => 'member',
-                'is_active'         => true,
+                'telephone'         => '082991919192811',
                 'email_verified_at' => now(),
             ]);
         }
