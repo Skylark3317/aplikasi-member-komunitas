@@ -33,7 +33,15 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $user = $request->user();
+
+        if ($user->isSuperAdmin()) {
+            return redirect()->intended(route('superadmin.kelol-akun.index', absolute: false));
+        } elseif ($user->isKetua()) {
+            return redirect()->intended(route('admin.statistik', absolute: false));
+        }
+
+        return redirect()->intended(route('home', absolute: false));
     }
 
     /**

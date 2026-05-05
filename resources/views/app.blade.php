@@ -14,6 +14,18 @@
         @routes
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
+
+        <!-- Dynamic Colors -->
+        @php
+            $primaryColor = \App\Models\Setting::get('primary_color', '#2563eb');
+            $surfaceColor = \App\Models\Setting::get('surface_color', '#ffffff');
+        @endphp
+        <style>
+            :root {
+                --primary-color: {{ $primaryColor }};
+                --surface-color: {{ $surfaceColor }};
+            }
+        </style>
     </head>
     <body class="font-sans antialiased">
         @inertia

@@ -112,7 +112,7 @@ const submit = () => {
 </script>
 
 <style scoped>
-.page-header { background: #2563eb; padding: 20px 0; }
+.page-header { background: var(--primary-color); padding: 20px 0; }
 .page-header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 .page-title { color: #fff; font-size: 22px; font-weight: 700; }
 
@@ -143,7 +143,7 @@ const submit = () => {
   transition: border-color 0.2s;
   font-family: inherit;
 }
-.form-group input:focus, .form-group textarea:focus { border-color: #2563eb; }
+.form-group input:focus, .form-group textarea:focus { border-color: var(--primary-color); }
 .input-icon-wrap { position: relative; }
 .input-icon-wrap input { padding-right: 42px; }
 .toggle-pw {
@@ -154,13 +154,16 @@ const submit = () => {
 .form-hints { margin-bottom: 16px; }
 .form-hints p { font-size: 12px; color: #6b7280; margin-bottom: 4px; }
 .btn-submit {
-  width: 100%; background: #2563eb; color: #fff; border: none;
+  width: 100%; background: var(--primary-color); color: #fff; border: none;
   padding: 12px; border-radius: 4px; font-size: 15px; font-weight: 600;
   cursor: pointer; transition: background 0.2s;
 }
-.btn-submit:hover:not(:disabled) { background: #1d4ed8; }
+.btn-submit:hover:not(:disabled) { background: var(--primary-color); }
 .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }
 .auth-alt { text-align: center; margin-top: 16px; font-size: 14px; color: #555; }
-.link-blue { color: #2563eb; text-decoration: none; }
+.link-blue { color: var(--primary-color); text-decoration: none; }
 .link-blue:hover { text-decoration: underline; }
 </style>
+
+
+

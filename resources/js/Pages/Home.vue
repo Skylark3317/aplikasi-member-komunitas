@@ -3,11 +3,11 @@
     <Head title="Beranda - AMK" />
 
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" :style="heroStyle">
       <div class="hero-overlay">
         <div class="hero-content">
-          <h1>Bangun Koneksi dan Tumbuh Bersama</h1>
-          <p>Terhubung dengan individu dari berbagai latar belakang, berbagi ide, dan membangun kolaborasi dalam komunitas inklusif untuk berkembang bersama serta menciptakan dampak nyata.</p>
+          <h1>{{ settings.hero_title || 'Bangun Koneksi dan Tumbuh Bersama' }}</h1>
+          <p>{{ settings.hero_description || 'Terhubung dengan individu dari berbagai latar belakang, berbagi ide, dan membangun kolaborasi dalam komunitas inklusif untuk berkembang bersama serta menciptakan dampak nyata.' }}</p>
           <Link :href="route('register')" class="btn-hero">Gabung membership →</Link>
         </div>
       </div>
@@ -17,12 +17,11 @@
     <section class="tentang-section">
       <div class="container tentang-grid">
         <div class="tentang-img">
-          <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&auto=format" alt="Komunitas AMK" />
+          <img :src="aboutImage" alt="Tentang Komunitas" />
         </div>
         <div class="tentang-text">
-          <h2 class="section-heading"><span class="heading-bar"></span> Tentang</h2>
-          <p>Komunitas ini adalah ruang terbuka bagi siapa saja yang ingin belajar, berkembang, dan saling terhubung dalam lingkungan yang positif dan kolaboratif. Kami menghadirkan berbagai kesempatan untuk bertukar wawasan, membangun relasi, serta berpartisipasi dalam kegiatan yang mendorong pertumbuhan pribadi maupun profesional.</p>
-          <p>Dengan semangat kebersamaan, kami percaya bahwa setiap individu memiliki potensi untuk memberikan kontribusi dan menciptakan dampak yang berarti. Di sini, kamu tidak hanya menjadi bagian dari komunitas, tetapi juga bagian dari perjalanan untuk tumbuh dan berkembang bersama.</p>
+          <h2 class="section-heading"><span class="heading-bar"></span> {{ settings.about_title || 'Tentang' }}</h2>
+          <p style="white-space: pre-line;">{{ settings.about_description || 'Komunitas ini adalah ruang terbuka bagi siapa saja yang ingin belajar, berkembang, dan saling terhubung dalam lingkungan yang positif dan kolaboratif.' }}</p>
         </div>
       </div>
     </section>
@@ -48,18 +47,38 @@
 </template>
 
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 
 defineProps({
   latestPosts: Array,
+});
+
+const $page = usePage();
+const settings = computed(() => $page.props.settings || {});
+
+const heroStyle = computed(() => {
+  if (settings.value.bg_image) {
+    return {
+      '--hero-bg': `url('/storage/${settings.value.bg_image}')`
+    };
+  }
+  return {};
+});
+
+const aboutImage = computed(() => {
+  if (settings.value.about_image) {
+    return `/storage/${settings.value.about_image}`;
+  }
+  return 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&auto=format';
 });
 </script>
 
 <style scoped>
 /* Hero */
 .hero {
-  background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 50%, #2563eb 100%);
+  background: var(--primary-color, var(--primary-color));
   min-height: 340px;
   position: relative;
   overflow: hidden;
@@ -68,7 +87,7 @@ defineProps({
   content: '';
   position: absolute;
   inset: 0;
-  background: url('https://images.unsplash.com/photo-1531545514256-b1400bc00f31?w=1200&auto=format') center/cover;
+  background: var(--hero-bg, url('https://images.unsplash.com/photo-1531545514256-b1400bc00f31?w=1200&auto=format')) center/cover;
   opacity: 0.25;
 }
 .hero-overlay {
@@ -76,7 +95,7 @@ defineProps({
   z-index: 1;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 72px 24px 80px;
+  padding: 110px 24px 80px;
 }
 .hero-content { max-width: 560px; }
 .hero-content h1 {
@@ -95,7 +114,7 @@ defineProps({
 .btn-hero {
   display: inline-block;
   background: #fff;
-  color: #2563eb;
+  color: var(--primary-color);
   font-weight: 600;
   font-size: 14px;
   padding: 10px 24px;
@@ -103,7 +122,7 @@ defineProps({
   text-decoration: none;
   transition: background 0.2s, transform 0.2s;
 }
-.btn-hero:hover { background: #eff6ff; transform: translateX(2px); }
+.btn-hero:hover { background: #f3f4f6; transform: translateX(2px); }
 
 /* Container */
 .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
@@ -116,11 +135,17 @@ defineProps({
   gap: 56px;
   align-items: center;
 }
+.tentang-img {
+  display: flex;
+  justify-content: center;
+}
 .tentang-img img {
-  width: 100%;
-  height: 260px;
+  width: 80%;
+  max-width: 340px;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
 }
 .tentang-text p { font-size: 13.5px; color: #555; line-height: 1.8; margin-bottom: 14px; }
 
@@ -138,7 +163,7 @@ defineProps({
   display: inline-block;
   width: 28px;
   height: 3px;
-  background: #2563eb;
+  background: var(--primary-color);
   border-radius: 2px;
 }
 
@@ -152,14 +177,14 @@ defineProps({
 }
 .btn-lihat-semua {
   font-size: 13px;
-  color: #2563eb;
-  border: 1px solid #2563eb;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
   padding: 6px 16px;
   border-radius: 4px;
   text-decoration: none;
   transition: background 0.2s, color 0.2s;
 }
-.btn-lihat-semua:hover { background: #2563eb; color: #fff; }
+.btn-lihat-semua:hover { background: var(--primary-color); color: #fff; }
 .posts-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -177,7 +202,7 @@ defineProps({
 }
 .post-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-2px); }
 .post-date {
-  background: #2563eb;
+  background: var(--primary-color);
   color: #fff;
   font-size: 11px;
   font-weight: 600;
@@ -200,10 +225,13 @@ defineProps({
 }
 .post-read-more {
   font-size: 12.5px;
-  color: #2563eb;
+  color: var(--primary-color);
   text-decoration: none;
   font-weight: 500;
   margin-top: 8px;
 }
 .post-read-more:hover { text-decoration: underline; }
 </style>
+
+
+

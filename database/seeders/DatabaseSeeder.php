@@ -14,13 +14,28 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // ── Settings ─────────────────────────────────────────────
+        $this->call(SettingsSeeder::class);
+
+        // ── Super Admin ──────────────────────────────────────────
+        User::create([
+            'name'              => 'Met Slamet',
+            'email'             => 'superadmin@amk.com',
+            'password'          => Hash::make('password'),
+            'role'              => 'super_admin',
+            'telephone'         => '081234567890',
+            'is_active'         => true,
+            'email_verified_at' => now(),
+        ]);
+
         // ── Users ──────────────────────────────────────────────
         $ketua = User::create([
-            'name'        => 'Jo Bejo',
-            'email'       => 'ketua@amk.com',
-            'password'    => Hash::make('password'),
-            'role'        => 'leader',
-            'telephone'       => '081200000001',
+            'name'              => 'Jo Bejo',
+            'email'             => 'ketua@amk.com',
+            'password'          => Hash::make('password'),
+            'role'              => 'leader',
+            'telephone'         => '081200000001',
+            'is_active'         => true,
             'email_verified_at' => now(),
         ]);
 

@@ -42,7 +42,7 @@ const resend = () => form.post(route('verification.send'));
 </script>
 
 <style scoped>
-.page-header { background: #2563eb; padding: 20px 0; }
+.page-header { background: var(--primary-color); padding: 20px 0; }
 .page-header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 .page-title { color: #fff; font-size: 22px; font-weight: 700; }
 
@@ -59,11 +59,11 @@ const resend = () => form.post(route('verification.send'));
 }
 .verify-actions { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
 .btn-resend {
-  background: #2563eb; color: #fff; border: none;
+  background: var(--primary-color); color: #fff; border: none;
   padding: 10px 20px; border-radius: 4px; font-size: 14px;
   font-weight: 600; cursor: pointer; transition: background 0.2s;
 }
-.btn-resend:hover:not(:disabled) { background: #1d4ed8; }
+.btn-resend:hover:not(:disabled) { background: var(--primary-color); }
 .btn-resend:disabled { opacity: 0.7; cursor: not-allowed; }
 .btn-logout {
   background: none; border: none; color: #dc2626;
@@ -72,3 +72,6 @@ const resend = () => form.post(route('verification.send'));
 }
 .btn-logout:hover { text-decoration: underline; }
 </style>
+
+
+

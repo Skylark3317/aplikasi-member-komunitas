@@ -1,31 +1,42 @@
 <template>
   <div class="app-wrapper">
-    <!-- Top Bar -->
-    <div class="topbar">
-      <div class="topbar-inner">
-        <span class="brand-logo">AMK</span>
-        <div class="topbar-contacts">
-          <a href="mailto:amk@mail.com"><span class="icon">✉</span> amk@mail.com</a>
-          <a href="tel:08120000000"><span class="icon">📞</span> 0812 0000 0000</a>
-          <a href="#" target="_blank"><span class="icon">▶</span> YouTube</a>
-          <a href="#" target="_blank"><span class="icon">📷</span> Instagram</a>
+    <header class="site-header" :class="{ 'is-home': isHome }">
+      <!-- Top Bar -->
+      <div class="topbar">
+        <div class="topbar-inner">
+          <div class="topbar-contacts">
+            <a v-if="settings.email" :href="`mailto:${settings.email}`"><span class="icon">✉</span> {{ settings.email }}</a>
+            <a v-if="settings.phone" :href="`tel:${settings.phone}`"><span class="icon">📞</span> {{ settings.phone }}</a>
+            <a v-if="settings.social_youtube" :href="settings.social_youtube" target="_blank"><span class="icon">▶</span> YouTube</a>
+            <a v-if="settings.social_instagram" :href="settings.social_instagram" target="_blank"><span class="icon">📷</span> Instagram</a>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Main Navbar -->
-    <nav class="navbar">
-      <div class="navbar-inner">
-        <div class="nav-links">
-          <Link :href="route('home')" :class="{ active: isActive('home') }">TENTANG</Link>
-          <Link :href="route('blog.index')" :class="{ active: isActive('blog') }">BLOG</Link>
-          <a href="#kontak">KONTAK</a>
+      <!-- Main Navbar -->
+      <nav class="navbar">
+        <div class="navbar-inner">
+          <div class="nav-links-center">
+            <Link :href="route('home')" :class="{ active: isActive('home') }">TENTANG</Link>
+            <Link :href="route('blog.index')" :class="{ active: isActive('blog') }">BLOG</Link>
+            <a href="#kontak">KONTAK</a>
+            <Link :href="route('register')" class="btn-membership" :style="{ color: 'var(--primary-color, #2563eb) !important' }">Membership</Link>
+          </div>
         </div>
-        <div class="nav-actions">
-          <Link :href="route('register')" class="btn-membership">Membership</Link>
+      </nav>
+
+      <!-- Brand Overlapping Box -->
+      <div class="brand-absolute-wrapper">
+        <div class="brand-absolute-inner">
+          <div class="brand-absolute">
+            <div v-if="settings.community_logo" class="brand-img">
+              <img :src="`/storage/${settings.community_logo}`" alt="Logo" />
+            </div>
+            <span class="brand-logo">{{ settings.community_name || 'AMK' }}</span>
+          </div>
         </div>
       </div>
-    </nav>
+    </header>
 
     <!-- Page Content -->
     <main>
@@ -36,17 +47,19 @@
     <footer class="site-footer">
       <div class="footer-top">
         <div class="footer-brand">
-          <div class="footer-logo">AMK</div>
-          <p>Komunitas ini adalah ruang terbuka bagi siapa saja yang ingin belajar, berkembang, dan saling terhubung dalam lingkungan yang positif dan kolaboratif. Kami menghadirkan berbagai kesempatan untuk bertukar wawasan, membangun relasi, serta berpartisipasi dalam kegiatan yang mendorong pertumbuhan pribadi maupun profesional.</p>
-          <p>Dengan semangat kebersamaan, kami percaya bahwa setiap individu memiliki potensi untuk memberikan kontribusi dan menciptakan dampak yang berarti. Di sini, kamu tidak hanya menjadi bagian dari komunitas, tetapi juga bagian dari perjalanan untuk tumbuh dan berkembang bersama.</p>
+          <div v-if="settings.community_logo" class="footer-img">
+            <img :src="`/storage/${settings.community_logo}`" alt="Logo" />
+          </div>
+          <div v-else class="footer-logo">{{ settings.community_name || 'AMK' }}</div>
+          <p style="white-space: pre-line;">{{ settings.about_description || 'Komunitas ini adalah ruang terbuka bagi siapa saja yang ingin belajar, berkembang, dan saling terhubung dalam lingkungan yang positif dan kolaboratif.' }}</p>
           <p class="footer-sosmed-label">Media Sosial</p>
           <div class="footer-socials">
-            <a href="#" title="X">𝕏</a>
-            <a href="#" title="Facebook">f</a>
-            <a href="#" title="LinkedIn">in</a>
-            <a href="#" title="Skype">☎</a>
-            <a href="#" title="Instagram">◎</a>
-            <a href="#" title="YouTube">▶</a>
+            <a v-if="settings.social_x" :href="settings.social_x" title="X">𝕏</a>
+            <a v-if="settings.social_facebook" :href="settings.social_facebook" title="Facebook">f</a>
+            <a v-if="settings.social_linkedin" :href="settings.social_linkedin" title="LinkedIn">in</a>
+            <a v-if="settings.social_skype" :href="settings.social_skype" title="Skype">☎</a>
+            <a v-if="settings.social_instagram" :href="settings.social_instagram" title="Instagram">◎</a>
+            <a v-if="settings.social_youtube" :href="settings.social_youtube" title="YouTube">▶</a>
           </div>
         </div>
         <div class="footer-menu">
@@ -60,9 +73,8 @@
         </div>
         <div class="footer-contact" id="kontak">
           <h4>Kontak</h4>
-          <p><span>📍</span> Gedung Cipta Karya, Jl. Pahlawan Sejahtera No. 5, Surabaya</p>
-          <p><span>📞</span> 0812 0000 0000</p>
-          <p><span>✉</span> amk@mail.com</p>
+          <p v-if="settings.phone"><span>📞</span> {{ settings.phone }}</p>
+          <p v-if="settings.email"><span>✉</span> {{ settings.email }}</p>
         </div>
       </div>
       <div class="footer-bottom">
@@ -77,6 +89,10 @@ import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 const page = usePage();
+const settings = computed(() => page.props.settings || {});
+
+const isHome = computed(() => page.component === 'Home');
+
 const isActive = (routeName) => {
   const current = page.url;
   if (routeName === 'home') return current === '/';
@@ -86,26 +102,31 @@ const isActive = (routeName) => {
 </script>
 
 <style scoped>
+/* ── Header ────────────────────────────────────── */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.site-header.is-home {
+  margin-bottom: -56px; /* Pulls hero section under the navbar */
+}
+
 /* ── Top Bar ───────────────────────────────────── */
 .topbar {
   background: #fff;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+  height: 36px;
+  display: flex;
+  align-items: center;
 }
 .topbar-inner {
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 24px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.brand-logo {
-  font-weight: 700;
-  font-size: 18px;
-  letter-spacing: 2px;
-  border: 2px solid #111;
-  padding: 2px 10px;
+  justify-content: flex-end;
 }
 .topbar-contacts {
   display: flex;
@@ -119,41 +140,50 @@ const isActive = (routeName) => {
   align-items: center;
   gap: 4px;
 }
-.topbar-contacts a:hover { color: #2563eb; }
+.topbar-contacts a:hover { color: var(--primary-color); }
 
 /* ── Navbar ────────────────────────────────────── */
 .navbar {
-  background: #2563eb;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  height: 56px;
+  display: flex;
+  align-items: center;
 }
+.site-header.is-home .navbar {
+  background: rgba(0, 0, 0, 0.43);
+}
+.site-header:not(.is-home) .navbar {
+  background: var(--primary-color);
+}
+
 .navbar-inner {
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 24px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 48px;
+  justify-content: center;
 }
-.nav-links {
+.nav-links-center {
   display: flex;
+  align-items: center;
   gap: 32px;
 }
-.nav-links a, .nav-links .active {
+.nav-links-center a:not(.btn-membership) {
   color: #fff;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.5px;
   text-decoration: none;
-  opacity: 0.85;
+  opacity: 100%;
   transition: opacity 0.2s;
 }
-.nav-links a:hover, .nav-links a.active { opacity: 1; }
+.nav-links-center a:not(.btn-membership):hover, .nav-links-center a.active {
+  opacity: 1;
+}
+
 .btn-membership {
   background: #fff;
-  color: #2563eb !important;
+  color: var(--primary-color) !important;
   padding: 6px 18px;
   border-radius: 20px;
   font-weight: 600;
@@ -162,8 +192,52 @@ const isActive = (routeName) => {
   transition: background 0.2s, color 0.2s;
 }
 .btn-membership:hover {
-  background: #1d4ed8;
+  background: var(--primary-color);
   color: #fff !important;
+}
+
+/* ── Brand Overlapping Box ─────────────────────── */
+.brand-absolute-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0; /* Ensures it doesn't block clicks */
+}
+.brand-absolute-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+}
+.brand-absolute {
+  position: absolute;
+  top: 0;
+  left: 24px;
+  background: #fff;
+  height: 92px; /* Covers both topbar (36px) and navbar (56px) */
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  gap: 4px;
+  pointer-events: auto; /* Re-enable clicks inside the logo box */
+}
+.brand-img img {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+}
+.brand-logo {
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: var(--primary-color, #111);
+  text-align: center;
 }
 
 /* ── Footer ────────────────────────────────────── */
@@ -179,6 +253,12 @@ const isActive = (routeName) => {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: 48px;
+}
+.footer-img img {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 16px;
 }
 .footer-logo {
   font-weight: 700;
@@ -225,3 +305,6 @@ const isActive = (routeName) => {
   color: #555;
 }
 </style>
+
+
+

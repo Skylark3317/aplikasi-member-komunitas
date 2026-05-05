@@ -102,7 +102,7 @@ const doSearch = () => {
 
 <style scoped>
 .page-header {
-  background: #2563eb;
+  background: var(--primary-color);
   padding: 20px 0;
 }
 .page-header-inner {
@@ -134,7 +134,7 @@ const doSearch = () => {
   border-bottom: 1px solid #f3f4f6;
   transition: color 0.2s;
 }
-.cat-list li a:hover, .cat-active { color: #2563eb !important; font-weight: 600; }
+.cat-list li a:hover, .cat-active { color: var(--primary-color) !important; font-weight: 600; }
 
 /* Search */
 .search-label { font-size: 14px; font-weight: 600; color: #111; display: block; margin-bottom: 8px; }
@@ -148,9 +148,9 @@ const doSearch = () => {
   border-radius: 4px 0 0 4px;
   outline: none;
 }
-.search-input:focus { border-color: #2563eb; }
+.search-input:focus { border-color: var(--primary-color); }
 .btn-search {
-  background: #2563eb;
+  background: var(--primary-color);
   color: #fff;
   border: none;
   padding: 8px 20px;
@@ -160,7 +160,7 @@ const doSearch = () => {
   cursor: pointer;
   transition: background 0.2s;
 }
-.btn-search:hover { background: #1d4ed8; }
+.btn-search:hover { background: var(--primary-color); }
 
 /* Post list */
 .post-list-item, .post-search-item {
@@ -171,7 +171,7 @@ const doSearch = () => {
   margin-bottom: 16px;
 }
 .post-date-badge {
-  background: #2563eb;
+  background: var(--primary-color);
   color: #fff;
   font-size: 11px;
   font-weight: 600;
@@ -189,7 +189,7 @@ const doSearch = () => {
   padding-bottom: 10px;
 }
 .post-list-title a, .post-search-title a { color: inherit; text-decoration: none; }
-.post-list-title a:hover, .post-search-title a:hover { color: #2563eb; }
+.post-list-title a:hover, .post-search-title a:hover { color: var(--primary-color); }
 .post-list-excerpt, .post-search-excerpt { font-size: 13.5px; color: #666; line-height: 1.7; }
 
 /* Pagination */
@@ -205,7 +205,10 @@ const doSearch = () => {
   transition: background 0.2s, color 0.2s;
 }
 .page-btn:hover { background: #f3f4f6; }
-.page-active { background: #2563eb !important; color: #fff !important; border-color: #2563eb !important; }
+.page-active { background: var(--primary-color) !important; color: #fff !important; border-color: var(--primary-color) !important; }
 
 .full-width { grid-column: 1 / -1; }
 </style>
+
+
+

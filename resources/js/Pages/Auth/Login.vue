@@ -69,7 +69,7 @@ const submit = () => {
 </script>
 
 <style scoped>
-.page-header { background: #2563eb; padding: 20px 0; }
+.page-header { background: var(--primary-color); padding: 20px 0; }
 .page-header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 .page-title { color: #fff; font-size: 22px; font-weight: 700; }
 
@@ -100,7 +100,7 @@ const submit = () => {
   box-sizing: border-box;
   transition: border-color 0.2s;
 }
-.form-group input:focus { border-color: #2563eb; }
+.form-group input:focus { border-color: var(--primary-color); }
 .input-icon-wrap { position: relative; }
 .input-icon-wrap input { padding-right: 42px; }
 .toggle-pw {
@@ -115,12 +115,12 @@ const submit = () => {
   padding: 0;
 }
 .forgot-link-row { text-align: right; margin-top: 6px; }
-.link-blue { color: #2563eb; text-decoration: none; font-size: 13px; }
+.link-blue { color: var(--primary-color); text-decoration: none; font-size: 13px; }
 .link-blue:hover { text-decoration: underline; }
 .field-error { color: #dc2626; font-size: 12px; margin-top: 4px; display: block; }
 .btn-submit {
   width: 100%;
-  background: #2563eb;
+  background: var(--primary-color);
   color: #fff;
   border: none;
   padding: 12px;
@@ -131,7 +131,10 @@ const submit = () => {
   transition: background 0.2s;
   margin-top: 8px;
 }
-.btn-submit:hover:not(:disabled) { background: #1d4ed8; }
+.btn-submit:hover:not(:disabled) { background: var(--primary-color); }
 .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }
 .auth-alt { text-align: center; margin-top: 16px; font-size: 14px; color: #555; }
 </style>
+
+
+

@@ -12,8 +12,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name', 'email', 'password',
-        'phone', 'institution', 'department', 'address',
-        'role', 'is_active',
+        'telephone', 'role', 'is_active',
     ];
 
     protected $hidden = ['password', 'remember_token'];
@@ -37,8 +36,18 @@ class User extends Authenticatable
         return $this->hasMany(Payment::class);
     }
 
+    public function memberProfile()
+    {
+        return $this->hasOne(MemberProfile::class, 'member_id');
+    }
+
     public function isKetua(): bool
     {
         return $this->role === 'ketua';
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
     }
 }

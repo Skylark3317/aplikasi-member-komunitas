@@ -193,7 +193,7 @@ const memberChartData = computed(() => ({
     {
       label: 'Aktif',
       data: props.stats.member.aktifData,
-      backgroundColor: '#2563eb',
+      backgroundColor: 'var(--primary-color)',
       borderRadius: 3,
     },
     {
@@ -208,7 +208,7 @@ const memberChartData = computed(() => ({
 const kontenChartData = computed(() => ({
   labels: props.months,
   datasets: [
-    { label: 'Video', data: props.months.map(() => Math.floor(Math.random() * 15) + 5), backgroundColor: '#2563eb', borderRadius: 3 },
+    { label: 'Video', data: props.months.map(() => Math.floor(Math.random() * 15) + 5), backgroundColor: 'var(--primary-color)', borderRadius: 3 },
     { label: 'Ebook', data: props.months.map(() => Math.floor(Math.random() * 10) + 3), backgroundColor: '#e5e7eb', borderRadius: 3 },
   ],
 }));
@@ -216,14 +216,14 @@ const kontenChartData = computed(() => ({
 const blogChartData = computed(() => ({
   labels: props.months,
   datasets: [
-    { label: 'Blog', data: props.stats.blog.data, backgroundColor: '#2563eb', borderRadius: 3 },
+    { label: 'Blog', data: props.stats.blog.data, backgroundColor: 'var(--primary-color)', borderRadius: 3 },
   ],
 }));
 
 const pertanyaanChartData = computed(() => ({
   labels: props.months,
   datasets: [
-    { label: 'Dijawab', data: props.months.map(() => Math.floor(Math.random() * 40) + 50), backgroundColor: '#2563eb', borderRadius: 3 },
+    { label: 'Dijawab', data: props.months.map(() => Math.floor(Math.random() * 40) + 50), backgroundColor: 'var(--primary-color)', borderRadius: 3 },
     { label: 'Belum Dijawab', data: props.months.map(() => Math.floor(Math.random() * 5) + 1), backgroundColor: '#e5e7eb', borderRadius: 3 },
   ],
 }));
@@ -231,7 +231,7 @@ const pertanyaanChartData = computed(() => ({
 const pendapatanChartData = computed(() => ({
   labels: props.months,
   datasets: [
-    { label: 'Diterima', data: props.stats.payment.diterimaData, backgroundColor: '#2563eb', borderRadius: 3 },
+    { label: 'Diterima', data: props.stats.payment.diterimaData, backgroundColor: 'var(--primary-color)', borderRadius: 3 },
     { label: 'Ditolak', data: props.stats.payment.ditolakData, backgroundColor: '#ef4444', borderRadius: 3 },
     { label: 'Menunggu', data: props.stats.payment.menungguData, backgroundColor: '#e5e7eb', borderRadius: 3 },
   ],
@@ -253,12 +253,12 @@ const formatCurrency = (val) => {
 }
 .page-heading { font-size: 22px; font-weight: 700; color: #111; }
 .btn-print {
-  background: #2563eb; color: #fff; border: none;
+  background: var(--primary-color); color: #fff; border: none;
   padding: 8px 18px; border-radius: 20px; font-size: 13px;
   font-weight: 600; cursor: pointer; transition: background 0.2s;
   display: flex; align-items: center; gap: 6px;
 }
-.btn-print:hover { background: #1d4ed8; }
+.btn-print:hover { background: var(--primary-color); }
 
 .stats-grid {
   display: grid;
@@ -292,7 +292,7 @@ const formatCurrency = (val) => {
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
 }
-.toggle-btn.active { background: #2563eb; color: #fff; }
+.toggle-btn.active { background: var(--primary-color); color: #fff; }
 
 .stat-numbers { display: flex; gap: 32px; margin-bottom: 16px; }
 .stat-num { display: flex; flex-direction: column; gap: 2px; }
@@ -311,7 +311,7 @@ const formatCurrency = (val) => {
   width: 8px; height: 8px;
   border-radius: 50%;
 }
-.legend-dot.blue { background: #2563eb; }
+.legend-dot.blue { background: var(--primary-color); }
 .legend-dot.gray { background: #e5e7eb; }
 .legend-dot.red { background: #ef4444; }
 
@@ -324,3 +324,6 @@ const formatCurrency = (val) => {
 }
 .nav-arrow:hover { background: #f3f4f6; }
 </style>
+
+
+

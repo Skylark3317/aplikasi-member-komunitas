@@ -52,7 +52,7 @@ const submit = () => form.post(route('password.email'));
 </script>
 
 <style scoped>
-.page-header { background: #2563eb; padding: 20px 0; }
+.page-header { background: var(--primary-color); padding: 20px 0; }
 .page-header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 .page-title { color: #fff; font-size: 22px; font-weight: 700; }
 
@@ -71,15 +71,15 @@ const submit = () => form.post(route('password.email'));
   width: 100%; border: 1px solid #d1d5db; border-radius: 4px;
   padding: 10px 14px; font-size: 14px; outline: none; box-sizing: border-box;
 }
-.form-group input:focus { border-color: #2563eb; }
+.form-group input:focus { border-color: var(--primary-color); }
 .field-error { color: #dc2626; font-size: 12px; margin-top: 4px; display: block; }
 .form-actions { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
 .btn-send {
-  background: #2563eb; color: #fff; border: none;
+  background: var(--primary-color); color: #fff; border: none;
   padding: 10px 20px; border-radius: 4px; font-size: 14px;
   font-weight: 600; cursor: pointer; transition: background 0.2s;
 }
-.btn-send:hover:not(:disabled) { background: #1d4ed8; }
+.btn-send:hover:not(:disabled) { background: var(--primary-color); }
 .btn-send:disabled { opacity: 0.7; cursor: not-allowed; }
 .btn-logout {
   background: none; border: none; color: #dc2626;
@@ -88,3 +88,6 @@ const submit = () => form.post(route('password.email'));
 }
 .btn-logout:hover { text-decoration: underline; }
 </style>
+
+
+

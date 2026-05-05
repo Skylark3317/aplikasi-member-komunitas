@@ -60,7 +60,7 @@ defineProps({
 
 <style scoped>
 .page-header {
-  background: #2563eb;
+  background: var(--primary-color);
   padding: 20px 0;
 }
 .page-header-inner {
@@ -91,7 +91,7 @@ defineProps({
   padding: 28px;
 }
 .post-date-badge {
-  background: #2563eb;
+  background: var(--primary-color);
   color: #fff;
   font-size: 11px;
   font-weight: 600;
@@ -127,9 +127,9 @@ defineProps({
   display: inline-block;
   width: 24px;
   height: 2px;
-  background: #2563eb;
+  background: var(--primary-color);
 }
-.cat-link { color: #2563eb; text-decoration: none; font-weight: 600; }
+.cat-link { color: var(--primary-color); text-decoration: none; font-weight: 600; }
 
 /* Sidebar */
 .sidebar-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 20px; }
@@ -144,5 +144,8 @@ defineProps({
   border-bottom: 1px solid #f3f4f6;
   transition: color 0.2s;
 }
-.cat-list li a:hover, .cat-active { color: #2563eb !important; font-weight: 600; }
+.cat-list li a:hover, .cat-active { color: var(--primary-color) !important; font-weight: 600; }
 </style>
+
+
+

@@ -29,11 +29,19 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $settings = [];
+        try {
+            $settings = \App\Models\Setting::allAsArray();
+        } catch (\Exception $e) {
+            // Ignore if DB/table doesn't exist yet
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
             ],
+            'settings' => $settings,
         ];
     }
 }
