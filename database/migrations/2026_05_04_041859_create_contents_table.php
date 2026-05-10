@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('contents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('staff_id')->constrained('users')->cascadeOnDelete();
-            $table->enum('type', ['vidio', 'ebook']);
+            $table->foreignId('uploader_id')->constrained('users')->cascadeOnDelete();
+            $table->enum('type', ['video', 'ebook']);
             $table->string('title');
             $table->string('file_url');
-            $table->string('thumbnail_url');
+            $table->string('thumbnail_url')->nullable();
             $table->timestamps();
         });
     }

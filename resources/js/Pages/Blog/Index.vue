@@ -103,7 +103,7 @@ const doSearch = () => {
 <style scoped>
 .page-header {
   background: var(--primary-color);
-  padding: 20px 0;
+  padding: 110px 0 32px; /* Increased top padding for overlay navbar */
 }
 .page-header-inner {
   max-width: 1200px;

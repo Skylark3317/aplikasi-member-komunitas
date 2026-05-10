@@ -53,3 +53,35 @@ Route::middleware(['auth', 'verified', 'role:super_admin'])
         Route::get('/profil/edit', [SuperAdminProfilController::class, 'edit'])->name('profil.edit');
         Route::patch('/profil', [SuperAdminProfilController::class, 'update'])->name('profil.update');
     });
+
+// ─── Petugas Routes ────────────────────────────────────────
+Route::middleware(['auth', 'verified', 'role:staff'])
+    ->prefix('petugas')
+    ->name('petugas.')
+    ->group(function () {
+        // Konten
+        Route::get('/konten', [\App\Http\Controllers\Petugas\KontenController::class, 'index'])->name('konten.index');
+        Route::get('/konten/buat', [\App\Http\Controllers\Petugas\KontenController::class, 'create'])->name('konten.create');
+        Route::post('/konten', [\App\Http\Controllers\Petugas\KontenController::class, 'store'])->name('konten.store');
+        Route::get('/konten/{content}/edit', [\App\Http\Controllers\Petugas\KontenController::class, 'edit'])->name('konten.edit');
+        Route::post('/konten/{content}', [\App\Http\Controllers\Petugas\KontenController::class, 'update'])->name('konten.update');
+        Route::delete('/konten/{content}', [\App\Http\Controllers\Petugas\KontenController::class, 'destroy'])->name('konten.destroy');
+
+        // Blog
+        Route::get('/blog', [\App\Http\Controllers\Petugas\BlogController::class, 'index'])->name('blog.index');
+        Route::get('/blog/buat', [\App\Http\Controllers\Petugas\BlogController::class, 'create'])->name('blog.create');
+        Route::post('/blog', [\App\Http\Controllers\Petugas\BlogController::class, 'store'])->name('blog.store');
+        Route::get('/blog/{post}/edit', [\App\Http\Controllers\Petugas\BlogController::class, 'edit'])->name('blog.edit');
+        Route::patch('/blog/{post}', [\App\Http\Controllers\Petugas\BlogController::class, 'update'])->name('blog.update');
+        Route::delete('/blog/{post}', [\App\Http\Controllers\Petugas\BlogController::class, 'destroy'])->name('blog.destroy');
+
+        // Pertanyaan
+        Route::get('/pertanyaan', [\App\Http\Controllers\Petugas\PertanyaanController::class, 'index'])->name('pertanyaan.index');
+        Route::get('/pertanyaan/{conversation}', [\App\Http\Controllers\Petugas\PertanyaanController::class, 'show'])->name('pertanyaan.show');
+        Route::post('/pertanyaan/{conversation}/balas', [\App\Http\Controllers\Petugas\PertanyaanController::class, 'reply'])->name('pertanyaan.reply');
+
+        // Profil
+        Route::get('/profil', [\App\Http\Controllers\Petugas\ProfilController::class, 'show'])->name('profil');
+        Route::get('/profil/edit', [\App\Http\Controllers\Petugas\ProfilController::class, 'edit'])->name('profil.edit');
+        Route::patch('/profil', [\App\Http\Controllers\Petugas\ProfilController::class, 'update'])->name('profil.update');
+    });

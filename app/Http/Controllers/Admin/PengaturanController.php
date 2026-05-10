@@ -24,6 +24,7 @@ class PengaturanController extends Controller
             'community_name'      => 'required|string|max:255',
             'email'               => 'required|email',
             'phone'               => 'required|string|max:20',
+            'address'             => 'nullable|string|max:500',
             'membership_fee'      => 'required|numeric|min:0',
             'membership_duration' => 'required|integer|min:1',
             'invoice_countdown'   => 'required|integer|min:1',
@@ -36,7 +37,7 @@ class PengaturanController extends Controller
         ]);
 
         $fields = [
-            'community_name', 'email', 'phone',
+            'community_name', 'email', 'phone', 'address',
             'social_x', 'social_facebook', 'social_linkedin',
             'social_skype', 'social_instagram', 'social_youtube',
             'bank_account_name', 'bank_account_number', 'bank_name',

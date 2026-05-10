@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('conversations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('member_id')->constrained('users')->cascadeOnDelete();
-            $table->enum('status', ['open', 'closed']);
+            $table->foreignId('submitter_id')->constrained('users')->cascadeOnDelete();
+            $table->string('ticket_number')->unique();
+            $table->boolean('is_closed')->default(false);
             $table->timestamps();
         });
     }

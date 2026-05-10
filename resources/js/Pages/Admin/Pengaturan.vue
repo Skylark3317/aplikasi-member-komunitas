@@ -84,6 +84,13 @@
           <span v-if="form.errors.phone" class="error-msg">{{ form.errors.phone }}</span>
         </div>
 
+        <!-- Alamat -->
+        <div class="field-group">
+          <label class="field-label">Alamat</label>
+          <textarea v-model="form.address" class="field-textarea" rows="3" />
+          <span v-if="form.errors.address" class="error-msg">{{ form.errors.address }}</span>
+        </div>
+
         <!-- Social media -->
         <div class="field-group">
           <label class="field-label">Tautan Akun X</label>
@@ -266,6 +273,7 @@ const form = useForm({
   community_name:      s.community_name      ?? '',
   email:               s.email               ?? '',
   phone:               s.phone               ?? '',
+  address:             s.address             ?? '',
   social_x:            s.social_x            ?? '',
   social_facebook:     s.social_facebook     ?? '',
   social_linkedin:     s.social_linkedin     ?? '',

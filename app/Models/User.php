@@ -50,4 +50,9 @@ class User extends Authenticatable
     {
         return $this->role === 'super_admin';
     }
+
+    public function isPetugas(): bool
+    {
+        return $this->role === 'staff';
+    }
 }

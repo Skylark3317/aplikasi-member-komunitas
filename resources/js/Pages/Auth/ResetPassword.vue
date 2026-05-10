@@ -67,7 +67,7 @@ const submit = () => {
 </script>
 
 <style scoped>
-.page-header { background: var(--primary-color); padding: 20px 0; }
+.page-header { background: var(--primary-color); padding: 110px 0 32px; }
 .page-header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 .page-title { color: #fff; font-size: 22px; font-weight: 700; }
 

@@ -18,26 +18,45 @@ class DatabaseSeeder extends Seeder
         $this->call(SettingsSeeder::class);
 
         // ── Super Admin ──────────────────────────────────────────
-        User::create([
-            'name'              => 'Met Slamet',
-            'email'             => 'superadmin@amk.com',
-            'password'          => Hash::make('password'),
-            'role'              => 'super_admin',
-            'telephone'         => '081234567890',
-            'is_active'         => true,
-            'email_verified_at' => now(),
-        ]);
+        // ── Super Admin ──────────────────────────────────────────
+        User::updateOrCreate(
+            ['email' => 'superadmin@amk.com'],
+            [
+                'name'              => 'Met Slamet',
+                'password'          => Hash::make('password'),
+                'role'              => 'super_admin',
+                'telephone'         => '081234567890',
+                'is_active'         => true,
+                'email_verified_at' => now(),
+            ]
+        );
 
         // ── Users ──────────────────────────────────────────────
-        $ketua = User::create([
-            'name'              => 'Jo Bejo',
-            'email'             => 'ketua@amk.com',
-            'password'          => Hash::make('password'),
-            'role'              => 'leader',
-            'telephone'         => '081200000001',
-            'is_active'         => true,
-            'email_verified_at' => now(),
-        ]);
+        // ── Users ──────────────────────────────────────────────
+        $ketua = User::updateOrCreate(
+            ['email' => 'ketua@amk.com'],
+            [
+                'name'              => 'Jo Bejo',
+                'password'          => Hash::make('password'),
+                'role'              => 'leader',
+                'telephone'         => '081200000001',
+                'is_active'         => true,
+                'email_verified_at' => now(),
+            ]
+        );
+
+        // ── Petugas (Staff) ──────────────────────────────────────
+        User::updateOrCreate(
+            ['email' => 'staff@amk.com'],
+            [
+                'name'              => 'Petugas AMK',
+                'password'          => Hash::make('password'),
+                'role'              => 'staff',
+                'telephone'         => '081200000002',
+                'is_active'         => true,
+                'email_verified_at' => now(),
+            ]
+        );
 
         $members = [
             ['name' => 'Nem Painem',  'email' => 'nem@amk.com'],
@@ -47,20 +66,22 @@ class DatabaseSeeder extends Seeder
 
         $memberModels = [];
         foreach ($members as $m) {
-            $memberModels[] = User::create([
-                'name'              => $m['name'],
-                'email'             => $m['email'],
-                'password'          => Hash::make('password'),
-                'role'              => 'member',
-                'telephone'         => '082991919192811',
-                'email_verified_at' => now(),
-            ]);
+            $memberModels[] = User::updateOrCreate(
+                ['email' => $m['email']],
+                [
+                    'name'              => $m['name'],
+                    'password'          => Hash::make('password'),
+                    'role'              => 'member',
+                    'telephone'         => '082991919192811',
+                    'email_verified_at' => now(),
+                ]
+            );
         }
 
         // ── Categories ─────────────────────────────────────────
-        $catSemua  = Category::create(['name' => 'Semua',  'slug' => 'semua']);
-        $catBerita = Category::create(['name' => 'Berita', 'slug' => 'berita']);
-        $catAcara  = Category::create(['name' => 'Acara',  'slug' => 'acara']);
+        $catSemua  = Category::updateOrCreate(['slug' => 'semua'], ['name' => 'Semua']);
+        $catBerita = Category::updateOrCreate(['slug' => 'berita'], ['name' => 'Berita']);
+        $catAcara  = Category::updateOrCreate(['slug' => 'acara'], ['name' => 'Acara']);
 
         // ── Posts ──────────────────────────────────────────────
         $posts = [
@@ -79,6 +100,22 @@ class DatabaseSeeder extends Seeder
                 'content'      => '<p>Tren keterlibatan anak muda dalam berbagai gerakan sosial terus meningkat. Dari kegiatan lingkungan hingga pemberdayaan masyarakat, generasi Z dan milenial membuktikan bahwa perubahan bisa dimulai dari aksi nyata.</p><p>Data menunjukkan bahwa partisipasi pemuda dalam kegiatan sukarela meningkat signifikan dalam tiga tahun terakhir. Mereka tidak hanya hadir sebagai peserta, tetapi juga sebagai penggagas dan pemimpin perubahan.</p>',
                 'category_id'  => $catBerita->id,
                 'published_at' => now()->subDays(1),
+            ],
+            [
+                'title'        => 'Pemanfaatan Teknologi Tingkatkan Produktivitas UMKM',
+                'slug'         => 'pemanfaatan-teknologi-tingkatkan-produktivitas-umkm',
+                'excerpt'      => 'Adopsi teknologi digital membantu pelaku UMKM meningkatkan efisiensi operasional dan memperluas jangkauan pasar.',
+                'content'      => '<p>Transformasi digital kini menjadi kebutuhan bagi pelaku Usaha Mikro, Kecil, dan Menengah (UMKM) dalam menghadapi persaingan pasar yang semakin ketat. Dengan memanfaatkan teknologi seperti marketplace, media sosial, dan sistem pembayaran digital, UMKM mampu menjangkau konsumen lebih luas.</p><p>Tidak hanya itu, penggunaan aplikasi pencatatan keuangan dan manajemen stok juga membantu pelaku usaha dalam mengelola bisnis secara lebih efisien dan terstruktur.</p><p>Berbagai pelatihan dan pendampingan dari komunitas maupun pemerintah turut mendorong percepatan adopsi teknologi ini. Hasilnya, banyak UMKM yang mengalami peningkatan omzet serta daya saing di pasar lokal maupun nasional.</p>',
+                'category_id'  => $catBerita->id,
+                'published_at' => now()->subDays(2),
+            ],
+            [
+                'title'        => 'Pentingnya Literasi Digital di Era Informasi',
+                'slug'         => 'pentingnya-literasi-digital-di-era-informasi',
+                'excerpt'      => 'Kemampuan memahami dan menyaring informasi digital menjadi keterampilan penting di tengah arus informasi yang cepat.',
+                'content'      => '<p>Di era informasi yang serba cepat, literasi digital menjadi keterampilan dasar yang harus dimiliki oleh setiap individu. Kemampuan untuk memahami, mengevaluasi, dan menggunakan informasi secara bijak sangat penting untuk menghindari penyebaran hoaks.</p><p>Berbagai komunitas dan lembaga pendidikan kini активно menggalakkan program literasi digital melalui workshop, seminar, dan kampanye online. Tujuannya adalah meningkatkan kesadaran masyarakat dalam menggunakan teknologi secara bertanggung jawab.</p><p>Dengan literasi digital yang baik, masyarakat tidak hanya menjadi konsumen informasi, tetapi juga mampu berkontribusi secara positif dalam ekosistem digital yang sehat.</p>',
+                'category_id'  => $catBerita->id,
+                'published_at' => now()->subDays(3),
             ],
             [
                 'title'        => 'Workshop Pengembangan Diri Diminati Banyak Peserta',
@@ -148,5 +185,9 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+
+        // ── Dummy Content ──────────────────────────────────────
+        $this->call(DummyContentSeeder::class);
+        $this->call(PertanyaanSeeder::class);
     }
 }

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('conversation_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('sender_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('conversation_id')->constrained('conversations')->cascadeOnDelete();
             $table->text('content');
             $table->timestamps();
         });

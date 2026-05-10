@@ -5,10 +5,10 @@
       <div class="topbar">
         <div class="topbar-inner">
           <div class="topbar-contacts">
-            <a v-if="settings.email" :href="`mailto:${settings.email}`"><span class="icon">✉</span> {{ settings.email }}</a>
-            <a v-if="settings.phone" :href="`tel:${settings.phone}`"><span class="icon">📞</span> {{ settings.phone }}</a>
-            <a v-if="settings.social_youtube" :href="settings.social_youtube" target="_blank"><span class="icon">▶</span> YouTube</a>
-            <a v-if="settings.social_instagram" :href="settings.social_instagram" target="_blank"><span class="icon">📷</span> Instagram</a>
+            <a v-if="settings.email" :href="`mailto:${settings.email}`"><span class="icon"><i class="bi bi-envelope"></i></span> {{ settings.email }}</a>
+            <a v-if="settings.phone" :href="`tel:${settings.phone}`"><span class="icon"><i class="bi bi-telephone"></i></span> {{ settings.phone }}</a>
+            <a v-if="settings.social_youtube" :href="settings.social_youtube" target="_blank"><span class="icon"><i class="bi bi-youtube"></i></span> YouTube</a>
+            <a v-if="settings.social_instagram" :href="settings.social_instagram" target="_blank"><span class="icon"><i class="bi bi-instagram"></i></span> Instagram</a>
           </div>
         </div>
       </div>
@@ -20,7 +20,7 @@
             <Link :href="route('home')" :class="{ active: isActive('home') }">TENTANG</Link>
             <Link :href="route('blog.index')" :class="{ active: isActive('blog') }">BLOG</Link>
             <a href="#kontak">KONTAK</a>
-            <Link :href="route('register')" class="btn-membership" :style="{ color: 'var(--primary-color, #2563eb) !important' }">Membership</Link>
+            <Link :href="route('register')" class="btn-membership">Membership</Link>
           </div>
         </div>
       </nav>
@@ -54,12 +54,12 @@
           <p style="white-space: pre-line;">{{ settings.about_description || 'Komunitas ini adalah ruang terbuka bagi siapa saja yang ingin belajar, berkembang, dan saling terhubung dalam lingkungan yang positif dan kolaboratif.' }}</p>
           <p class="footer-sosmed-label">Media Sosial</p>
           <div class="footer-socials">
-            <a v-if="settings.social_x" :href="settings.social_x" title="X">𝕏</a>
-            <a v-if="settings.social_facebook" :href="settings.social_facebook" title="Facebook">f</a>
-            <a v-if="settings.social_linkedin" :href="settings.social_linkedin" title="LinkedIn">in</a>
-            <a v-if="settings.social_skype" :href="settings.social_skype" title="Skype">☎</a>
-            <a v-if="settings.social_instagram" :href="settings.social_instagram" title="Instagram">◎</a>
-            <a v-if="settings.social_youtube" :href="settings.social_youtube" title="YouTube">▶</a>
+            <a v-if="settings.social_x" :href="settings.social_x" title="X"><i class="bi bi-twitter-x"></i></a>
+            <a v-if="settings.social_facebook" :href="settings.social_facebook" title="Facebook"><i class="bi bi-facebook"></i></a>
+            <a v-if="settings.social_linkedin" :href="settings.social_linkedin" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            <a v-if="settings.social_skype" :href="settings.social_skype" title="Skype"><i class="bi bi-skype"></i></a>
+            <a v-if="settings.social_instagram" :href="settings.social_instagram" title="Instagram"><i class="bi bi-instagram"></i></a>
+            <a v-if="settings.social_youtube" :href="settings.social_youtube" title="YouTube"><i class="bi bi-youtube"></i></a>
           </div>
         </div>
         <div class="footer-menu">
@@ -73,8 +73,9 @@
         </div>
         <div class="footer-contact" id="kontak">
           <h4>Kontak</h4>
-          <p v-if="settings.phone"><span>📞</span> {{ settings.phone }}</p>
-          <p v-if="settings.email"><span>✉</span> {{ settings.email }}</p>
+          <p v-if="settings.address"><span><i class="bi bi-geo-alt"></i></span> {{ settings.address }}</p>
+          <p v-if="settings.phone"><span><i class="bi bi-telephone"></i></span> {{ settings.phone }}</p>
+          <p v-if="settings.email"><span><i class="bi bi-envelope"></i></span> {{ settings.email }}</p>
         </div>
       </div>
       <div class="footer-bottom">
@@ -107,52 +108,70 @@ const isActive = (routeName) => {
   position: sticky;
   top: 0;
   z-index: 100;
-}
-.site-header.is-home {
-  margin-bottom: -56px; /* Pulls hero section under the navbar */
+  margin-bottom: -56px; /* Pulls page content under the navbar */
 }
 
 /* ── Top Bar ───────────────────────────────────── */
 .topbar {
-  background: #fff;
-  border-bottom: 1px solid #eee;
-  height: 36px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #ddd;
+  height: 48px;
   display: flex;
   align-items: center;
 }
+
 .topbar-inner {
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
   padding: 0 24px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-end; /* tetap ke kanan */
 }
+
+/* container */
 .topbar-contacts {
   display: flex;
-  gap: 20px;
 }
+
+/* item */
 .topbar-contacts a {
-  font-size: 13px;
-  color: #444;
-  text-decoration: none;
+  height: 48px;
+  padding: 0 16px;
+
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
+
+  font-size: 13px;
+  color: #222;
+  text-decoration: none;
+
+  background: #f5f5f5;
+  border-left: 1px solid #ddd; 
+  border-right: 1px solid #ddd; 
+  transition: all 0.2s ease;
 }
-.topbar-contacts a:hover { color: var(--primary-color); }
+
+/* hover */
+.topbar-contacts a:hover {
+  background: #eaeaea;
+  color: var(--primary-color);
+}
+
+/* icon */
+.topbar-contacts .icon {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
 
 /* ── Navbar ────────────────────────────────────── */
 .navbar {
   height: 56px;
   display: flex;
   align-items: center;
-}
-.site-header.is-home .navbar {
   background: rgba(0, 0, 0, 0.43);
-}
-.site-header:not(.is-home) .navbar {
-  background: var(--primary-color);
 }
 
 .navbar-inner {
@@ -182,18 +201,45 @@ const isActive = (routeName) => {
 }
 
 .btn-membership {
-  background: #fff;
-  color: var(--primary-color) !important;
+  background: transparent;               /* no background */
+  color: #fff !important;                /* teks putih */
   padding: 6px 18px;
   border-radius: 20px;
   font-weight: 600;
   font-size: 13px;
   text-decoration: none;
-  transition: background 0.2s, color 0.2s;
+
+  border: 1.5px solid #fff;              /* outline putih */
+
+  display: inline-block;
+  transition: 
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
+
+/* Hover */
 .btn-membership:hover {
-  background: var(--primary-color);
-  color: #fff !important;
+  background: #fff;                      /* isi putih */
+  color: var(--primary-color) !important;
+
+  transform: translateY(-2px) scale(1.03);
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Klik (biar terasa hidup) */
+.btn-membership:active {
+  transform: scale(0.97);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Focus (aksesibilitas + modern feel) */
+.btn-membership:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+
 }
 
 /* ── Brand Overlapping Box ─────────────────────── */
@@ -215,29 +261,32 @@ const isActive = (routeName) => {
   top: 0;
   left: 24px;
   background: #fff;
-  height: 92px; /* Covers both topbar (36px) and navbar (56px) */
-  padding: 0 20px;
+  height: 82px; /* Slightly shorter than the total header (92px) */
+  padding: 0 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-bottom-right-radius: 8px;
-  border-bottom-left-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  gap: 4px;
-  pointer-events: auto; /* Re-enable clicks inside the logo box */
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12); /* Stronger shadow for depth */
+  border: 1px solid rgba(0,0,0,0.05);
+  border-top: none;
+  gap: 2px;
+  pointer-events: auto;
 }
 .brand-img img {
-  height: 60px;
+  height: 44px; /* Smaller logo */
   width: auto;
   object-fit: contain;
 }
 .brand-logo {
   font-weight: 800;
-  font-size: 13px;
-  letter-spacing: 0.5px;
+  font-size: 11.5px; /* Slightly smaller text */
+  letter-spacing: 0.3px;
   color: var(--primary-color, #111);
   text-align: center;
+  line-height: 1.2;
 }
 
 /* ── Footer ────────────────────────────────────── */

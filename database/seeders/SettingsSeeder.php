@@ -14,6 +14,7 @@ class SettingsSeeder extends Seeder
             'community_logo'        => null,
             'email'                 => 'amk@mail.com',
             'phone'                 => '081234567890',
+            'address'               => 'Jl. Merdeka No. 123, Jakarta, Indonesia',
             'social_x'              => 'https://x.com/amk',
             'social_facebook'       => 'https://facebook.com/amk',
             'social_linkedin'       => 'https://linkedin.com/amk',
