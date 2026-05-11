@@ -43,7 +43,7 @@
           :disabled="currentPage === 1"
           @click="currentPage--"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
           Sebelumnya
         </button>
         
@@ -62,7 +62,7 @@
           @click="currentPage++"
         >
           Berikutnya
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       </div>
 
@@ -80,7 +80,7 @@ const props = defineProps({
 });
 
 const currentPage = ref(1);
-const itemsPerPage = 5;
+const itemsPerPage = 3;
 
 const totalPages = computed(() => Math.ceil(props.posts.length / itemsPerPage));
 
@@ -188,7 +188,7 @@ function truncateText(text, length) {
 .blog-date-badge {
   display: inline-block;
   background: #eff6ff;
-  color: #2563eb;
+  color: var(--primary-color, #2563eb);
   font-size: 12px;
   font-weight: 600;
   padding: 4px 10px;
@@ -227,7 +227,7 @@ function truncateText(text, length) {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
   margin-top: auto;
   padding-top: 32px;
 }
@@ -246,19 +246,20 @@ function truncateText(text, length) {
 }
 
 .page-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.3;
   cursor: not-allowed;
 }
 
 .page-btn.active {
-  background: var(--primary-color, #2563eb);
+  background: #acc000;
   color: #fff;
-  border-radius: 6px;
-  width: 32px;
-  height: 32px;
+  border-radius: 10px;
+  width: 40px;
+  height: 40px;
   justify-content: center;
+  font-weight: 600;
 }
 
-.text-muted { color: #9ca3af; }
-.text-primary { color: var(--primary-color, #2563eb); }
+.text-muted { color: #ccc; }
+.text-primary { color: #acc000; }
 </style>

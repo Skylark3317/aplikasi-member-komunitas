@@ -10,11 +10,18 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->decimal('amount', 12, 2)->default(0);
-            $table->enum('status', ['diterima', 'ditolak', 'menunggu'])->default('menunggu');
-            $table->string('month')->nullable(); // e.g. "Jan", "Feb"
-            $table->year('year')->nullable();
+            $table->foreignId('invoice_id')->constrained()->onDelete('cascade');
+            $table->foreignId('payer_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('verifier_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('payment_proof_url');
+            $table->string('account_holder_name');
+            $table->string('account_number');
+            $table->string('account_bank_name');
+            $table->decimal('amount', 12, 2);
+            $table->dateTime('date');
+            $table->enum('status', ['menunggu', 'diverifikasi', 'ditolak'])->default('menunggu');
+            $table->text('reject_reason')->nullable();
+            $table->timestamp('verified_at')->nullable();
             $table->timestamps();
         });
     }

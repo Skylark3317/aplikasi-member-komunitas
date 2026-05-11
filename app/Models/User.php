@@ -33,7 +33,17 @@ class User extends Authenticatable
 
     public function payments()
     {
-        return $this->hasMany(Payment::class);
+        return $this->hasMany(Payment::class, 'payer_id');
+    }
+
+    public function verifiedPayments()
+    {
+        return $this->hasMany(Payment::class, 'verifier_id');
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
     }
 
     public function memberProfile()
@@ -54,5 +64,10 @@ class User extends Authenticatable
     public function isPetugas(): bool
     {
         return $this->role === 'staff';
+    }
+
+    public function isBendahara(): bool
+    {
+        return $this->role === 'bendahara';
     }
 }

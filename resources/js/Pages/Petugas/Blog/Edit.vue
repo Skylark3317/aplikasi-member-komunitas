@@ -160,7 +160,7 @@ function deletePost() {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #007bff;
+  background: var(--primary-color, #2563eb);
   color: #fff;
   border: none;
   padding: 10px 20px;
@@ -174,8 +174,8 @@ function deletePost() {
 
 .btn-outline {
   background: #fff;
-  color: #007bff;
-  border: 1px solid #007bff;
+  color: var(--primary-color, #007bff);
+  border: 1px solid var(--primary-color, #007bff);
   padding: 10px 20px;
   border-radius: 8px;
   font-size: 13.5px;

@@ -237,7 +237,7 @@ onMounted(scrollToBottom);
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #007bff;
+  background: var(--primary-color, #2563eb);
   color: #fff;
   border: none;
   padding: 8px 20px;

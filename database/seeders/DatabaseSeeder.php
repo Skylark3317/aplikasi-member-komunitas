@@ -58,6 +58,19 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        // ── Bendahara (Keuangan) ──────────────────────────────────
+        $bendahara = User::updateOrCreate(
+            ['email' => 'bendahara@amk.com'],
+            [
+                'name'              => 'Jo Paijo',
+                'password'          => Hash::make('password'),
+                'role'              => 'bendahara',
+                'telephone'         => '081200000003',
+                'is_active'         => true,
+                'email_verified_at' => now(),
+            ]
+        );
+
         $members = [
             ['name' => 'Nem Painem',  'email' => 'nem@amk.com'],
             ['name' => 'Siti Rahayu', 'email' => 'siti@amk.com'],
@@ -171,18 +184,41 @@ class DatabaseSeeder extends Seeder
             Post::create(array_merge($postData, ['author_id' => $memberModels[0]->id]));
         }
 
-        // ── Payments ───────────────────────────────────────────
-        $months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-        $statuses = ['diterima', 'diterima', 'diterima', 'ditolak', 'menunggu'];
+        // ── Invoices & Payments ───────────────────────────────────────────
+        $invoiceStatuses = [true, false];
         foreach ($memberModels as $member) {
-            foreach ($months as $i => $month) {
-                Payment::create([
+            for ($i = 1; $i <= 5; $i++) {
+                $invoice = \App\Models\Invoice::create([
                     'user_id' => $member->id,
-                    'amount'  => rand(300, 700) * 1000,
-                    'status'  => $statuses[array_rand($statuses)],
-                    'month'   => $month,
-                    'year'    => now()->year,
+                    'number' => 'INV' . str_pad(rand(1, 99999), 5, '0', STR_PAD_LEFT),
+                    'amount' => 50000,
+                    'due_date' => now()->addDays(rand(1, 30)),
+                    'is_accepted' => $invoiceStatuses[array_rand($invoiceStatuses)],
                 ]);
+
+                // Create a payment for some invoices
+                if (rand(0, 1)) {
+                    $status = ['menunggu', 'diverifikasi', 'ditolak'][rand(0, 2)];
+                    
+                    Payment::create([
+                        'invoice_id' => $invoice->id,
+                        'payer_id' => $member->id,
+                        'verifier_id' => $status === 'menunggu' ? null : $bendahara->id,
+                        'payment_proof_url' => 'https://via.placeholder.com/300x400?text=Bukti+Pembayaran',
+                        'account_holder_name' => $member->name,
+                        'account_number' => '000000000000',
+                        'account_bank_name' => 'Bank BRI',
+                        'amount' => 50000,
+                        'date' => now()->subDays(rand(1, 10)),
+                        'status' => $status,
+                        'verified_at' => $status === 'menunggu' ? null : now(),
+                    ]);
+
+                    // If payment is verified, update invoice
+                    if ($status === 'diverifikasi') {
+                        $invoice->update(['is_accepted' => true]);
+                    }
+                }
             }
         }
 
