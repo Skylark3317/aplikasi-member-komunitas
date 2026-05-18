@@ -53,7 +53,7 @@ class User extends Authenticatable
 
     public function isKetua(): bool
     {
-        return $this->role === 'ketua';
+        return $this->role === 'leader' || $this->role === 'ketua';
     }
 
     public function isSuperAdmin(): bool

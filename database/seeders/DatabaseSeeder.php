@@ -49,7 +49,7 @@ class DatabaseSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'staff@amk.com'],
             [
-                'name'              => 'Petugas AMK',
+                'name'              => 'Agus Haryanto',
                 'password'          => Hash::make('password'),
                 'role'              => 'staff',
                 'telephone'         => '081200000002',

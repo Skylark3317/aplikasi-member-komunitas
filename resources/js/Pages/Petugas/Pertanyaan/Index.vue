@@ -8,12 +8,12 @@
     <div class="divider" />
 
     <div class="content-area">
-      <div v-if="conversations.data.length === 0" class="empty-state">
+      <div v-if="paginatedConversations.length === 0" class="empty-state">
         Belum ada pertanyaan.
       </div>
 
       <div v-else class="question-list">
-        <div v-for="conv in conversations.data" :key="conv.id" class="question-card">
+        <div v-for="conv in paginatedConversations" :key="conv.id" class="question-card">
           <div class="card-header">
             <span class="ticket-no">#{{ conv.ticket_number }}</span>
           </div>
@@ -31,41 +31,59 @@
       </div>
 
       <!-- Pagination -->
-      <div class="pagination" v-if="conversations.links.length > 3">
-        <Link 
-          v-for="(link, k) in conversations.links" 
-          :key="k"
-          :href="link.url || '#'"
-          :class="[
-            'page-btn', 
-            link.active ? 'active' : '', 
-            !link.url ? 'btn-disabled' : '',
-            k === 0 ? 'text-muted' : (k === conversations.links.length - 1 ? 'text-primary' : '')
-          ]"
+      <div class="pagination" v-if="totalPages > 1">
+        <button 
+          class="page-btn text-muted" 
+          :disabled="currentPage === 1"
+          @click="currentPage--"
         >
-          <template v-if="k === 0">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg> 
-            Sebelumnya
-          </template>
-          <template v-else-if="k === conversations.links.length - 1">
-            Berikutnya 
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          </template>
-          <template v-else>
-            {{ link.label }}
-          </template>
-        </Link>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          Sebelumnya
+        </button>
+        
+        <button 
+          v-for="page in totalPages" 
+          :key="page"
+          :class="['page-btn', currentPage === page ? 'active' : '']"
+          @click="currentPage = page"
+        >
+          {{ page }}
+        </button>
+
+        <button 
+          class="page-btn text-primary"
+          :disabled="currentPage === totalPages"
+          @click="currentPage++"
+        >
+          Berikutnya
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
       </div>
     </div>
   </PetugasLayout>
 </template>
 
 <script setup>
+import { ref, computed } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import PetugasLayout from '@/Layouts/PetugasLayout.vue';
 
-defineProps({
-  conversations: Object,
+const props = defineProps({
+  conversations: {
+    type: Array,
+    default: () => []
+  },
+});
+
+const currentPage = ref(1);
+const itemsPerPage = 3;
+
+const totalPages = computed(() => Math.ceil(props.conversations.length / itemsPerPage));
+
+const paginatedConversations = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  return props.conversations.slice(start, end);
 });
 
 function formatDateTime(dateStr) {
@@ -203,7 +221,7 @@ function formatDateTime(dateStr) {
 }
 
 .page-btn.active {
-  background: #acc000;
+  background:  var(--primary-color, #2563eb);
   color: #fff;
   border-radius: 10px;
   width: 40px;
@@ -213,5 +231,5 @@ function formatDateTime(dateStr) {
 }
 
 .text-muted { color: #ccc; }
-.text-primary { color: #acc000; }
+.text-primary { color: var(--primary-color, #2563eb); }
 </style>

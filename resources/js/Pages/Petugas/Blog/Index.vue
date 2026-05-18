@@ -251,7 +251,7 @@ function truncateText(text, length) {
 }
 
 .page-btn.active {
-  background: #acc000;
+  background:  var(--primary-color, #2563eb);
   color: #fff;
   border-radius: 10px;
   width: 40px;
@@ -261,5 +261,5 @@ function truncateText(text, length) {
 }
 
 .text-muted { color: #ccc; }
-.text-primary { color: #acc000; }
+.text-primary { color: var(--primary-color, #2563eb); }
 </style>

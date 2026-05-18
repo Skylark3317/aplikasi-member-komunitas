@@ -10,7 +10,10 @@ class CheckRole
 {
     public function handle(Request $request, Closure $next, string $role): Response
     {
-        if (!$request->user() || $request->user()->role !== $role) {
+        $userRole = $request->user() ? $request->user()->role : null;
+        $checkRole = $role === 'ketua' ? 'leader' : $role;
+
+        if (!$request->user() || $userRole !== $checkRole) {
             abort(403, 'Akses ditolak.');
         }
         return $next($request);

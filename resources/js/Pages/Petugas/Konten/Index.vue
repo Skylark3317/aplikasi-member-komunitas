@@ -327,7 +327,7 @@ function formatDate(dateStr) {
 }
 
 .page-btn.active {
-  background: #acc000;
+  background:  var(--primary-color, #2563eb);
   color: #fff;
   border-radius: 10px;
   width: 40px;
@@ -337,5 +337,5 @@ function formatDate(dateStr) {
 }
 
 .text-muted { color: #ccc; }
-.text-primary { color: #acc000; }
+.text-primary { color: var(--primary-color, #2563eb); }
 </style>

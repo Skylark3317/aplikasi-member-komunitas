@@ -38,7 +38,7 @@ class AuthenticatedSessionController extends Controller
         if ($user->isSuperAdmin()) {
             return redirect()->intended(route('superadmin.kelol-akun.index', absolute: false));
         } elseif ($user->isKetua()) {
-            return redirect()->intended(route('admin.statistik', absolute: false));
+            return redirect()->intended(route('ketua.statistik', absolute: false));
         } elseif ($user->isPetugas()) {
             return redirect()->intended(route('petugas.konten.index', absolute: false));
         } elseif ($user->isBendahara()) {

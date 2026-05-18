@@ -24,12 +24,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// ─── Admin Routes (Ketua only) ─────────────────────────────
+// ─── Ketua Routes ──────────────────────────────────────────
 Route::middleware(['auth', 'verified', 'role:ketua'])
-    ->prefix('admin')
-    ->name('admin.')
+    ->prefix('ketua')
+    ->name('ketua.')
     ->group(function () {
-        Route::get('/statistik', [StatistikController::class, 'index'])->name('statistik');
+        Route::get('/statistik', [\App\Http\Controllers\Ketua\StatistikController::class, 'index'])->name('statistik');
+        Route::get('/statistik/detail/{type}', [\App\Http\Controllers\Ketua\DetailController::class, 'index'])->name('statistik.detail');
+        Route::get('/profil', [\App\Http\Controllers\Ketua\ProfilController::class, 'show'])->name('profil');
+        Route::get('/profil/edit', [\App\Http\Controllers\Ketua\ProfilController::class, 'edit'])->name('profil.edit');
+        Route::patch('/profil', [\App\Http\Controllers\Ketua\ProfilController::class, 'update'])->name('profil.update');
     });
 
 // ─── Super Admin Routes ────────────────────────────────────

@@ -14,7 +14,7 @@ class PertanyaanController extends Controller
     {
         $conversations = Conversation::with(['submitter', 'messages' => function($q) {
             $q->latest();
-        }])->latest()->paginate(3);
+        }])->latest()->get();
 
         return Inertia::render('Petugas/Pertanyaan/Index', [
             'conversations' => $conversations
