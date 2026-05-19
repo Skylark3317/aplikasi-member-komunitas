@@ -11,6 +11,16 @@
         </Link>
         <h1 class="page-title">Pertanyaan #{{ conversation.ticket_number }}</h1>
       </div>
+      <button 
+        v-if="!conversation.is_closed" 
+        @click="closeConversation" 
+        class="btn-close-ticket"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 6px;">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        Selesaikan Pertanyaan
+      </button>
     </div>
     <div class="divider" />
 
@@ -59,7 +69,7 @@
 </template>
 
 <script setup>
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage, router } from '@inertiajs/vue3';
 import { computed, ref, onMounted, nextTick } from 'vue';
 import PetugasLayout from '@/Layouts/PetugasLayout.vue';
 
@@ -103,6 +113,12 @@ function formatTimeOnly(dateStr) {
   return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
 }
 
+function closeConversation() {
+  router.post(route('petugas.pertanyaan.close', props.conversation.id), {}, {
+    preserveScroll: true
+  });
+}
+
 onMounted(scrollToBottom);
 </script>
 
@@ -113,6 +129,27 @@ onMounted(scrollToBottom);
   justify-content: space-between;
   padding: 16px 32px;
   background: #fff;
+}
+
+.btn-close-ticket {
+  display: flex;
+  align-items: center;
+  background: #10b981;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-close-ticket:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+.btn-close-ticket:active {
+  transform: translateY(0);
 }
 .page-header { display: flex; align-items: center; gap: 12px; }
 

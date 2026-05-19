@@ -1,143 +1,340 @@
-# Project Documentation
+# 📘 Dokumentasi Resmi Proyek: Aplikasi Member Komunitas (AMK)
+> **Nama Sandi Proyek:** PBL WOY / Aplikasi Member Komunitas  
+> **Karakteristik Aplikasi:** Single Page Application (SPA) berbasis Peran (RBAC) dengan Responsivitas Visual Tinggi  
+> **Teknologi Utama:** Laravel 11.x, Vue 3 (Composition API), Inertia.js, Tailwind CSS
 
-## 1. Project Overview
-- **Nama Project**: PBL WOY / Aplikasi Member Komunitas
-- **Tujuan Project**: Sistem manajemen anggota komunitas terpadu yang memfasilitasi akses materi (video/ebook), forum tanya jawab (Q&A), blog komunitas, sistem keanggotaan berbayar (premium), serta dashboard untuk pengurus (Super Admin, Ketua, Petugas, Bendahara, Member).
-- **Deskripsi Singkat**: Aplikasi ini dibangun menggunakan stack modern (Laravel 11 dan Vue 3 dengan Inertia.js). Bertujuan untuk memberikan pengalaman *Single Page Application* (SPA) yang cepat dengan sistem *role-based access control* (RBAC) yang lengkap untuk mengatur konten, pembayaran, dan interaksi antar anggota.
+---
 
-## 2. Tech Stack
-- **Frontend**: Vue 3 (Composition API), Inertia.js `@inertiajs/vue3`
-- **Backend**: Laravel 11.x (PHP ^8.3)
-- **Database**: SQLite (Default `.env`, dapat dikonfigurasi ke MySQL/PostgreSQL)
-- **Styling**: Tailwind CSS 3.x, `@tailwindcss/forms`
-- **Build Tools**: Vite 8.x, `@vitejs/plugin-vue`, Laravel Vite Plugin
-- **Deployment**: Dapat di-deploy di VPS standar atau shared hosting dengan akses SSH, menggunakan `php artisan serve` & `npm run build`.
-- **Icon Pack**: Bootstrap Icons (`bootstrap-icons`)
-- **State Management**: Dikelola secara server-driven melalui Inertia.js (Props & Shared Data)
-- **Utilities**: 
-  - Rich Text Editor: Vue Quill (`@vueup/vue-quill`)
-  - Charts: Chart.js & Vue Chart.js (`chart.js`, `vue-chartjs`)
+## 🧭 1. Gambaran Umum Proyek
+**Aplikasi Member Komunitas (AMK)** adalah platform manajemen terpadu yang dirancang khusus untuk memfasilitasi kebutuhan keanggotaan komunitas digital modern. Sistem ini menjembatani interaksi antara anggota biasa (*Member*) dengan pengurus (*Super Admin*, *Ketua*, *Petugas*, dan *Bendahara*).
 
-## 3. Project Structure
-Struktur utama project mengikuti standar Laravel + Inertia.js:
-- `app/`: Berisi logika backend (Controllers, Models, Middleware).
-  - `Http/Controllers/`: Terbagi menjadi sub-folder berdasarkan Role (`Admin`, `Bendahara`, `Petugas`, `Auth`).
-  - `Models/`: Mendefinisikan schema Eloquent (User, Content, Payment, Invoice, Post, dll).
-- `bootstrap/app.php`: Titik masuk utama aplikasi (konfigurasi routing dan middleware untuk Laravel 11).
-- `database/`: Berisi struktur database, migrations, factories, dan seeders.
-- `public/`: Direktori yang dapat diakses publik (entry point `index.php`, asset statis).
-- `resources/`: 
-  - `js/Pages/`: Komponen Vue halaman per role (Admin, Bendahara, Petugas, Auth, Blog, Profile).
-  - `js/Components/`: Komponen Vue reusable (Button, Modal, TextInput, RichTextEditor).
-  - `js/Layouts/`: Layout utama (misal: AppLayout, MemberLayout).
-- `routes/`: Menyimpan deklarasi route (`web.php` untuk Web dan Inertia routes, auth rute).
+### Fitur Utama:
+- **E-Learning & Content Delivery:** Menyediakan akses eksklusif untuk materi edukatif berupa **Video Pembelajaran** dan **E-Book** dengan pembagian hak akses premium.
+- **Sistem Keanggotaan Premium:** Alur registrasi keanggotaan berbayar terintegrasi dengan invoice otomatis dan verifikasi bukti pembayaran manual.
+- **Forum Q&A (Tanya Jawab):** Sistem tiket forum yang menghubungkan member langsung dengan staf/petugas untuk berkonsultasi secara interaktif.
+- **Community Blog/News:** Portal publikasi artikel dan kegiatan resmi komunitas dengan editor teks kaya (*Rich Text Editor*).
+- **Statistik & Visualisasi:** Grafik interaktif bagi pengurus (Ketua) untuk memantau tren pendaftaran, konten, dan status keuangan.
 
-## 4. Important Files
-- `composer.json` & `package.json`: Daftar dependencies backend (PHP) dan frontend (Node.js).
-- `bootstrap/app.php`: File registrasi utama untuk routing, middleware (`HandleInertiaRequests`, `CheckRole`), dan exception handling di Laravel 11.
-- `routes/web.php`: Berisi seluruh routing logika aplikasi, dikelompokkan dengan middleware `role`.
-- `tailwind.config.js`: Konfigurasi Tailwind, men-scan folder `resources/js/**/*.vue` dan `resources/views`.
-- `vite.config.js`: Konfigurasi build process asset frontend.
+---
 
-## 5. Routing System
-Sistem routing didefinisikan secara tersentralisasi di `routes/web.php` dan dibagi menjadi beberapa block middleware:
-- **Public Routes**: Homepage (`/`) dan Blog (`/blog`).
-- **Auth Routes**: Sistem login, register, reset password bawaan Laravel Breeze (`auth.php`).
-- **Super Admin Routes** (`/superadmin`): Mengelola akun dan pengaturan web.
-- **Admin/Ketua Routes** (`/admin`): Mengakses halaman statistik/dashboard.
-- **Petugas/Staff Routes** (`/petugas`): Manajemen konten, blog, dan membalas pertanyaan member.
-- **Bendahara Routes** (`/bendahara`): Verifikasi pembayaran dan invoice.
-- Setiap role dilindungi oleh custom middleware `role:nama_role`.
+## 🏗️ 2. Arsitektur & Aliran Sistem (Inertia.js SPA)
+Aplikasi ini dibangun menggunakan arsitektur **Modern Monolith** menggunakan **Inertia.js**. Keunggulan arsitektur ini adalah mempertahankan kecepatan pengembangan Laravel dibarengi dengan pengalaman pengguna interaktif ala *Single Page Application (SPA)* menggunakan Vue 3 tanpa overhead pembuatan API terpisah.
 
-## 6. Authentication & Authorization
-- **Authentication**: Menggunakan **Laravel Breeze** (Inertia + Vue stack). Menangani Login, Registration, Password Reset, dan Email Verification.
-- **Authorization**: Menggunakan custom Middleware `CheckRole` yang didaftarkan sebagai alias `role` di `bootstrap/app.php`. Role yang terdeteksi antara lain: `super_admin`, `ketua`, `staff` (petugas), `bendahara`, dan `member` biasa.
+### Aliran Data Request-Response:
+```mermaid
+sequenceDiagram
+    participant User as Client (Vue 3 Page)
+    participant Inertia as Inertia.js Engine
+    participant Route as Laravel Router & Middleware
+    participant Controller as Laravel Controller
+    participant DB as Database (SQLite/MySQL)
 
-## 7. Database Structure
-Aplikasi ini memiliki beberapa model/tabel utama:
-- `users`: Data pengguna dan role mereka (`is_active` flag).
-- `member_profiles`: Data profil khusus untuk para member.
-- `categories`: Kategori untuk konten/blog.
-- `contents`: Menyimpan informasi video atau ebook.
-- `posts` / `blogs`: Untuk publikasi blog.
-- `payments` & `invoices`: Mengelola transaksi keanggotaan/premium.
-- `conversations` & `messages`: Sistem Q&A atau forum komunikasi antara member dan petugas.
-- `settings`: Konfigurasi aplikasi yang bisa diubah Super Admin.
+    User->>Inertia: Navigasi Page / Klik Action (Axios HTTP)
+    Inertia->>Route: Kirim Inertia-Header Request
+    Route->>Route: Validasi Autentikasi & Role Middleware
+    Route->>Controller: Teruskan ke Controller Method
+    Controller->>DB: Query Data (Eloquent ORM)
+    DB-->>Controller: Return Data / Model Collection
+    Controller-->>Inertia: Inertia::render('Halaman', [Props Data])
+    Inertia-->>User: Update DOM secara parsial (Tanpa Full Reload)
+```
 
-## 8. API Structure
-Saat ini aplikasi tidak difokuskan sebagai REST API murni melainkan sebagai **SPA dengan Inertia.js**. Response dari server langsung di-render menjadi komponen Vue beserta data JSON prop-nya. Tidak ada file `routes/api.php` yang aktif dalam arsitektur default saat ini.
+---
 
-## 9. Components Architecture
-Aplikasi mengadopsi struktur *Atomic Design/Reusable Components*:
-- Komponen dasar (UI Toolkit) diletakkan di `resources/js/Components/` (ex: `PrimaryButton.vue`, `Modal.vue`, `RichTextEditor.vue`, `TextInput.vue`).
-- Komponen layout diletakkan di `resources/js/Layouts/`.
-- Halaman diletakkan di `resources/js/Pages/` dikelompokkan per Role agar rapi.
-Semua komponen ditulis dengan `<script setup>` (Vue 3 Composition API).
+## 👥 3. Peta Kontrol Akses Berbasis Peran (RBAC)
+Sistem memiliki 5 peran pengguna (*Roles*) yang terdefinisi dengan sangat ketat. Setiap akses ke menu atau aksi dilindungi oleh middleware `role:nama_role`.
 
-## 10. State Management
-Tidak menggunakan library external seperti Vuex atau Pinia. State management dikelola oleh **Inertia.js**.
-- Data Global (seperti Info User yang login, flash message, pengaturan) di-share via `HandleInertiaRequests.php` middleware.
-- Data Page-specific dikirim langsung dari Controller sebagai props ke page komponen Vue.
+| Peran (Role) | Kode Sistem | Deskripsi Tanggung Jawab Utama | Halaman Utama / Fitur Utama |
+| :--- | :--- | :--- | :--- |
+| **Super Admin** | `super_admin` | Mengontrol konfigurasi sistem dan manajemen akun seluruh pengurus. | Kelola Akun Pengurus, Aktivasi/Deaktivasi User, Pengaturan Profil & Web. |
+| **Ketua (Leader)** | `leader` / `ketua` | Memantau seluruh aktivitas komunitas secara makro melalui laporan grafis. | Dashboard Statistik Keuangan & Anggota, Visualisasi Chart.js, Detail Statistik. |
+| **Petugas (Staff)** | `staff` | Mengelola materi edukasi, menulis artikel blog, dan menjawab pertanyaan member. | Upload Video & Ebook, Manajemen Blog (Quill Editor), Forum Balas Tiket Pertanyaan. |
+| **Bendahara** | `bendahara` | Mengurusi verifikasi administrasi pembayaran keanggotaan berbayar. | Daftar Invoice, Verifikasi Pembayaran, Sistem Penolakan Pembayaran (+Alasan). |
+| **Member** | `member` | Pengguna akhir komunitas yang menikmati materi, blog, dan mengajukan konsultasi. | Landing Page, Billing & Pembayaran Premium, Akses Konten (Video/Ebook), Forum Q&A. |
 
-## 11. UI/Design System
-- **UI Framework**: Tailwind CSS
-- **Icon Pack**: Bootstrap Icons
-- **Theme System**: Bergantung pada utility classes Tailwind CSS (terlihat dari konfigurasi form di `tailwind.config.js`).
-- **Styling Approach**: Utility-first CSS dengan beberapa custom CSS di `resources/css/app.css` jika diperlukan. Design sangat menekankan pada clean UI yang modern.
+---
 
-## 12. Environment Configuration
-Konfigurasi `ENV` memuat variabel esensial Laravel tanpa membocorkan secret:
-- `APP_ENV`, `APP_KEY`, `APP_DEBUG`, `APP_URL`
-- `DB_CONNECTION=sqlite` (Secara default menggunakan SQLite untuk development yang praktis).
-- `VITE_APP_NAME`: Untuk injeksi nama aplikasi ke Vue.
-- Tidak ada credentials sensitive (seperti password DB atau payment gateway secret) yang tersimpan di `.env.example`, yang mana ini sudah sesuai best-practice.
+## 🗄️ 4. Struktur Database & Model Relasional
+Database default menggunakan **SQLite** untuk kelancaran fase pengembangan, namun dirancang kompatibel untuk migrasi ke **MySQL/PostgreSQL**.
 
-## 13. Build & Run Instructions
-**Development Setup:**
-1. `composer install`
-2. `npm install`
-3. Copy `.env.example` ke `.env` dan jalankan `php artisan key:generate`
-4. Sesuaikan konfigurasi database, lalu jalankan `php artisan migrate --seed`
-5. Buka dua terminal, jalankan:
-   - `php artisan serve`
-   - `npm run dev`
+### Diagram Relasi Entitas Utama (ERD):
+```mermaid
+erDiagram
+    USERS {
+        bigint id PK
+        string name
+        string email
+        string password
+        string telephone
+        string role
+        boolean is_active
+    }
+    MEMBER_PROFILES {
+        bigint id PK
+        bigint member_id FK
+        datetime expire_date
+        string institution
+        string department
+        text address
+        string status
+    }
+    CATEGORIES {
+        bigint id PK
+        string name
+        string slug
+    }
+    CONTENTS {
+        bigint id PK
+        bigint uploader_id FK
+        enum type
+        string title
+        string file_url
+        string thumbnail_url
+    }
+    POSTS {
+        bigint id PK
+        string title
+        string slug
+        text excerpt
+        longtext content
+        bigint category_id FK
+        bigint author_id FK
+        timestamp published_at
+    }
+    INVOICES {
+        bigint id PK
+        bigint user_id FK
+        string number
+        decimal amount
+        datetime due_date
+        boolean is_accepted
+    }
+    PAYMENTS {
+        bigint id PK
+        bigint invoice_id FK
+        bigint payer_id FK
+        bigint verifier_id FK
+        string payment_proof_url
+        string account_holder_name
+        string account_number
+        string account_bank_name
+        decimal amount
+        datetime date
+        enum status
+        text reject_reason
+        timestamp verified_at
+    }
+    CONVERSATIONS {
+        bigint id PK
+        bigint submitter_id FK
+        string ticket_number
+        boolean is_closed
+    }
+    MESSAGES {
+        bigint id PK
+        bigint conversation_id FK
+        bigint sender_id FK
+        text content
+    }
 
-**Production Setup:**
-1. Jalankan `npm run build` untuk meng-compile asset Vue dan Tailwind.
-2. Pastikan `APP_ENV=production` dan `APP_DEBUG=false`.
-3. Konfigurasi web server (Nginx/Apache) untuk mengarah ke folder `public/`.
+    USERS ||--|| MEMBER_PROFILES : "has one"
+    USERS ||--o{ POSTS : "writes"
+    USERS ||--o{ CONTENTS : "uploads"
+    USERS ||--o{ INVOICES : "receives"
+    USERS ||--o{ PAYMENTS : "pays"
+    CATEGORIES ||--o{ POSTS : "categorizes"
+    INVOICES ||--o| PAYMENTS : "settles"
+    USERS ||--o{ CONVERSATIONS : "starts"
+    CONVERSATIONS ||--o{ MESSAGES : "contains"
+    USERS ||--o{ MESSAGES : "sends"
+```
 
-## 14. Deployment
-Aplikasi siap untuk dideploy pada target Hosting konvensional (Shared Hosting dengan SSH) atau VPS (DigitalOcean, AWS, dll). Diperlukan Node.js di server hanya untuk membuild asset (`npm run build`), dan PHP ^8.3 untuk menjalankan logic backend.
+---
 
-## 15. Third Party Services
-- **Chart.js**: Untuk rendering statistik dan chart di halaman dashboard Ketua/Admin.
-- **Vue Quill**: Untuk Rich Text Editor di halaman pembuatan konten/blog.
+## 📁 5. Folder & Berkas Penting
+Struktur proyek mengikuti konvensi Laravel 11 dengan integrasi aset modern:
 
-## 16. Security Notes
-- Proteksi CSRF otomatis dilindungi oleh Laravel + Inertia Axios middleware.
-- Autentikasi aman via session Laravel dan hashing Bcrypt (Breeze default).
-- Route Role terlindungi dengan baik menggunakan Custom Middleware.
-- Terdapat flag `is_active` pada User untuk me-nonaktifkan akun jika ada pelanggaran.
+- 📂 **`app/Http/Controllers/`**
+  - 📁 `Admin/`: Controller untuk manajemen data sistem oleh Super Admin (`KelolAkunController.php`, `PengaturanController.php`, `SuperAdminProfilController.php`).
+  - 📁 `Ketua/`: Laporan visual dan statistik umum (`StatistikController.php`, `DetailController.php`).
+  - 📁 `Petugas/`: Penanganan konten, artikel, dan forum tanya jawab (`KontenController.php`, `BlogController.php`, `PertanyaanController.php`).
+  - 📁 `Bendahara/`: Manajemen persetujuan administrasi pembayaran (`PembayaranController.php`).
+- 📂 **`app/Http/Middleware/`**
+  - 📄 `CheckRole.php`: Middleware penapis hak akses rute. Mengubah parameter `'ketua'` menjadi role `'leader'` secara dinamis di database.
+- 📂 **`resources/js/Pages/`**
+  - Halaman Vue terorganisasi rapi berdasarkan folder role masing-masing: `Admin/`, `Ketua/`, `Petugas/`, `Bendahara/`, `Profile/`, `Blog/`.
+- 📂 **`resources/js/Layouts/`**
+  - Layout dinamis yang membungkus komponen navigasi unik untuk masing-masing role: `AdminLayout.vue`, `KetuaLayout.vue`, `PetugasLayout.vue`, `BendaharaLayout.vue`, dan `AppLayout.vue` (untuk Landing Page & Member).
+- 📂 **`routes/web.php`**
+  - Berkas konfigurasi rute terpusat yang memetakan URL ke Controller dengan proteksi middleware `auth` dan `role:X`.
 
-## 17. Performance Notes
-- Menggunakan Vite memangkas waktu load aset saat development dan mengoptimalkan bundle di production.
-- Menggunakan pendekatan SPA dengan Inertia.js sehingga tidak ada page reload (full refresh) ketika bernavigasi, membuat UI terasa sangat instan.
-- *Rekomendasi:* Gunakan `php artisan optimize` di production dan pastikan database di-index dengan benar pada tabel dengan trafik tinggi (`messages`, `payments`).
+---
 
-## 18. Issues & Recommendations
-- **Sistem Database**: Saat ini `.env.example` menggunakan SQLite, yang ideal untuk development. Untuk production multi-user, direkomendasikan migrasi ke MySQL atau PostgreSQL untuk menangani concurrent writes yang lebih baik (terutama untuk sistem chat/Q&A).
-- **Penggunaan Storage**: Jika banyak member upload bukti pembayaran/avatar, pastikan mengubah `FILESYSTEM_DISK=public` dan jalankan `php artisan storage:link`.
-- **Sistem Notifikasi**: Belum terlihat implementasi real-time WebSockets (seperti Laravel Reverb atau Pusher). Untuk Q&A/Forum dan status Pembayaran, WebSockets akan sangat menambah kesan *premium* dan *live*.
-- **Code Refactor**: Periksa file controllers di folder `Petugas` dan `Bendahara` untuk melihat apakah ada logic yang bisa dipindah ke *Service Layer* agar controller tetap tipis.
+## 🛣️ 6. Sistem Routing & Middleware
+Routing utama diatur menggunakan larik middleware demi memastikan keamanan data:
 
-## 19. Dependency Analysis
-- **`laravel/framework` (^11.0 / 13.0 dev)**: Core backend.
-- **`inertiajs/inertia-laravel` & `@inertiajs/vue3`**: Jembatan Vue dan Laravel.
-- **`vue` (^3.4.0)**: Core framework frontend.
-- **`tailwindcss` & `@tailwindcss/vite`**: Styling CSS framework yang mudah dan modern.
-- **`@vueup/vue-quill`**: Komponen krusial untuk mengisi deskripsi ebook, video, dan blog post secara profesional.
-- **`vue-chartjs`**: Dibutuhkan untuk halaman `/admin/statistik`.
+```php
+// Contoh Rute Petugas
+Route::middleware(['auth', 'verified', 'role:staff'])
+    ->prefix('petugas')
+    ->name('petugas.')
+    ->group(function () {
+        Route::get('/konten', [KontenController::class, 'index'])->name('konten.index');
+        Route::post('/konten', [KontenController::class, 'store'])->name('konten.store');
+        // ... rute lainnya
+    });
+```
+Setiap rute yang berawalan `/petugas/*` hanya dapat diakses oleh user dengan `role == 'staff'`. Jika role tidak sesuai, sistem akan merespon dengan status **HTTP 403 Forbidden**.
 
-## 20. Conclusion
-Aplikasi **PBL WOY / Aplikasi Member Komunitas** adalah platform komprehensif yang telah menggunakan arsitektur modern (Laravel 11 + Vue 3 SPA). Struktur foldernya rapi, pemisahan *Role* dilakukan secara tegas di level Controller, Route, dan Vue Pages, serta penggunakan komponen Vue (*atomic*) sudah mengikuti standar *best practice*. Dengan penyesuaian minor untuk production (seperti database engine dan caching statis), sistem ini sangat solid, secure, dan scalable.
+---
+
+## 💻 7. Panduan Instalasi & Setup Lokal (Development)
+
+Ikuti langkah-langkah berikut untuk menjalankan aplikasi di lingkungan lokal Anda:
+
+### ⚙️ Prasyarat:
+- **PHP** versi `^8.2` atau `^8.3`
+- **Node.js** versi `^18.x` atau `^20.x`
+- **Composer** versi `^2.x`
+
+### 🛠️ Langkah-Langkah:
+1. **Clone Proyek & Masuk Direktori:**
+   ```bash
+   cd aplikasi-member-komunitas
+   ```
+2. **Instalasi Dependensi Backend (PHP):**
+   ```bash
+   composer install
+   ```
+3. **Instalasi Dependensi Frontend (Node):**
+   ```bash
+   npm install
+   ```
+4. **Konfigurasi Environment:**
+   Salin file `.env.example` ke `.env`
+   ```bash
+   cp .env.example .env
+   ```
+5. **Generate Kunci Enkripsi Aplikasi:**
+   ```bash
+   php artisan key:generate
+   ```
+6. **Inisialisasi Database (SQLite):**
+   Pastikan file database SQLite kosong telah dibuat jika menggunakan SQLite.
+   ```bash
+   touch database/database.sqlite
+   ```
+   Jalankan migrasi database beserta data seeding awal (akun pengujian):
+   ```bash
+   php artisan migrate --seed
+   ```
+7. **Jalankan Server Lokal:**
+   Buka dua jendela terminal terpisah dan jalankan:
+   - **Terminal 1 (Backend Server):**
+     ```bash
+     php artisan serve
+     ```
+   - **Terminal 2 (Frontend Hot Reload Vite):**
+     ```bash
+     npm run dev
+     ```
+8. **Akses Aplikasi:**
+   Buka browser dan buka alamat `http://127.0.0.1:8000`
+
+---
+
+## 🔐 8. Kredensial Akun Pengujian Default (Seeders)
+Untuk memudahkan peninjauan fitur di lingkungan lokal, database seeder telah menyediakan beberapa akun contoh untuk setiap peran:
+
+> [!IMPORTANT]
+> Sandi (*password*) untuk seluruh akun di bawah ini adalah: **`password`**
+
+* **Super Admin:**  
+  📧 Email: `superadmin@amk.com`  
+  👑 Nama: Met Slamet  
+* **Ketua (Leader):**  
+  📧 Email: `ketua@amk.com`  
+  📊 Nama: Jo Bejo  
+* **Petugas (Staff):**  
+  📧 Email: `staff@amk.com`  
+  📝 Nama: Agus Haryanto  
+* **Bendahara:**  
+  📧 Email: `bendahara@amk.com`  
+  💳 Nama: Jo Paijo  
+* **Anggota Biasa (Member):**  
+  📧 Email: `nem@amk.com` / `siti@amk.com` / `budi@amk.com`  
+  👤 Nama: Nem Painem / Siti Rahayu / Budi Santoso  
+
+---
+
+## 🎨 9. Analisis Fitur Unggulan & Standarisasi UI
+
+### A. Alur Verifikasi & Penolakan Bukti Pembayaran (Bendahara)
+Sistem memiliki mekanisme keamanan saat Bendahara melakukan peninjauan pembayaran.
+```mermaid
+graph TD
+    A[Member Upload Bukti Transfer] --> B[Invoice Status: Menunggu]
+    B --> C{Bendahara Meninjau Bukti}
+    C -->|Valid / Setujui| D[Verifikasi Sukses]
+    D --> E[Status Invoice: Aktif]
+    D --> F[Status Profil Member: Aktif]
+    C -->|Tidak Valid / Tolak| G[Tampil Modal Alasan Penolakan]
+    G --> H[Bendahara Input Alasan Penolakan]
+    H --> I[Status Invoice: Ditolak]
+    I --> J[Member melihat alasan & melakukan upload ulang]
+```
+Sistem ini diimplementasikan menggunakan dialog modal interaktif di `resources/js/Pages/Bendahara/Pembayaran/Show.vue` yang terhindar dari penyalahgunaan aksi tanpa alasan penolakan yang jelas.
+
+### B. Editor Kaya (WYSIWYG Quill)
+Di halaman penulisan artikel dan konten oleh Petugas, sistem mengintegrasikan komponen **Vue Quill Editor** (`@vueup/vue-quill`). Komponen ini dibungkus secara kustom agar menghasilkan tag HTML yang bersih sehingga mempermudah proses rendering artikel di halaman publik blog tanpa merusak estetika antarmuka.
+
+### C. Visualisasi Data Dinamis (Chart.js)
+Pada halaman dashboard Ketua, grafik batang (*Bar Chart*) dan lingkaran (*Doughnut Chart*) menggunakan `vue-chartjs` dipadukan secara dinamis untuk menggambarkan peningkatan jumlah keanggotaan aktif serta grafik statistik bulanan pemasukan kas komunitas.
+
+### D. Konsistensi Transparansi Navbar
+Aplikasi menggunakan sistem navigasi global (`AppLayout.vue`) dengan transisi warna latar belakang navbar yang cerdas. Pada halaman landing (*Home*), navbar akan tetap transparan sewaktu di posisi atas halaman (*scroll position 0*) dan berangsur menjadi berlatar solid dengan efek blur kaca halus (*glassmorphism*) saat digulir ke bawah, memberikan sentuhan premium sejak impresi pertama.
+
+### E. Sistem Percakapan Real-Time Berbasis Cache (Redis to SQL Database)
+Untuk mendukung interaksi langsung antara member dan petugas tanpa membebani disk database, sistem chat real-time diimplementasikan menggunakan pola **Cache-First Verify-and-Write** dengan memprioritaskan Redis sebagai RAM cache berkecepatan tinggi sebelum diteruskan ke database SQL.
+*   **Struktur File Implementasi:**
+    *   `app/Services/ChatService.php`: Layanan enkapsulasi perintah Redis (inisialisasi sesi hash meta, push pesan list `'chat:session:{session_id}'`, update TTL, validasi status sesi).
+    *   `app/Http/Middleware/ValidateChatSession.php`: Middleware penapis hak kirim pesan pada sesi chat aktif di Redis (`chat.active`).
+    *   `app/Events/ChatMessageSent.php`: Event broadcast WebSocket untuk pembaruan UI instan pada lawan bicara.
+    *   `app/Http/Controllers/ChatController.php`: Endpoint controller untuk memulai sesi, bergabung, mengirim pesan (dengan verifikasi cache-first), dan mengakhiri chat.
+*   **Keamanan & Aliran Data:** Setiap pesan dikirim wajib masuk dan di-cache terlebih dahulu ke Redis. Setelah diverifikasi keberadaannya di cache Redis, baru disimpan secara permanen ke database SQL (`conversations` dan `messages` tables). Saat sesi ditutup, cache memori Redis dibersihkan seketika.
+
+### F. Standarisasi Komponen UI & Paginasi Kustom
+Untuk memastikan konsistensi pengalaman pengguna sesuai dengan desain *mockup* asli, aplikasi menerapkan komponen paginasi kustom yang menyertakan tombol navigasi "Sebelumnya" dan "Berikutnya" dipadukan dengan deretan angka halaman (*numeric page selectors*). Selain itu, sistem *grid layout* responsif dinamis diimplementasikan pada berbagai halaman, contohnya *grid* 3-kolom untuk daftar Video dan *grid* 5-kolom untuk daftar E-book, guna memberikan tampilan visual yang rapi dan terstruktur di dashboard Petugas dan Member.
+
+---
+
+## 🚀 10. Rekomendasi Skalabilitas & Panduan Produksi
+
+1. **Migrasi Engine Database:**  
+   Pada lingkungan produksi (*Production*), sangat dianjurkan untuk beralih dari **SQLite** ke **MySQL** atau **PostgreSQL** guna mencegah masalah penguncian tabel (*database locking*) akibat transaksi bersamaan sewaktu banyak pengguna mengunggah bukti pembayaran secara serentak.
+2. **Setup Driver Storage:**  
+   Pastikan konfigurasi `FILESYSTEM_DISK` diatur ke driver penyimpanan publik, dan jalankan perintah:
+   ```bash
+   php artisan storage:link
+   ```
+   Hal ini mutlak diperlukan agar bukti pembayaran dan avatar pengguna dapat diakses secara publik dan aman oleh server web.
+3. **Kompilasi Aset Produksi:**  
+   Selalu jalankan proses kompilasi bundel production sebelum melakukan deploy:
+   ```bash
+   npm run build
+   ```
+4. **Optimasi Cache Laravel:**  
+   Jalankan serangkaian perintah optimasi berikut saat men-deploy versi terbaru aplikasi ke server VPS:
+   ```bash
+   php artisan config:cache
+   ```
+   ```bash
+   php artisan route:cache
+   ```
+   ```bash
+   php artisan view:cache
+   ```
+
+---
+
+*Hak Cipta © 2026. Tim Pengembang PBL WOY - Aplikasi Member Komunitas.*
