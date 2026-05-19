@@ -13,6 +13,23 @@ use Inertia\Response;
 
 class AuthenticatedSessionController extends Controller
 {
+    public function index(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->isSuperAdmin()) {
+            return redirect()->intended(route('superadmin.kelol-akun.index', absolute: false));
+        } elseif ($user->isKetua()) {
+            return redirect()->intended(route('ketua.statistik', absolute: false));
+        } elseif ($user->isPetugas()) {
+            return redirect()->intended(route('petugas.konten.index', absolute: false));
+        } elseif ($user->isBendahara()) {
+            return redirect()->intended(route('bendahara.pembayaran.index', absolute: false));
+        }
+
+        return redirect()->intended(route('home', absolute: false));
+    }
+
     /**
      * Display the login view.
      */
