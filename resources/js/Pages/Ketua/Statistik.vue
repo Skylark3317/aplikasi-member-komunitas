@@ -129,12 +129,27 @@ function handleCetak() { window.print(); }
 }
 .page-title { font-size: 18px; font-weight: 700; color: #111; margin: 0; }
 .btn-cetak {
-  display: flex; align-items: center; gap: 8px;
-  background: #2563eb; color: #fff; border: none;
-  border-radius: 8px; padding: 9px 18px; font-size: 13.5px;
-  font-weight: 500; cursor: pointer; transition: background .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1;
+  height: 38px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: filter 0.2s;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
 }
-.btn-cetak:hover { background: #1d4ed8; }
+.btn-cetak:hover { filter: brightness(0.9); }
 .btn-cetak svg { width: 16px; height: 16px; }
 
 .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }

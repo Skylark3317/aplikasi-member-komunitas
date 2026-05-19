@@ -34,8 +34,11 @@
               autocomplete="current-password"
               required
             />
-            <button type="button" class="toggle-pw" @click="showPassword = !showPassword">
-              {{ showPassword ? '🙈' : '👁' }}
+            <button
+              type="button"
+              class="toggle-pw"
+              @click="showPassword = !showPassword">
+              <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
             </button>
           </div>
           <span v-if="form.errors.password" class="field-error">{{ form.errors.password }}</span>
@@ -105,14 +108,29 @@ const submit = () => {
 .input-icon-wrap input { padding-right: 42px; }
 .toggle-pw {
   position: absolute;
-  right: 10px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
   border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  font-size: 16px;
-  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.toggle-pw i {
+  font-size: 18px;
+  color: #6b7280;
+  transition: color 0.2s ease;
+}
+
+.toggle-pw:hover i {
+  color: var(--primary-color);
 }
 .forgot-link-row { text-align: right; margin-top: 6px; }
 .link-blue { color: var(--primary-color); text-decoration: none; font-size: 13px; }

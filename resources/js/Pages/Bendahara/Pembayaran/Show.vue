@@ -1,9 +1,9 @@
 <template>
-  <BendaharaLayout>
+  <KeuanganLayout>
     <!-- Top Bar -->
     <div class="top-bar">
       <div class="top-left">
-        <Link :href="route('bendahara.pembayaran.index')" class="back-link">
+        <Link :href="route('keuangan.pembayaran.index')" class="back-link">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <polyline points="15 18 9 12 15 6"/>
           </svg>
@@ -124,13 +124,13 @@
     <div v-if="zoomImage" class="modal-overlay" @click="zoomImage = false">
       <img :src="payment.payment_proof_url" class="zoomed-img" />
     </div>
-  </BendaharaLayout>
+  </KeuanganLayout>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
-import BendaharaLayout from '@/Layouts/BendaharaLayout.vue';
+import KeuanganLayout from '@/Layouts/KeuanganLayout.vue';
 
 const props = defineProps({
   payment: Object,
@@ -149,12 +149,12 @@ function goBack() {
 
 function handleVerify() {
   if (confirm('Apakah Anda yakin ingin menerima pembayaran ini?')) {
-    router.post(route('bendahara.pembayaran.verify', props.payment.id));
+    router.post(route('keuangan.pembayaran.verify', props.payment.id));
   }
 }
 
 function handleReject() {
-  router.post(route('bendahara.pembayaran.reject', props.payment.id), {
+  router.post(route('keuangan.pembayaran.reject', props.payment.id), {
     reject_reason: rejectReason.value,
   }, {
     onSuccess: () => {
@@ -217,46 +217,33 @@ function formatCurrency(amount) {
 }
 
 /* Button Styles based on Mockup */
-.btn-cancel {
-  background: #fff;
-  border: 1px solid #d1d5db;
-  color: #3b82f6;
-  padding: 7px 18px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.btn-reject {
-  background: #ff0000;
-  color: #fff;
-  border: none;
-  padding: 7px 18px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
+.btn-cancel, .btn-reject, .btn-accept {
   display: flex;
   align-items: center;
-  gap: 6px;
-  cursor: pointer;
-}
-.btn-reject svg { width: 14px; height: 14px; }
-
-.btn-accept {
-  background: #007bff;
-  color: #fff;
-  border: none;
-  padding: 7px 18px;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1;
+  height: 38px;
   font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 6px;
   cursor: pointer;
+  text-decoration: none;
+  transition: filter 0.2s;
+  border: 1px solid transparent;
+  box-sizing: border-box;
 }
-.btn-accept svg { width: 14px; height: 14px; }
+
+.btn-accept { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.btn-reject { background: #ef4444; color: #fff; border-color: #ef4444; }
+.btn-cancel { background: #fff; color: #374151; border-color: #d1d5db; }
+
+.btn-accept:hover, .btn-reject:hover { filter: brightness(0.9); }
+.btn-cancel:hover { background: #f3f4f6; }
+
+.btn-reject svg, .btn-accept svg { width: 16px; height: 16px; }
 
 .divider { height: 1px; background: #e5e7eb; }
 
@@ -377,15 +364,28 @@ function formatCurrency(amount) {
   gap: 12px;
 }
 .btn-reject-confirm {
-  background: #dc2626;
-  color: #fff;
-  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   padding: 8px 16px;
   border-radius: 6px;
-  font-weight: 600;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1;
+  height: 38px;
+  font-weight: 500;
   cursor: pointer;
+  text-decoration: none;
+  transition: filter 0.2s;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  background: #ef4444;
+  color: #fff;
+  border-color: #ef4444;
 }
-.btn-reject-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-reject-confirm:hover:not(:disabled) { filter: brightness(0.9); }
+.btn-reject-confirm:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .zoomed-img {
   max-width: 90%;

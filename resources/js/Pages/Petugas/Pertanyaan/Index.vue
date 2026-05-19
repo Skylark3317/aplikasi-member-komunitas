@@ -33,30 +33,32 @@
       <!-- Pagination -->
       <div class="pagination" v-if="totalPages > 1">
         <button 
-          class="page-btn text-muted" 
+          class="page-nav-btn"
           :disabled="currentPage === 1"
           @click="currentPage--"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
           Sebelumnya
         </button>
         
-        <button 
-          v-for="page in totalPages" 
-          :key="page"
-          :class="['page-btn', currentPage === page ? 'active' : '']"
-          @click="currentPage = page"
-        >
-          {{ page }}
-        </button>
+        <div class="page-numbers">
+          <button 
+            v-for="page in totalPages" 
+            :key="page"
+            :class="['page-num-btn', currentPage === page ? 'active' : '']"
+            @click="currentPage = page"
+          >
+            {{ page }}
+          </button>
+        </div>
 
         <button 
-          class="page-btn text-primary"
+          class="page-nav-btn"
           :disabled="currentPage === totalPages"
           @click="currentPage++"
         >
           Berikutnya
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       </div>
     </div>
@@ -197,39 +199,71 @@ function formatDateTime(dateStr) {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   margin-top: auto;
-  padding-top: 32px;
+  padding-top: 40px;
+  width: 100%;
 }
 
-.page-btn {
+.page-numbers {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.page-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   background: transparent;
   border: none;
   font-size: 14px;
-  cursor: pointer;
-  padding: 4px;
   font-weight: 500;
-  color: #111;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  color: var(--primary-color);
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
-.page-btn:disabled {
-  opacity: 0.3;
+.page-nav-btn:hover:not(:disabled) {
+  background: #eff6ff;
+}
+
+.page-nav-btn:disabled {
+  color: #9ca3af;
   cursor: not-allowed;
 }
 
-.page-btn.active {
-  background:  var(--primary-color, #2563eb);
-  color: #fff;
-  border-radius: 10px;
-  width: 40px;
-  height: 40px;
+.page-num-btn {
+  display: flex;
+  align-items: center;
   justify-content: center;
-  font-weight: 600;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.text-muted { color: #ccc; }
-.text-primary { color: var(--primary-color, #2563eb); }
+.page-num-btn:hover:not(.active) {
+  background: #f3f4f6;
+  color: #111;
+}
+
+.page-num-btn.active {
+  background: var(--primary-color);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.page-num-btn.active:hover {
+  filter: brightness(1.1);
+}
 </style>

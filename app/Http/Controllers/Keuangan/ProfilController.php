@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Bendahara;
+namespace App\Http\Controllers\Keuangan;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -47,6 +47,6 @@ class ProfilController extends Controller
 
         $user->save();
 
-        return redirect()->route('bendahara.profil')->with('success', 'Profil berhasil diperbarui.');
+        return redirect()->route('keuangan.profil')->with('success', 'Profil berhasil diperbarui.');
     }
 }

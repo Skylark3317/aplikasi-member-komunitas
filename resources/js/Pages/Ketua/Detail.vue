@@ -34,8 +34,8 @@
                 <div class="th-inner">
                   {{ col.label }}
                   <span v-if="col.sortable" class="sort-icon">
-                    <svg v-if="sortKey === col.key && sortDir === 'asc'" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
-                    <svg v-else-if="sortKey === col.key && sortDir === 'desc'" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    <svg v-if="sortKey === col.key && sortDir === 'asc'" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                    <svg v-else-if="sortKey === col.key && sortDir === 'desc'" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
                     <svg v-else viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="2"><polyline points="18 15 12 9 6 15"/><polyline points="6 9 12 15 18 9" opacity=".4"/></svg>
                   </span>
                 </div>
@@ -212,7 +212,7 @@ function badgeClass(colKey, val) {
   font-size: 13.5px; color: #111; outline: none; width: 240px;
   transition: border .2s;
 }
-.search-input:focus { border-color: #2563eb; }
+.search-input:focus { border-color: var(--primary-color); }
 .search-clear {
   position: absolute; right: 10px; background: none; border: none;
   font-size: 16px; color: #9ca3af; cursor: pointer; line-height: 1;
@@ -279,6 +279,6 @@ thead { background: #f9fafb; }
 }
 .pg-btn:hover:not(:disabled) { background: #f3f4f6; }
 .pg-btn:disabled { opacity: .4; cursor: not-allowed; }
-.pg-btn.pg-active { background: #2563eb; color: #fff; border-color: #2563eb; font-weight: 700; }
+.pg-btn.pg-active { background: var(--primary-color); color: #fff; border-color: var(--primary-color); font-weight: 700; }
 .pg-info { font-size: 12px; color: #9ca3af; margin-left: 8px; }
 </style>

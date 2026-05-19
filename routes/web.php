@@ -91,21 +91,21 @@ Route::middleware(['auth', 'verified', 'role:staff'])
         Route::patch('/profil', [\App\Http\Controllers\Petugas\ProfilController::class, 'update'])->name('profil.update');
     });
 
-// ─── Bendahara Routes ──────────────────────────────────────
-Route::middleware(['auth', 'verified', 'role:bendahara'])
-    ->prefix('bendahara')
-    ->name('bendahara.')
+// ─── Keuangan Routes ──────────────────────────────────────
+Route::middleware(['auth', 'verified', 'role:finance'])
+    ->prefix('keuangan')
+    ->name('keuangan.')
     ->group(function () {
         // Pembayaran
-        Route::get('/pembayaran', [\App\Http\Controllers\Bendahara\PembayaranController::class, 'index'])->name('pembayaran.index');
-        Route::get('/pembayaran/{payment}', [\App\Http\Controllers\Bendahara\PembayaranController::class, 'show'])->name('pembayaran.show');
-        Route::post('/pembayaran/{payment}/verify', [\App\Http\Controllers\Bendahara\PembayaranController::class, 'verify'])->name('pembayaran.verify');
-        Route::post('/pembayaran/{payment}/reject', [\App\Http\Controllers\Bendahara\PembayaranController::class, 'reject'])->name('pembayaran.reject');
+        Route::get('/pembayaran', [\App\Http\Controllers\Keuangan\PembayaranController::class, 'index'])->name('pembayaran.index');
+        Route::get('/pembayaran/{payment}', [\App\Http\Controllers\Keuangan\PembayaranController::class, 'show'])->name('pembayaran.show');
+        Route::post('/pembayaran/{payment}/verify', [\App\Http\Controllers\Keuangan\PembayaranController::class, 'verify'])->name('pembayaran.verify');
+        Route::post('/pembayaran/{payment}/reject', [\App\Http\Controllers\Keuangan\PembayaranController::class, 'reject'])->name('pembayaran.reject');
 
         // Profil
-        Route::get('/profil', [\App\Http\Controllers\Bendahara\ProfilController::class, 'show'])->name('profil');
-        Route::get('/profil/edit', [\App\Http\Controllers\Bendahara\ProfilController::class, 'edit'])->name('profil.edit');
-        Route::patch('/profil', [\App\Http\Controllers\Bendahara\ProfilController::class, 'update'])->name('profil.update');
+        Route::get('/profil', [\App\Http\Controllers\Keuangan\ProfilController::class, 'show'])->name('profil');
+        Route::get('/profil/edit', [\App\Http\Controllers\Keuangan\ProfilController::class, 'edit'])->name('profil.edit');
+        Route::patch('/profil', [\App\Http\Controllers\Keuangan\ProfilController::class, 'update'])->name('profil.update');
     });
 
 

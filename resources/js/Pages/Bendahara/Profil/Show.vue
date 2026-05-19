@@ -1,11 +1,11 @@
 <template>
-  <BendaharaLayout>
+  <KeuanganLayout>
     <Head title="Profil - AMK" />
 
     <!-- Top Bar -->
     <div class="top-bar">
       <h1 class="page-title">Profil</h1>
-      <Link :href="route('bendahara.profil.edit')" class="btn-primary">
+      <Link :href="route('keuangan.profil.edit')" class="btn-primary">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
           <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -57,12 +57,12 @@
         </div>
       </div>
     </div>
-  </BendaharaLayout>
+  </KeuanganLayout>
 </template>
 
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import BendaharaLayout from '@/Layouts/BendaharaLayout.vue';
+import KeuanganLayout from '@/Layouts/KeuanganLayout.vue';
 
 defineProps({
   user: Object,
@@ -81,19 +81,25 @@ defineProps({
 .btn-primary {
   display: flex;
   align-items: center;
-  gap: 7px;
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  padding: 9px 18px;
-  border-radius: 8px;
-  font-size: 13.5px;
-  font-weight: 600;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1;
+  height: 38px;
+  font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.2s;
+  transition: filter 0.2s;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
 }
-.btn-primary:hover { background: #1d4ed8; }
+.btn-primary:hover { filter: brightness(0.9); }
 .btn-primary svg { width: 16px; height: 16px; }
 
 .divider { height: 1px; background: #e5e7eb; }

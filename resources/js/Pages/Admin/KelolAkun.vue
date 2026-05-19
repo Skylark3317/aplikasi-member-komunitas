@@ -147,18 +147,27 @@ function roleLabel(role) {
   color: #111;
 }
 .btn-primary {
-  background: var(--primary-color);
-  color: #fff;
-  border: none;
-  padding: 9px 20px;
-  border-radius: 8px;
-  font-size: 13.5px;
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1;
+  height: 38px;
+  font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.2s;
+  transition: filter 0.2s;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
 }
-.btn-primary:hover { background: var(--primary-color); }
+.btn-primary:hover { filter: brightness(0.9); }
 
 .divider { height: 1px; background: #e5e7eb; }
 
@@ -208,7 +217,7 @@ function roleLabel(role) {
   gap: 6px;
   border: 1px solid #d1d5db;
   border-radius: 7px;
-  padding: 7px 32px 7px 12px;
+  padding: 7px 0 7px 12px;
   background: #fff;
   cursor: pointer;
 }
@@ -226,7 +235,8 @@ function roleLabel(role) {
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
-  padding-right: 4px;
+  padding-right: 32px;
+  width: 100%;
 }
 .select-arrow {
   position: absolute;

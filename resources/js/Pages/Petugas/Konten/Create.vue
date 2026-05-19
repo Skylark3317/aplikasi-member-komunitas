@@ -67,7 +67,7 @@
           </ul>
           
           <div class="thumbnail-actions">
-            <label class="btn-primary-small">
+            <label class="btn-upload">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
               Unggah thumbnail
               <input 
@@ -78,7 +78,7 @@
               />
             </label>
             
-            <button type="button" @click="removeThumbnail" class="btn-outline-small" v-if="thumbnailPreview || form.thumbnail">
+            <button type="button" @click="removeThumbnail" class="btn-delete" v-if="thumbnailPreview || form.thumbnail">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
               Hapus thumbnail
             </button>
@@ -186,21 +186,26 @@ function submit() {
 .btn-primary, .btn-outline {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 8px 16px;
   border-radius: 6px;
   font-size: 14px;
+  font-family: inherit;
+  line-height: 1;
+  height: 38px;
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  transition: opacity 0.2s;
-  border: none;
+  transition: filter 0.2s;
+  border: 1px solid transparent;
+  box-sizing: border-box;
 }
 
-.btn-primary { background: var(--primary-color, #007bff); color: #fff; }
-.btn-outline { background: #fff; color: var(--primary-color, #007bff); border: 1px solid var(--primary-color, #007bff); }
+.btn-primary { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.btn-outline { background: #fff; color: var(--primary-color); border-color: var(--primary-color); }
 
-.btn-primary:hover { opacity: 0.9; }
+.btn-primary:hover { filter: brightness(0.9); }
 .btn-outline:hover { background: #eff6ff; }
 
 .divider { height: 1px; background: #e5e7eb; margin: 0; }
@@ -242,7 +247,7 @@ function submit() {
   transition: border-color 0.2s;
 }
 .form-input:focus {
-  border-color: var(--primary-color, #007bff);
+  border-color: var(--primary-color);
 }
 
 .radio-group {
@@ -263,7 +268,7 @@ function submit() {
 .radio-label input[type="radio"] {
   width: 16px;
   height: 16px;
-  accent-color: var(--primary-color, #007bff);
+  accent-color: var(--primary-color);
 }
 
 .thumbnail-preview-box {
@@ -315,19 +320,29 @@ function submit() {
   margin-top: 8px;
 }
 
-.btn-primary-small, .btn-outline-small {
+.btn-upload, .btn-delete {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
   border-radius: 6px;
-  font-size: 13px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1;
+  height: 38px;
   font-weight: 500;
   cursor: pointer;
-  border: none;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  box-sizing: border-box;
 }
-.btn-primary-small { background: var(--primary-color, #007bff); color: #fff; }
-.btn-outline-small { background: #fff; color: var(--primary-color, #007bff); border: 1px solid var(--primary-color, #007bff); }
+.btn-upload { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.btn-delete { background: #fff; color: #ef4444; border-color: #fca5a5; }
+
+.btn-upload:hover { filter: brightness(0.9); }
+.btn-delete:hover { background: #fef2f2; border-color: #ef4444; }
 
 .hidden-input { display: none; }
 .error-text { font-size: 13px; color: #ef4444; }

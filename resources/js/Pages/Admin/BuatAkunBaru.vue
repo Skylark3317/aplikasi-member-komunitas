@@ -70,7 +70,7 @@
             <label class="radio-item">
               <input type="radio" v-model="form.role" value="finance" />
               <span class="radio-custom" :class="{ 'checked': form.role === 'finance' }" />
-              Bendahara
+              Keuangan
             </label>
             <label class="radio-item">
               <input type="radio" v-model="form.role" value="leader" />
@@ -273,8 +273,9 @@ function submit() {
   color: #9ca3af;
   padding: 0;
   display: flex;
+  transition: color 0.2s ease;
 }
-.eye-btn:hover { color: #555; }
+.eye-btn:hover { color: var(--primary-color); }
 .eye-btn svg { width: 18px; height: 18px; }
 
 /* Hint */

@@ -1,5 +1,5 @@
 <template>
-  <BendaharaLayout>
+  <KeuanganLayout>
     <!-- Top Bar -->
     <div class="top-bar">
       <h1 class="page-title">Pembayaran</h1>
@@ -68,7 +68,7 @@
                 </span>
               </td>
               <td>
-                <Link :href="route('bendahara.pembayaran.show', payment.id)" class="action-btn">
+                <Link :href="route('keuangan.pembayaran.show', payment.id)" class="action-btn">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
                     <circle cx="12" cy="12" r="3"/>
@@ -83,40 +83,48 @@
         </table>
 
         <!-- Pagination -->
-        <div v-if="payments.links.length > 3" class="pagination">
-          <Link 
-            v-for="(link, k) in payments.links" 
-            :key="k"
-            :href="link.url || '#'"
-            :class="[
-              'page-btn', 
-              link.active ? 'active' : '', 
-              !link.url ? 'btn-disabled' : '',
-              k === 0 ? 'text-muted' : (k === payments.links.length - 1 ? 'text-primary' : '')
-            ]"
+        <div class="pagination" v-if="payments.links.length > 3">
+          <component
+            :is="payments.links[0].url ? Link : 'span'"
+            :href="payments.links[0].url"
+            class="page-nav-btn"
+            :class="{ 'disabled': !payments.links[0].url }"
           >
-            <template v-if="k === 0">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg> 
-              Sebelumnya
-            </template>
-            <template v-else-if="k === payments.links.length - 1">
-              Berikutnya 
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </template>
-            <template v-else>
-              {{ link.label }}
-            </template>
-          </Link>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            Sebelumnya
+          </component>
+
+          <div class="page-numbers">
+            <component
+              v-for="(link, k) in payments.links.slice(1, -1)"
+              :key="k"
+              :is="link.url ? Link : 'span'"
+              :href="link.url"
+              class="page-num-btn"
+              :class="{ 'active': link.active, 'disabled': !link.url }"
+              v-html="link.label"
+            ></component>
+          </div>
+
+          <component
+            :is="payments.links[payments.links.length - 1].url ? Link : 'span'"
+            :href="payments.links[payments.links.length - 1].url"
+            class="page-nav-btn"
+            :class="{ 'disabled': !payments.links[payments.links.length - 1].url }"
+          >
+            Berikutnya
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </component>
         </div>
       </div>
     </div>
-  </BendaharaLayout>
+  </KeuanganLayout>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
-import BendaharaLayout from '@/Layouts/BendaharaLayout.vue';
+import KeuanganLayout from '@/Layouts/KeuanganLayout.vue';
 
 const props = defineProps({
   payments: Object,
@@ -129,7 +137,7 @@ const to = ref(props.filters.to || '');
 const status = ref(props.filters.status || 'Semua');
 
 function handleSearch() {
-  router.get(route('bendahara.pembayaran.index'), {
+  router.get(route('keuangan.pembayaran.index'), {
     search: search.value,
     from: from.value,
     to: to.value,
@@ -227,14 +235,27 @@ function formatCurrency(amount) {
   font-size: 14px;
 }
 .btn-primary {
-  padding: 10px 24px;
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1;
+  height: 38px;
+  font-weight: 500;
   cursor: pointer;
+  text-decoration: none;
+  transition: filter 0.2s;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
 }
+.btn-primary:hover { filter: brightness(0.9); }
 
 .filter-section {
   display: flex;
@@ -253,6 +274,15 @@ function formatCurrency(amount) {
   border-radius: 8px;
   font-size: 14px;
   background: #fff;
+}
+
+.filter-group select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 36px;
 }
 
 .table-card {
@@ -310,8 +340,7 @@ function formatCurrency(amount) {
   transition: background 0.15s;
 }
 .action-btn:hover {
-  background: #f3f4f6;
-  color: #111;
+  color: var(--primary-color);
 }
 .action-btn svg {
   width: 18px;
@@ -328,41 +357,80 @@ function formatCurrency(amount) {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
   padding: 24px;
   border-top: 1px solid #f3f4f6;
+  width: 100%;
 }
 
-.page-btn {
-  background: transparent;
-  border: none;
-  font-size: 13.5px;
-  cursor: pointer;
-  padding: 4px;
-  font-weight: 500;
-  color: #111;
+.page-numbers {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
+}
+
+.page-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--primary-color);
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
   text-decoration: none;
 }
 
-.btn-disabled {
-  color: #ccc !important;
+.page-nav-btn:hover:not(:disabled):not(.disabled) {
+  background: #eff6ff;
+}
+
+.page-nav-btn:disabled, .page-nav-btn.disabled {
+  color: #9ca3af;
   cursor: not-allowed;
   pointer-events: none;
 }
 
-.page-btn.active {
-  background: #acc000;
-  color: #fff;
-  border-radius: 10px;
-  width: 40px;
-  height: 40px;
+.page-num-btn {
+  display: flex;
+  align-items: center;
   justify-content: center;
-  font-weight: 600;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
 }
 
-.text-muted { color: #ccc; }
-.text-primary { color: #acc000; }
+.page-num-btn:hover:not(.active):not(.disabled) {
+  background: #f3f4f6;
+  color: #111;
+}
+
+.page-num-btn.disabled {
+  color: #9ca3af;
+  cursor: default;
+  pointer-events: none;
+}
+
+.page-num-btn.active {
+  background: var(--primary-color);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.page-num-btn.active:hover {
+  filter: brightness(1.1);
+}
 </style>

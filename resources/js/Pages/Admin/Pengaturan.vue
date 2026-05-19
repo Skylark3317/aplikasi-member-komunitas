@@ -388,18 +388,25 @@ function submit() {
 .btn-primary {
   display: flex;
   align-items: center;
-  gap: 7px;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1;
+  height: 38px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: filter 0.2s;
+  border: 1px solid transparent;
+  box-sizing: border-box;
   background: var(--primary-color);
   color: #fff;
-  border: none;
-  padding: 9px 18px;
-  border-radius: 8px;
-  font-size: 13.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
+  border-color: var(--primary-color);
 }
-.btn-primary:hover:not(:disabled) { background: var(--primary-color); }
+.btn-primary:hover:not(:disabled) { filter: brightness(0.9); }
 .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 .btn-primary svg { width: 15px; height: 15px; }
 
@@ -497,39 +504,32 @@ function submit() {
 /* Button row */
 .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
 
-.btn-upload {
+.btn-upload, .btn-delete {
   display: flex;
   align-items: center;
-  gap: 7px;
-  background: var(--primary-color);
-  color: #fff;
-  border: none;
+  justify-content: center;
+  gap: 8px;
   padding: 8px 16px;
-  border-radius: 7px;
-  font-size: 13px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1;
+  height: 38px;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  box-sizing: border-box;
 }
-.btn-upload:hover { background: var(--primary-color); }
-.btn-upload svg { width: 15px; height: 15px; }
 
-.btn-delete {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background: #fff;
-  color: #374151;
-  border: 1px solid #d1d5db;
-  padding: 8px 16px;
-  border-radius: 7px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.btn-delete:hover { background: #fef2f2; color: #ef4444; border-color: #fca5a5; }
-.btn-delete svg { width: 15px; height: 15px; }
+.btn-upload { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.btn-delete { background: #fff; color: #ef4444; border-color: #fca5a5; }
+
+.btn-upload:hover { filter: brightness(0.9); }
+.btn-delete:hover { background: #fef2f2; border-color: #ef4444; }
+
+.btn-upload svg, .btn-delete svg { width: 16px; height: 16px; }
 
 /* Color input */
 .color-input-wrap { display: flex; align-items: center; gap: 10px; }

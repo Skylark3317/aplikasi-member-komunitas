@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Bendahara;
+namespace App\Http\Controllers\Keuangan;
 
 use App\Http\Controllers\Controller;
 use App\Models\Payment;

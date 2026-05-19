@@ -81,17 +81,23 @@ defineProps({
 .btn-primary {
   display: flex;
   align-items: center;
-  gap: 7px;
-  background: var(--primary-color);
-  color: #fff;
-  border: none;
-  padding: 9px 18px;
-  border-radius: 8px;
-  font-size: 13.5px;
-  font-weight: 600;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1;
+  height: 38px;
+  font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.2s;
+  transition: filter 0.2s;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
 }
 .btn-primary:hover { filter: brightness(0.9); }
 .btn-primary svg { width: 16px; height: 16px; }

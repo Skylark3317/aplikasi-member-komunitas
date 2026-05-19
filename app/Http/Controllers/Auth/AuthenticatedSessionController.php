@@ -23,8 +23,8 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('ketua.statistik', absolute: false));
         } elseif ($user->isPetugas()) {
             return redirect()->intended(route('petugas.konten.index', absolute: false));
-        } elseif ($user->isBendahara()) {
-            return redirect()->intended(route('bendahara.pembayaran.index', absolute: false));
+        } elseif ($user->isKeuangan()) {
+            return redirect()->intended(route('keuangan.pembayaran.index', absolute: false));
         }
 
         return redirect()->intended(route('home', absolute: false));
@@ -58,8 +58,8 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('ketua.statistik', absolute: false));
         } elseif ($user->isPetugas()) {
             return redirect()->intended(route('petugas.konten.index', absolute: false));
-        } elseif ($user->isBendahara()) {
-            return redirect()->intended(route('bendahara.pembayaran.index', absolute: false));
+        } elseif ($user->isKeuangan()) {
+            return redirect()->intended(route('keuangan.pembayaran.index', absolute: false));
         }
 
         return redirect()->intended(route('home', absolute: false));

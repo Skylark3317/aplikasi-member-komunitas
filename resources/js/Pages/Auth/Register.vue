@@ -52,7 +52,9 @@
               placeholder="Password"
               required
             />
-            <button type="button" class="toggle-pw" @click="showPw = !showPw">{{ showPw ? '🙈' : '👁' }}</button>
+            <button type="button" class="toggle-pw" @click="showPw = !showPw">
+              <i :class="showPw ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
           </div>
           <span v-if="form.errors.password" class="field-error">{{ form.errors.password }}</span>
         </div>
@@ -67,7 +69,9 @@
               placeholder="Konfirmasi password"
               required
             />
-            <button type="button" class="toggle-pw" @click="showPwC = !showPwC">{{ showPwC ? '🙈' : '👁' }}</button>
+            <button type="button" class="toggle-pw" @click="showPwC = !showPwC">
+              <i :class="showPwC ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
           </div>
         </div>
 
@@ -147,8 +151,30 @@ const submit = () => {
 .input-icon-wrap { position: relative; }
 .input-icon-wrap input { padding-right: 42px; }
 .toggle-pw {
-  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-  background: none; border: none; cursor: pointer; font-size: 16px;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-pw i {
+  font-size: 18px;
+  color: #6b7280;
+  transition: color 0.2s ease;
+}
+
+.toggle-pw:hover i {
+  color: var(--primary-color);
 }
 .field-error { color: #dc2626; font-size: 12px; margin-top: 4px; display: block; }
 .form-hints { margin-bottom: 16px; }

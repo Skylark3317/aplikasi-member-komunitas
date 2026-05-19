@@ -11,8 +11,8 @@
 
       <nav class="sidebar-nav">
         <Link
-          :href="route('bendahara.pembayaran.index')"
-          :class="['nav-item', isActive('bendahara.pembayaran') ? 'active' : '']"
+          :href="route('keuangan.pembayaran.index')"
+          :class="['nav-item', isActive('keuangan.pembayaran') ? 'active' : '']"
         >
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -28,7 +28,7 @@
 
         <!-- Popup menu -->
         <div v-if="showPopup" class="user-popup" @click.stop>
-          <Link :href="route('bendahara.profil')" class="popup-item" @click="showPopup = false">
+          <Link :href="route('keuangan.profil')" class="popup-item" @click="showPopup = false">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
@@ -76,7 +76,7 @@ function closePopup(e) {
 
 function isActive(routeName) {
   const current = $page.url;
-  if (routeName === 'bendahara.pembayaran') return current.startsWith('/bendahara/pembayaran');
+  if (routeName === 'keuangan.pembayaran') return current.startsWith('/keuangan/pembayaran');
   return false;
 }
 
@@ -99,7 +99,7 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
   border-right: 1px solid #e5e7eb;
   display: flex;
   flex-direction: column;
-  padding: 24px 0 0;
+  padding: 12px 0 0;
   position: fixed;
   top: 0;
   bottom: 0;
@@ -111,15 +111,21 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  margin: 0 20px 28px;
+  gap: 4px;
+  padding: 0 12px;
+  margin: 0 0 16px;
   text-align: center;
 }
 
+.sidebar-img {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .sidebar-img img {
-  height: 48px;
-  width: auto;
+  width: 100%;
+  max-height: 80px;
   object-fit: contain;
 }
 
@@ -146,11 +152,11 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
 }
 .nav-item:hover {
   background: #f0f4ff;
-  color: #2563eb;
+  color: var(--primary-color);
 }
 .nav-item.active {
   background: #f3f4f6;
-  color: #2563eb;
+  color: var(--primary-color);
   font-weight: 600;
 }
 
@@ -177,7 +183,7 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
 .user-role {
   font-size: 11px;
   background: #dbeafe;
-  color: #2563eb;
+  color: var(--primary-color);
   padding: 2px 9px;
   border-radius: 10px;
   display: inline-block;

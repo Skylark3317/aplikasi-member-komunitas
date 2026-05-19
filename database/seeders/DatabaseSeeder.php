@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(SettingsSeeder::class);
 
         // ── Super Admin ──────────────────────────────────────────
-        // ── Super Admin ──────────────────────────────────────────
         User::updateOrCreate(
             ['email' => 'superadmin@amk.com'],
             [
@@ -31,7 +30,6 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // ── Users ──────────────────────────────────────────────
         // ── Users ──────────────────────────────────────────────
         $ketua = User::updateOrCreate(
             ['email' => 'ketua@amk.com'],
@@ -49,7 +47,7 @@ class DatabaseSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'staff@amk.com'],
             [
-                'name'              => 'Agus Haryanto',
+                'name'              => 'Gus Agus',
                 'password'          => Hash::make('password'),
                 'role'              => 'staff',
                 'telephone'         => '081200000002',
@@ -58,13 +56,13 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // ── Bendahara (Keuangan) ──────────────────────────────────
-        $bendahara = User::updateOrCreate(
-            ['email' => 'bendahara@amk.com'],
+        // ── Keuangan ──────────────────────────────────
+        $keuangan = User::updateOrCreate(
+            ['email' => 'keuangan@amk.com'],
             [
                 'name'              => 'Jo Paijo',
                 'password'          => Hash::make('password'),
-                'role'              => 'bendahara',
+                'role'              => 'finance',
                 'telephone'         => '081200000003',
                 'is_active'         => true,
                 'email_verified_at' => now(),
@@ -203,7 +201,7 @@ class DatabaseSeeder extends Seeder
                     Payment::create([
                         'invoice_id' => $invoice->id,
                         'payer_id' => $member->id,
-                        'verifier_id' => $status === 'menunggu' ? null : $bendahara->id,
+                        'verifier_id' => $status === 'menunggu' ? null : $keuangan->id,
                         'payment_proof_url' => 'https://via.placeholder.com/300x400?text=Bukti+Pembayaran',
                         'account_holder_name' => $member->name,
                         'account_number' => '000000000000',

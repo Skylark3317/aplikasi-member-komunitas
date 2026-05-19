@@ -39,12 +39,15 @@
         <!-- Kategori -->
         <div class="form-group">
           <label class="form-label">Kategori</label>
-          <input 
-            type="text" 
+          <select 
             v-model="form.category" 
             class="form-input"
-            placeholder="Tulis kategori blog, pisahkan dengan tanda koma (,)"
-          />
+            required
+          >
+            <option value="" disabled>Pilih Kategori</option>
+            <option value="Berita">Berita</option>
+            <option value="Acara">Acara</option>
+          </select>
           <div v-if="form.errors.category" class="error-text">{{ form.errors.category }}</div>
         </div>
 
@@ -132,32 +135,30 @@ function submit() {
   gap: 12px;
 }
 
-.btn-primary {
-  background: #007bff;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 13.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-.btn-primary:hover { opacity: 0.9; }
-
-.btn-outline {
-  background: #fff;
-  color: #007bff;
-  border: 1px solid #007bff;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 13.5px;
-  font-weight: 600;
+.btn-primary, .btn-outline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1;
+  height: 38px;
+  font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.2s;
+  transition: filter 0.2s;
+  border: 1px solid transparent;
+  box-sizing: border-box;
 }
-.btn-outline:hover { background: #f0f4ff; }
+
+.btn-primary { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.btn-outline { background: #fff; color: var(--primary-color); border-color: var(--primary-color); }
+
+.btn-primary:hover { filter: brightness(0.9); }
+.btn-outline:hover { background: #eff6ff; }
 
 .divider { height: 1px; background: #e5e7eb; margin: 0; }
 
@@ -199,7 +200,17 @@ function submit() {
   background: #fff;
 }
 .form-input:focus {
-  border-color: #007bff;
+  border-color: var(--primary-color);
+}
+
+select.form-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  padding-right: 32px;
+  width: fit-content;
 }
 
 .error-text {

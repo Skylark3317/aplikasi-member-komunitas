@@ -53,8 +53,8 @@
               class="field-input"
               :class="{ 'error': form.errors.old_password }"
             />
-            <button type="button" class="eye-btn" @click="showOld = !showOld">
-              <EyeIcon :open="showOld" />
+            <button type="button" class="toggle-pw" @click="showOld = !showOld">
+              <i :class="showOld ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
             </button>
           </div>
           <span v-if="form.errors.old_password" class="error-msg">{{ form.errors.old_password }}</span>
@@ -71,8 +71,8 @@
               class="field-input"
               :class="{ 'error': form.errors.password }"
             />
-            <button type="button" class="eye-btn" @click="showNew = !showNew">
-              <EyeIcon :open="showNew" />
+            <button type="button" class="toggle-pw" @click="showNew = !showNew">
+              <i :class="showNew ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
             </button>
           </div>
           <span v-if="form.errors.password" class="error-msg">{{ form.errors.password }}</span>
@@ -88,8 +88,8 @@
               placeholder="Konfirmasi password baru"
               class="field-input"
             />
-            <button type="button" class="eye-btn" @click="showConfirm = !showConfirm">
-              <EyeIcon :open="showConfirm" />
+            <button type="button" class="toggle-pw" @click="showConfirm = !showConfirm">
+              <i :class="showConfirm ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
             </button>
           </div>
         </div>
@@ -108,7 +108,7 @@
 </template>
 
 <script setup>
-import { ref, h } from 'vue';
+import { ref } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import PetugasLayout from '@/Layouts/PetugasLayout.vue';
 
@@ -129,20 +129,6 @@ function submit() {
   form.patch(route('petugas.profil.update'));
 }
 
-// Inline EyeIcon component
-const EyeIcon = (props) => {
-  if (!props.open) {
-    return h('svg', { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '1.8' }, [
-      h('path', { d: 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z' }),
-      h('circle', { cx: '12', cy: '12', r: '3' }),
-    ]);
-  }
-  return h('svg', { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '1.8' }, [
-    h('path', { d: 'M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94' }),
-    h('path', { d: 'M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19' }),
-    h('line', { x1: '1', y1: '1', x2: '23', y2: '23' }),
-  ]);
-};
 </script>
 
 <style scoped>
@@ -164,36 +150,31 @@ const EyeIcon = (props) => {
 
 .top-actions { display: flex; align-items: center; gap: 10px; }
 
-.btn-batal {
-  border: 1px solid #d1d5db;
-  background: #fff;
-  color: #374151;
-  padding: 9px 18px;
-  border-radius: 8px;
-  font-size: 13.5px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  transition: background 0.2s;
-}
-.btn-batal:hover { background: #f3f4f6; }
-
-.btn-primary {
+.btn-primary, .btn-batal {
   display: flex;
   align-items: center;
-  gap: 7px;
-  background: var(--primary-color);
-  color: #fff;
-  border: none;
-  padding: 9px 18px;
-  border-radius: 8px;
-  font-size: 13.5px;
-  font-weight: 600;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1;
+  height: 38px;
+  font-weight: 500;
   cursor: pointer;
+  text-decoration: none;
   transition: filter 0.2s;
+  border: 1px solid transparent;
+  box-sizing: border-box;
 }
+
+.btn-primary { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+.btn-batal { background: #fff; color: #374151; border-color: #d1d5db; }
+
 .btn-primary:hover:not(:disabled) { filter: brightness(0.9); }
 .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-batal:hover { background: #f3f4f6; }
 .btn-primary svg { width: 15px; height: 15px; }
 
 .divider { height: 1px; background: #e5e7eb; }
@@ -232,20 +213,32 @@ const EyeIcon = (props) => {
 .input-pass-wrap { position: relative; }
 .input-pass-wrap .field-input { padding-right: 42px; }
 
-.eye-btn {
+.toggle-pw {
   position: absolute;
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
   border: none;
-  cursor: pointer;
-  color: #9ca3af;
-  padding: 0;
+  background: transparent;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
-.eye-btn:hover { color: #555; }
-.eye-btn svg { width: 18px; height: 18px; }
+
+.toggle-pw i {
+  font-size: 18px;
+  color: #6b7280;
+  transition: color 0.2s ease;
+}
+
+.toggle-pw:hover i {
+  color: var(--primary-color);
+}
 
 .hint-row {
   display: flex;

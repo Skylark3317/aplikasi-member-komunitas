@@ -366,9 +366,9 @@ function formatVal(v) {
   display: flex; align-items: center; gap: 5px; text-decoration: none;
   transition: color .15s;
 }
-.card-title-link:hover { color: #2563eb; }
+.card-title-link:hover { color: var(--primary-color); }
 .card-title-link svg { width: 11px; height: 11px; opacity: .7; }
-.pd-btn.active { background: #dbeafe; color: #2563eb; font-weight: 700; }
+.pd-btn.active { background: #dbeafe; color: var(--primary-color); font-weight: 700; }
 
 /* Live block */
 .live-block { display: flex; flex-direction: column; gap: 2px; }

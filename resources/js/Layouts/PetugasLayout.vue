@@ -127,7 +127,7 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
   border-right: 1px solid #e5e7eb;
   display: flex;
   flex-direction: column;
-  padding: 24px 0 0;
+  padding: 12px 0 0;
   position: fixed;
   top: 0;
   bottom: 0;
@@ -139,15 +139,21 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
-  margin: 0 20px 28px;
+  gap: 4px;
+  padding: 0 12px;
+  margin: 0 0 16px;
   text-align: center;
 }
 
+.sidebar-img {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .sidebar-img img {
-  height: 48px;
-  width: auto;
+  width: 100%;
+  max-height: 80px;
   object-fit: contain;
 }
 

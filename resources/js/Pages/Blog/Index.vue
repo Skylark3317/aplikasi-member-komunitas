@@ -67,14 +67,35 @@
 
         <!-- Pagination -->
         <div class="pagination" v-if="posts.last_page > 1">
-          <Link
-            v-for="page in posts.last_page"
-            :key="page"
-            :href="posts.links[page]?.url || '#'"
-            class="page-btn"
-            :class="{ 'page-active': page === posts.current_page }"
-          >{{ page }}</Link>
-          <Link v-if="posts.next_page_url" :href="posts.next_page_url" class="page-btn">›</Link>
+          <component
+            :is="posts.prev_page_url ? Link : 'span'"
+            :href="posts.prev_page_url"
+            class="page-nav-btn"
+            :class="{ 'disabled': !posts.prev_page_url }"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            Sebelumnya
+          </component>
+          
+          <div class="page-numbers">
+            <Link
+              v-for="page in posts.last_page"
+              :key="page"
+              :href="posts.links[page]?.url || '#'"
+              class="page-num-btn"
+              :class="{ 'active': page === posts.current_page }"
+            >{{ page }}</Link>
+          </div>
+
+          <component
+            :is="posts.next_page_url ? Link : 'span'"
+            :href="posts.next_page_url"
+            class="page-nav-btn"
+            :class="{ 'disabled': !posts.next_page_url }"
+          >
+            Berikutnya
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </component>
         </div>
       </main>
     </div>
@@ -193,19 +214,78 @@ const doSearch = () => {
 .post-list-excerpt, .post-search-excerpt { font-size: 13.5px; color: #666; line-height: 1.7; }
 
 /* Pagination */
-.pagination { display: flex; gap: 6px; margin-top: 24px; justify-content: center; }
-.page-btn {
-  width: 34px; height: 34px;
-  display: flex; align-items: center; justify-content: center;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 13px;
-  color: #555;
-  text-decoration: none;
-  transition: background 0.2s, color 0.2s;
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  width: 100%;
 }
-.page-btn:hover { background: #f3f4f6; }
-.page-active { background: var(--primary-color) !important; color: #fff !important; border-color: var(--primary-color) !important; }
+
+.page-numbers {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.page-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--primary-color);
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.page-nav-btn:hover:not(:disabled):not(.disabled) {
+  background: #eff6ff;
+}
+
+.page-nav-btn:disabled, .page-nav-btn.disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.page-num-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.page-num-btn:hover:not(.active) {
+  background: #f3f4f6;
+  color: #111;
+}
+
+.page-num-btn.active {
+  background: var(--primary-color);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.page-num-btn.active:hover {
+  filter: brightness(1.1);
+}
 
 .full-width { grid-column: 1 / -1; }
 </style>
