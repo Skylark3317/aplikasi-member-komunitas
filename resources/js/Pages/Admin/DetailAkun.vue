@@ -98,7 +98,7 @@
                 </svg>
               </div>
               <div>
-                <div class="card-val">{{ user.member_profile.days_remaining }} hari lagi</div>
+                <div class="card-val">{{ Math.round(user.member_profile.days_remaining) }} hari lagi</div>
                 <div class="card-key">Sisa Masa Aktif Membership</div>
               </div>
             </div>

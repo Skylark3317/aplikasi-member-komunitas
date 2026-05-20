@@ -25,6 +25,8 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('petugas.konten.index', absolute: false));
         } elseif ($user->isKeuangan()) {
             return redirect()->intended(route('keuangan.pembayaran.index', absolute: false));
+        } elseif ($user->isMember()) {
+            return redirect()->intended(route('member.konten.index', absolute: false));
         }
 
         return redirect()->intended(route('home', absolute: false));
@@ -60,6 +62,8 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('petugas.konten.index', absolute: false));
         } elseif ($user->isKeuangan()) {
             return redirect()->intended(route('keuangan.pembayaran.index', absolute: false));
+        } elseif ($user->isMember()) {
+            return redirect()->intended(route('member.konten.index', absolute: false));
         }
 
         return redirect()->intended(route('home', absolute: false));

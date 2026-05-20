@@ -109,5 +109,30 @@ Route::middleware(['auth', 'verified', 'role:finance'])
         Route::patch('/profil', [\App\Http\Controllers\Keuangan\ProfilController::class, 'update'])->name('profil.update');
     });
 
+Route::middleware(['auth', 'verified', 'role:member'])
+    ->prefix('member')
+    ->name('member.')
+    ->group(function () {
+        // Konten
+        Route::get('/konten', [\App\Http\Controllers\Member\KontenController::class, 'index'])->name('konten.index');
 
+        // Profil
+        Route::get('/profil', [\App\Http\Controllers\Member\ProfilController::class, 'show'])->name('profil.show');
+        Route::get('/profil/edit', [\App\Http\Controllers\Member\ProfilController::class, 'edit'])->name('profil.edit');
+        Route::patch('/profil', [\App\Http\Controllers\Member\ProfilController::class, 'update'])->name('profil.update');
 
+        // Premium & Pembayaran
+        Route::get('/premium', [\App\Http\Controllers\Member\PremiumController::class, 'index'])->name('premium.index');
+        Route::post('/premium/gabung', [\App\Http\Controllers\Member\PremiumController::class, 'join'])->name('premium.join');
+        Route::get('/premium/pembayaran', [\App\Http\Controllers\Member\PremiumController::class, 'paymentIndex'])->name('premium.payment');
+        Route::get('/premium/pembayaran/{invoice}', [\App\Http\Controllers\Member\PremiumController::class, 'paymentDetail'])->name('premium.payment_detail');
+        Route::post('/premium/bayar', [\App\Http\Controllers\Member\PremiumController::class, 'pay'])->name('premium.pay');
+
+        // Pertanyaan (Q&A)
+        Route::get('/pertanyaan', [\App\Http\Controllers\Member\PertanyaanController::class, 'index'])->name('pertanyaan.index');
+        Route::get('/pertanyaan/buat', [\App\Http\Controllers\Member\PertanyaanController::class, 'create'])->name('pertanyaan.create');
+        Route::post('/pertanyaan', [\App\Http\Controllers\Member\PertanyaanController::class, 'store'])->name('pertanyaan.store');
+        Route::get('/pertanyaan/{conversation}', [\App\Http\Controllers\Member\PertanyaanController::class, 'show'])->name('pertanyaan.show');
+        Route::post('/pertanyaan/{conversation}/balas', [\App\Http\Controllers\Member\PertanyaanController::class, 'reply'])->name('pertanyaan.reply');
+        Route::post('/pertanyaan/{conversation}/selesai', [\App\Http\Controllers\Member\PertanyaanController::class, 'close'])->name('pertanyaan.close');
+    });

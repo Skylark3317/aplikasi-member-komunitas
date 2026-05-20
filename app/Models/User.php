@@ -70,4 +70,72 @@ class User extends Authenticatable
     {
         return $this->role === 'finance';
     }
+
+    public function isMember(): bool
+    {
+        return $this->role === 'member';
+    }
+
+    public function isPremium(): bool
+    {
+        if ($this->role !== 'member') {
+            return false;
+        }
+        $profile = $this->memberProfile;
+        return $profile && $profile->status === 'active' && now()->lt($profile->expire_date);
+    }
+
+    public function membershipStatus(): string
+    {
+        if ($this->role !== 'member') {
+            return 'none';
+        }
+
+        $profile = $this->memberProfile;
+        $latestInvoice = $this->invoices()->latest()->first();
+
+        if (!$latestInvoice && !$profile) {
+            return 'none';
+        }
+
+        if ($profile && $profile->status === 'active') {
+            if (now()->lt($profile->expire_date)) {
+                return 'active';
+            }
+            return 'expired';
+        }
+
+        if ($latestInvoice) {
+            $payment = $latestInvoice->payment;
+            if (!$payment) {
+                return 'pending_invoice';
+            }
+            
+            if ($payment->status === 'menunggu') {
+                return 'pending_verification';
+            }
+            
+            if ($payment->status === 'ditolak') {
+                return 'rejected';
+            }
+            
+            if ($payment->status === 'diverifikasi') {
+                return 'active';
+            }
+        }
+
+        return 'none';
+    }
+
+    public function getAvatarUrlAttribute()
+    {
+        $extensions = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
+        foreach ($extensions as $ext) {
+            $path = 'avatars/user_' . $this->id . '.' . $ext;
+            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
+                return '/storage/' . $path;
+            }
+        }
+        return null;
+    }
 }

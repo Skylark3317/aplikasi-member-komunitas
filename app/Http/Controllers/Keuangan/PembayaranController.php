@@ -62,7 +62,19 @@ class PembayaranController extends Controller
             'is_accepted' => true,
         ]);
 
-        return redirect()->back()->with('success', 'Pembayaran berhasil diverifikasi.');
+        // Auto-activate or extend MemberProfile
+        $payer = $payment->payer;
+        $durationMonths = (int) \App\Models\Setting::get('membership_duration', 12);
+        
+        \App\Models\MemberProfile::updateOrCreate(
+            ['member_id' => $payer->id],
+            [
+                'status' => 'active',
+                'expire_date' => now()->addMonths($durationMonths),
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Pembayaran berhasil diverifikasi dan member diaktifkan.');
     }
 
     public function reject(Request $request, Payment $payment)
