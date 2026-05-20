@@ -310,7 +310,7 @@ function formatDate(dateStr) {
 }
 
 .card-title {
-  font-size: 13.5px;
+  font-size: 16px;
   font-weight: 600;
   color: #111;
   margin: 0;
@@ -323,7 +323,7 @@ function formatDate(dateStr) {
 }
 
 .card-meta {
-  font-size: 11px;
+  font-size: 13px;
   color: #888;
 }
 
@@ -367,16 +367,16 @@ function formatDate(dateStr) {
 .page-num {
   background: none;
   border: none;
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: #555;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 8px;
   transition: all 0.15s;
 }
 
