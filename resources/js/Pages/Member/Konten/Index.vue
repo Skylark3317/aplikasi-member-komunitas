@@ -286,7 +286,9 @@ function formatDate(dateStr) {
 .card-thumbnail {
   width: 100%;
   border-radius: 8px;
-  background: #f2f2f2;
+  background: #f3f4f6;
+  overflow: hidden;
+  margin-bottom: 12px;
   transition: opacity 0.15s ease;
 }
 
@@ -295,7 +297,7 @@ function formatDate(dateStr) {
 }
 
 .video-thumb {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 10;
 }
 
 .ebook-thumb {
@@ -310,7 +312,7 @@ function formatDate(dateStr) {
 }
 
 .card-title {
-  font-size: 13.5px;
+  font-size: 16px;
   font-weight: 600;
   color: #111;
   margin: 0;
@@ -323,7 +325,7 @@ function formatDate(dateStr) {
 }
 
 .card-meta {
-  font-size: 11px;
+  font-size: 13px;
   color: #888;
 }
 
