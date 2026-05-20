@@ -102,7 +102,7 @@
           <span class="tip-val">{{ formatVal(activeSeriesData(si)[activeIdx]) }}</span>
         </div>
         <div class="tip-date">{{ activeLabels[activeIdx] }}</div>
-        <div v-if="isPinned" class="tip-pin">📌 Klik lagi untuk lepas</div>
+        <div v-if="isPinned" class="tip-pin"><i class="bi bi-pin-angle-fill"></i> Klik lagi untuk lepas</div>
       </div>
     </div>
 

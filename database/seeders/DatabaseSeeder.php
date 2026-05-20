@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'superadmin@amk.com'],
             [
                 'name'              => 'Met Slamet',
-                'password'          => Hash::make('password'),
+                'password'          => Hash::make('Password123'),
                 'role'              => 'super_admin',
                 'telephone'         => '081234567890',
                 'is_active'         => true,
@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'ketua@amk.com'],
             [
                 'name'              => 'Jo Bejo',
-                'password'          => Hash::make('password'),
+                'password'          => Hash::make('Password123'),
                 'role'              => 'leader',
                 'telephone'         => '081200000001',
                 'is_active'         => true,
@@ -48,7 +48,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'staff@amk.com'],
             [
                 'name'              => 'Gus Agus',
-                'password'          => Hash::make('password'),
+                'password'          => Hash::make('Password123'),
                 'role'              => 'staff',
                 'telephone'         => '081200000002',
                 'is_active'         => true,
@@ -61,7 +61,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'keuangan@amk.com'],
             [
                 'name'              => 'Jo Paijo',
-                'password'          => Hash::make('password'),
+                'password'          => Hash::make('Password123'),
                 'role'              => 'finance',
                 'telephone'         => '081200000003',
                 'is_active'         => true,
@@ -81,7 +81,7 @@ class DatabaseSeeder extends Seeder
                 ['email' => $m['email']],
                 [
                     'name'              => $m['name'],
-                    'password'          => Hash::make('password'),
+                    'password'          => Hash::make('Password123'),
                     'role'              => 'member',
                     'telephone'         => '082991919192811',
                     'email_verified_at' => now(),
@@ -184,11 +184,12 @@ class DatabaseSeeder extends Seeder
 
         // ── Invoices & Payments ───────────────────────────────────────────
         $invoiceStatuses = [true, false];
+        $invoiceIndex = 1;
         foreach ($memberModels as $member) {
             for ($i = 1; $i <= 5; $i++) {
                 $invoice = \App\Models\Invoice::create([
                     'user_id' => $member->id,
-                    'number' => 'INV' . str_pad(rand(1, 99999), 5, '0', STR_PAD_LEFT),
+                    'number' => 'INV' . str_pad($invoiceIndex++, 5, '0', STR_PAD_LEFT),
                     'amount' => 50000,
                     'due_date' => now()->addDays(rand(1, 30)),
                     'is_accepted' => $invoiceStatuses[array_rand($invoiceStatuses)],

@@ -10,11 +10,96 @@
         <span class="row-count">{{ filtered.length }} data</span>
       </div>
       <div class="header-right">
+        <a :href="exportUrl" class="export-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="export-icon">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Export Excel
+        </a>
         <div class="search-wrap">
           <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input v-model="search" class="search-input" placeholder="Cari data..." />
           <button v-if="search" class="search-clear" @click="search = ''">×</button>
         </div>
+      </div>
+    </div>
+
+    <!-- Filters Bar -->
+    <div class="filters-bar">
+      <div class="filters-left">
+        <!-- Date Range Filter -->
+        <div class="filter-group">
+          <label class="filter-label">Mulai Tanggal</label>
+          <input type="date" v-model="startDateFilter" class="filter-input date-input" />
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Sampai Tanggal</label>
+          <input type="date" v-model="endDateFilter" class="filter-input date-input" />
+        </div>
+
+        <!-- Membership Filter (Member only) -->
+        <div v-if="type === 'member'" class="filter-group">
+          <label class="filter-label">Membership</label>
+          <select v-model="membershipFilter" class="filter-input select-input">
+            <option value="">Semua</option>
+            <option value="premium">Premium</option>
+            <option value="regular">Regular</option>
+          </select>
+        </div>
+
+        <!-- Status Filter (Member, Pertanyaan, Payment) -->
+        <div v-if="type === 'member' || type === 'pertanyaan' || type === 'payment'" class="filter-group">
+          <label class="filter-label">Status</label>
+          <select v-model="statusFilter" class="filter-input select-input">
+            <option value="">Semua</option>
+            
+            <template v-if="type === 'member'">
+              <option value="aktif">Aktif</option>
+              <option value="nonaktif">Nonaktif</option>
+            </template>
+            
+            <template v-else-if="type === 'pertanyaan'">
+              <option value="selesai">Selesai</option>
+              <option value="direspond">Direspond</option>
+              <option value="belum_direspond">Belum direspond</option>
+            </template>
+            
+            <template v-else-if="type === 'payment'">
+              <option value="diverifikasi">Diterima</option>
+              <option value="ditolak">Ditolak</option>
+              <option value="menunggu">Menunggu</option>
+            </template>
+          </select>
+        </div>
+
+        <!-- Content Type Filter (Konten only) -->
+        <div v-if="type === 'konten'" class="filter-group">
+          <label class="filter-label">Tipe Konten</label>
+          <select v-model="contentTypeFilter" class="filter-input select-input">
+            <option value="">Semua</option>
+            <option value="video">Video</option>
+            <option value="ebook">Ebook</option>
+          </select>
+        </div>
+
+        <!-- Category Filter (Blog only) -->
+        <div v-if="type === 'blog'" class="filter-group">
+          <label class="filter-label">Kategori</label>
+          <select v-model="categoryIdFilter" class="filter-input select-input">
+            <option value="">Semua</option>
+            <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filters-right">
+        <!-- Clear Filters Button -->
+        <button v-if="hasActiveFilters" class="clear-filters-btn" @click="resetFilters">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="clear-icon"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Reset Filter
+        </button>
       </div>
     </div>
 
@@ -88,14 +173,79 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import KetuaLayout from '@/Layouts/KetuaLayout.vue';
 
 const props = defineProps({
-  type:    String,
-  title:   String,
-  rows:    Array,
-  columns: Array,
+  type:       String,
+  title:      String,
+  rows:       Array,
+  columns:    Array,
+  categories: { type: Array, default: () => [] },
+  filters:    { type: Object, default: () => ({}) },
+});
+
+// Filters
+const statusFilter = ref(props.filters.status || '');
+const membershipFilter = ref(props.filters.membership || '');
+const contentTypeFilter = ref(props.filters.content_type || '');
+const categoryIdFilter = ref(props.filters.category_id || '');
+const startDateFilter = ref(props.filters.start_date || '');
+const endDateFilter = ref(props.filters.end_date || '');
+
+const hasActiveFilters = computed(() => {
+  return !!(
+    statusFilter.value ||
+    membershipFilter.value ||
+    contentTypeFilter.value ||
+    categoryIdFilter.value ||
+    startDateFilter.value ||
+    endDateFilter.value
+  );
+});
+
+function resetFilters() {
+  statusFilter.value = '';
+  membershipFilter.value = '';
+  contentTypeFilter.value = '';
+  categoryIdFilter.value = '';
+  startDateFilter.value = '';
+  endDateFilter.value = '';
+}
+
+function applyFilters() {
+  router.get(
+    route('ketua.statistik.detail', { type: props.type }),
+    {
+      status: statusFilter.value || undefined,
+      membership: membershipFilter.value || undefined,
+      content_type: contentTypeFilter.value || undefined,
+      category_id: categoryIdFilter.value || undefined,
+      start_date: startDateFilter.value || undefined,
+      end_date: endDateFilter.value || undefined,
+    },
+    {
+      preserveState: true,
+      replace: true,
+    }
+  );
+}
+
+// Watch filters to trigger update
+watch([statusFilter, membershipFilter, contentTypeFilter, categoryIdFilter, startDateFilter, endDateFilter], () => {
+  applyFilters();
+});
+
+const exportUrl = computed(() => {
+  return route('ketua.statistik.detail.export', {
+    type: props.type,
+    status: statusFilter.value || undefined,
+    membership: membershipFilter.value || undefined,
+    content_type: contentTypeFilter.value || undefined,
+    category_id: categoryIdFilter.value || undefined,
+    start_date: startDateFilter.value || undefined,
+    end_date: endDateFilter.value || undefined,
+  });
 });
 
 // Search
@@ -201,6 +351,107 @@ function badgeClass(colKey, val) {
 .back-btn svg { width: 18px; height: 18px; }
 .page-title { font-size: 18px; font-weight: 700; color: #111; margin: 0; }
 .row-count { font-size: 12px; color: #9ca3af; background: #f3f4f6; padding: 2px 8px; border-radius: 20px; }
+
+.header-right { display: flex; align-items: center; gap: 12px; }
+.export-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 14px; border-radius: 8px; border: 1px solid #e5e7eb;
+  background: #fff; text-decoration: none; color: #374151; font-size: 13.5px;
+  font-weight: 500; cursor: pointer; transition: all 0.2s ease;
+}
+.export-btn:hover {
+  background: #f9fafb;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+.export-btn:active {
+  transform: translateY(0);
+}
+.export-icon { width: 16px; height: 16px; }
+
+/* ── Filters Bar ── */
+.filters-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.filters-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+.filters-right {
+  display: flex;
+  align-items: center;
+}
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.filter-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.filter-input {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 13px;
+  color: #374151;
+  background-color: #fff;
+  outline: none;
+  transition: all 0.15s ease;
+  min-width: 130px;
+  height: 36px;
+}
+.filter-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
+}
+.date-input {
+  min-width: 145px;
+}
+.select-input {
+  cursor: pointer;
+}
+.clear-filters-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #fee2e2;
+  background: #fef2f2;
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  height: 36px;
+}
+.clear-filters-btn:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+.clear-icon {
+  width: 14px;
+  height: 14px;
+}
 
 /* Search */
 .search-wrap {

@@ -15,7 +15,7 @@ class KelolAkunController extends Controller
 {
     public function index(Request $request): Response
     {
-        $query = User::query();
+        $query = User::query()->where('role', '!=', 'super_admin');
 
         // Search by name or email
         if ($request->filled('search')) {
@@ -53,6 +53,10 @@ class KelolAkunController extends Controller
 
     public function show(User $user): Response
     {
+        if ($user->role === 'super_admin') {
+            abort(404);
+        }
+
         $memberProfile = null;
         if ($user->role === 'member') {
             $memberProfile = $user->memberProfile;
@@ -101,7 +105,7 @@ class KelolAkunController extends Controller
             'email'                 => 'required|email|unique:users,email',
             'telephone'             => 'required|string|max:20',
             'role'                  => 'required|in:staff,finance,leader',
-            'password'              => ['required', 'confirmed', Rules\Password::min(8)],
+            'password'              => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         User::create([
@@ -119,6 +123,10 @@ class KelolAkunController extends Controller
 
     public function toggleStatus(User $user)
     {
+        if ($user->role === 'super_admin') {
+            abort(403);
+        }
+
         $user->update(['is_active' => !$user->is_active]);
 
         return back()->with('success', $user->is_active

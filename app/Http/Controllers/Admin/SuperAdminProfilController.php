@@ -48,7 +48,7 @@ class SuperAdminProfilController extends Controller
         $request->validate([
             'telephone'    => 'required|string|max:20',
             'old_password' => 'nullable|string',
-            'password'     => ['nullable', 'confirmed', Rules\Password::min(8)],
+            'password'     => ['nullable', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user->telephone = $request->telephone;

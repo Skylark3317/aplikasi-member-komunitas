@@ -36,7 +36,6 @@
             <option value="staff">Petugas</option>
             <option value="finance">Keuangan</option>
             <option value="leader">Ketua</option>
-            <option value="super_admin">Super Admin</option>
           </select>
           <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 12 15 18 9"/>
@@ -127,7 +126,6 @@ function roleLabel(role) {
     staff:       'Petugas',
     finance:     'Keuangan',
     leader:      'Ketua',
-    super_admin: 'Super Admin',
   };
   return map[role] ?? role;
 }

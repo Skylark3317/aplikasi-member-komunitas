@@ -9,6 +9,7 @@ use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -21,26 +22,53 @@ class DetailController extends Controller
             ->pluck('user_id')->unique()->values()->all();
 
         [$rows, $columns, $title] = match ($type) {
-            'member'     => $this->memberData($premiumIds),
-            'konten'     => $this->kontenData(),
-            'blog'       => $this->blogData(),
-            'pertanyaan' => $this->pertanyaanData(),
-            'payment'    => $this->paymentData(),
+            'member'     => $this->memberData($request, $premiumIds),
+            'konten'     => $this->kontenData($request),
+            'blog'       => $this->blogData($request),
+            'pertanyaan' => $this->pertanyaanData($request),
+            'payment'    => $this->paymentData($request),
             default      => abort(404),
         };
 
+        $categories = [];
+        if ($type === 'blog') {
+            $categories = Category::orderBy('name')->get(['id', 'name'])->all();
+        }
+
         return Inertia::render('Ketua/Detail', [
-            'type'    => $type,
-            'title'   => $title,
-            'rows'    => $rows,
-            'columns' => $columns,
+            'type'       => $type,
+            'title'      => $title,
+            'rows'       => $rows,
+            'columns'    => $columns,
+            'categories' => $categories,
+            'filters'    => $request->only(['status', 'membership', 'content_type', 'category_id', 'start_date', 'end_date']),
         ]);
     }
 
-    private function memberData(array $premiumIds): array
+    protected function memberData(Request $request, array $premiumIds): array
     {
-        $rows = User::where('role', 'member')
-            ->orderBy('created_at', 'desc')
+        $query = User::where('role', 'member');
+
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status === 'aktif');
+        }
+
+        if ($request->filled('membership')) {
+            if ($request->membership === 'premium') {
+                $query->whereIn('id', $premiumIds);
+            } else {
+                $query->whereNotIn('id', $premiumIds);
+            }
+        }
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $rows = $query->orderBy('created_at', 'desc')
             ->get(['id', 'name', 'email', 'telephone', 'is_active', 'created_at'])
             ->map(fn($u) => [
                 'id'       => $u->id,
@@ -65,10 +93,22 @@ class DetailController extends Controller
         return [$rows, $columns, 'Detail Member'];
     }
 
-    private function kontenData(): array
+    protected function kontenData(Request $request): array
     {
-        $rows = Content::with('uploader:id,name')
-            ->orderBy('created_at', 'desc')
+        $query = Content::with('uploader:id,name');
+
+        if ($request->filled('content_type')) {
+            $query->where('type', $request->content_type);
+        }
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $rows = $query->orderBy('created_at', 'desc')
             ->get()
             ->map(fn($c) => [
                 'id'       => $c->id,
@@ -89,10 +129,22 @@ class DetailController extends Controller
         return [$rows, $columns, 'Detail Konten'];
     }
 
-    private function blogData(): array
+    protected function blogData(Request $request): array
     {
-        $rows = Post::with(['author:id,name', 'category:id,name'])
-            ->orderBy('published_at', 'desc')
+        $query = Post::with(['author:id,name', 'category:id,name']);
+
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('published_at', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('published_at', '<=', $request->end_date);
+        }
+
+        $rows = $query->orderBy('published_at', 'desc')
             ->get()
             ->map(fn($p) => [
                 'id'           => $p->id,
@@ -113,10 +165,34 @@ class DetailController extends Controller
         return [$rows, $columns, 'Detail Blog'];
     }
 
-    private function pertanyaanData(): array
+    protected function pertanyaanData(Request $request): array
     {
-        $rows = Conversation::with(['submitter:id,name', 'messages.sender:id,name,role'])
-            ->orderBy('created_at', 'desc')
+        $query = Conversation::with(['submitter:id,name', 'messages.sender:id,name,role']);
+
+        if ($request->filled('status')) {
+            if ($request->status === 'selesai') {
+                $query->where('is_closed', true);
+            } elseif ($request->status === 'direspond') {
+                $query->where('is_closed', false)
+                    ->whereHas('messages.sender', function($q) {
+                        $q->whereIn('role', ['staff', 'super_admin']);
+                    });
+            } elseif ($request->status === 'belum_direspond') {
+                $query->where('is_closed', false)
+                    ->whereDoesntHave('messages.sender', function($q) {
+                        $q->whereIn('role', ['staff', 'super_admin']);
+                    });
+            }
+        }
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $rows = $query->orderBy('created_at', 'desc')
             ->get()
             ->map(function($c) {
                 // Find first staff/super_admin sender in replies
@@ -155,10 +231,22 @@ class DetailController extends Controller
         return [$rows, $columns, 'Detail Pertanyaan'];
     }
 
-    private function paymentData(): array
+    protected function paymentData(Request $request): array
     {
-        $rows = Payment::with(['payer:id,name', 'verifier:id,name'])
-            ->orderBy('created_at', 'desc')
+        $query = Payment::with(['payer:id,name', 'verifier:id,name']);
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('start_date')) {
+            $query->whereDate('date', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('date', '<=', $request->end_date);
+        }
+
+        $rows = $query->orderBy('created_at', 'desc')
             ->get()
             ->map(fn($p) => [
                 'id'      => $p->id,
