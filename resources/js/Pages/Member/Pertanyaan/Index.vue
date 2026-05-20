@@ -354,13 +354,13 @@ function formatDate(dateStr) {
 }
 
 .page-num-btn {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border: none;
   background: transparent;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
   color: #4b5563;
   cursor: pointer;
   display: flex;
