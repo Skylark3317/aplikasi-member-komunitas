@@ -35,11 +35,18 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name'        => $request->name,
             'email'       => $request->email,
-            'phone'       => $request->phone,
+            'telephone'   => $request->phone ?? '-',
+            'role'        => 'member',
+            'password'    => Hash::make($request->password),
+        ]);
+
+        \App\Models\MemberProfile::create([
+            'member_id'   => $user->id,
+            'expire_date' => now()->addYear(),
             'institution' => $request->institution,
             'department'  => $request->department,
-            'address'     => $request->address,
-            'password'    => Hash::make($request->password),
+            'address'     => $request->address ?? '-',
+            'status'      => 'active',
         ]);
 
         event(new Registered($user));

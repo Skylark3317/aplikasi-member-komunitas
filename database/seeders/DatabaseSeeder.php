@@ -70,14 +70,32 @@ class DatabaseSeeder extends Seeder
         );
 
         $members = [
-            ['name' => 'Nem Painem',  'email' => 'nem@amk.com'],
-            ['name' => 'Siti Rahayu', 'email' => 'siti@amk.com'],
-            ['name' => 'Budi Santoso','email' => 'budi@amk.com'],
+            [
+                'name' => 'Nem Painem',
+                'email' => 'nem@amk.com',
+                'institution' => 'Institut Teknologi Bandung',
+                'department' => 'Teknik Informatika',
+                'address' => 'Jl. Ganesha No. 10, Bandung'
+            ],
+            [
+                'name' => 'Siti Rahayu',
+                'email' => 'siti@amk.com',
+                'institution' => 'Universitas Indonesia',
+                'department' => 'Sistem Informasi',
+                'address' => 'Jl. Margonda Raya, Depok'
+            ],
+            [
+                'name' => 'Budi Santoso',
+                'email' => 'budi@amk.com',
+                'institution' => 'Universitas Gadjah Mada',
+                'department' => 'Ilmu Komputer',
+                'address' => 'Jl. Kaliurang, Yogyakarta'
+            ],
         ];
 
         $memberModels = [];
         foreach ($members as $m) {
-            $memberModels[] = User::updateOrCreate(
+            $user = User::updateOrCreate(
                 ['email' => $m['email']],
                 [
                     'name'              => $m['name'],
@@ -85,6 +103,18 @@ class DatabaseSeeder extends Seeder
                     'role'              => 'member',
                     'telephone'         => '082991919192811',
                     'email_verified_at' => now(),
+                ]
+            );
+            $memberModels[] = $user;
+
+            \App\Models\MemberProfile::updateOrCreate(
+                ['member_id' => $user->id],
+                [
+                    'expire_date' => now()->addYear(),
+                    'institution' => $m['institution'],
+                    'department' => $m['department'],
+                    'address' => $m['address'],
+                    'status' => 'active',
                 ]
             );
         }

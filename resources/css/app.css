@@ -48,3 +48,21 @@ a { color: inherit; }
   .sidebar, .navbar, .topbar, .btn-print, .card-nav { display: none !important; }
   .admin-main { margin-left: 0 !important; }
 }
+
+/* ─── Sticky Headers in Admin/Role Dashboards ───────────── */
+.admin-main .top-bar,
+.admin-main .page-header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 40 !important;
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+/* Reset for page-header inside top-bar to prevent nested sticky overlays */
+.admin-main .top-bar .page-header {
+  position: static !important;
+  background-color: transparent !important;
+  border-bottom: none !important;
+  padding: 0 !important;
+}

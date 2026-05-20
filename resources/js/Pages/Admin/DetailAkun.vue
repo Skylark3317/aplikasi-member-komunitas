@@ -152,6 +152,10 @@
             <div class="info-key">Departemen</div>
             <div class="info-val">{{ user.member_profile.department ?? '-' }}</div>
           </div>
+          <div class="info-row">
+            <div class="info-key">Alamat</div>
+            <div class="info-val">{{ user.member_profile.address ?? '-' }}</div>
+          </div>
         </template>
 
         <!-- Non-member fields -->
@@ -173,10 +177,6 @@
         <div class="info-row">
           <div class="info-key">Nomor Telepon</div>
           <div class="info-val">{{ user.telephone }}</div>
-        </div>
-        <div v-if="user.member_profile?.address" class="info-row">
-          <div class="info-key">Alamat</div>
-          <div class="info-val">{{ user.member_profile.address }}</div>
         </div>
       </div>
 

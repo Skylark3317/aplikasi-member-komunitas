@@ -47,7 +47,7 @@ class DetailController extends Controller
 
     protected function memberData(Request $request, array $premiumIds): array
     {
-        $query = User::where('role', 'member');
+        $query = User::where('role', 'member')->with('memberProfile');
 
         if ($request->filled('status')) {
             $query->where('is_active', $request->status === 'aktif');
@@ -69,24 +69,30 @@ class DetailController extends Controller
         }
 
         $rows = $query->orderBy('created_at', 'desc')
-            ->get(['id', 'name', 'email', 'telephone', 'is_active', 'created_at'])
+            ->get()
             ->map(fn($u) => [
-                'id'       => $u->id,
-                'nama'     => $u->name,
-                'email'    => $u->email,
-                'telepon'  => $u->telephone ?? '-',
-                'premium'  => in_array($u->id, $premiumIds) ? 'Premium' : 'Regular',
-                'aktif'    => $u->is_active ? 'Aktif' : 'Nonaktif',
-                'bergabung' => $u->created_at->format('d M Y'),
+                'id'         => $u->id,
+                'nama'       => $u->name,
+                'email'      => $u->email,
+                'telepon'    => $u->telephone ?? '-',
+                'institusi'  => $u->memberProfile?->institution ?? '-',
+                'departemen' => $u->memberProfile?->department ?? '-',
+                'alamat'     => $u->memberProfile?->address ?? '-',
+                'premium'    => in_array($u->id, $premiumIds) ? 'Premium' : 'Regular',
+                'aktif'      => $u->is_active ? 'Aktif' : 'Nonaktif',
+                'bergabung'  => $u->created_at->format('d M Y'),
                 '_sort_bergabung' => $u->created_at->timestamp,
             ])->values()->all();
 
         $columns = [
-            ['key' => 'nama',     'label' => 'Nama',       'sortable' => true],
-            ['key' => 'email',    'label' => 'Email',       'sortable' => true],
-            ['key' => 'telepon',  'label' => 'Telepon',     'sortable' => false],
-            ['key' => 'premium',  'label' => 'Membership',  'sortable' => true, 'badge' => true],
-            ['key' => 'aktif',    'label' => 'Status',      'sortable' => true, 'badge' => true],
+            ['key' => 'nama',       'label' => 'Nama',       'sortable' => true],
+            ['key' => 'email',      'label' => 'Email',      'sortable' => true],
+            ['key' => 'telepon',    'label' => 'Telepon',    'sortable' => false],
+            ['key' => 'institusi',  'label' => 'Institusi',  'sortable' => true],
+            ['key' => 'departemen', 'label' => 'Departemen', 'sortable' => true],
+            ['key' => 'alamat',     'label' => 'Alamat',     'sortable' => true],
+            ['key' => 'premium',    'label' => 'Membership', 'sortable' => true, 'badge' => true],
+            ['key' => 'aktif',      'label' => 'Status',      'sortable' => true, 'badge' => true],
             ['key' => '_sort_bergabung', 'label' => 'Bergabung', 'sortable' => true, 'display' => 'bergabung'],
         ];
 

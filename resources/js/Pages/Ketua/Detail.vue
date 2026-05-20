@@ -26,146 +26,149 @@
       </div>
     </div>
 
-    <!-- Filters Bar -->
-    <div class="filters-bar">
-      <div class="filters-left">
-        <!-- Date Range Filter -->
-        <div class="filter-group">
-          <label class="filter-label">Mulai Tanggal</label>
-          <input type="date" v-model="startDateFilter" class="filter-input date-input" />
-        </div>
-        <div class="filter-group">
-          <label class="filter-label">Sampai Tanggal</label>
-          <input type="date" v-model="endDateFilter" class="filter-input date-input" />
+    <!-- Content Area -->
+    <div class="content-area">
+      <!-- Filters Bar -->
+      <div class="filters-bar">
+        <div class="filters-left">
+          <!-- Date Range Filter -->
+          <div class="filter-group">
+            <label class="filter-label">Mulai Tanggal</label>
+            <input type="date" v-model="startDateFilter" class="filter-input date-input" />
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Sampai Tanggal</label>
+            <input type="date" v-model="endDateFilter" class="filter-input date-input" />
+          </div>
+
+          <!-- Membership Filter (Member only) -->
+          <div v-if="type === 'member'" class="filter-group">
+            <label class="filter-label">Membership</label>
+            <select v-model="membershipFilter" class="filter-input select-input">
+              <option value="">Semua</option>
+              <option value="premium">Premium</option>
+              <option value="regular">Regular</option>
+            </select>
+          </div>
+
+          <!-- Status Filter (Member, Pertanyaan, Payment) -->
+          <div v-if="type === 'member' || type === 'pertanyaan' || type === 'payment'" class="filter-group">
+            <label class="filter-label">Status</label>
+            <select v-model="statusFilter" class="filter-input select-input">
+              <option value="">Semua</option>
+              
+              <template v-if="type === 'member'">
+                <option value="aktif">Aktif</option>
+                <option value="nonaktif">Nonaktif</option>
+              </template>
+              
+              <template v-else-if="type === 'pertanyaan'">
+                <option value="selesai">Selesai</option>
+                <option value="direspond">Direspond</option>
+                <option value="belum_direspond">Belum direspond</option>
+              </template>
+              
+              <template v-else-if="type === 'payment'">
+                <option value="diverifikasi">Diterima</option>
+                <option value="ditolak">Ditolak</option>
+                <option value="menunggu">Menunggu</option>
+              </template>
+            </select>
+          </div>
+
+          <!-- Content Type Filter (Konten only) -->
+          <div v-if="type === 'konten'" class="filter-group">
+            <label class="filter-label">Tipe Konten</label>
+            <select v-model="contentTypeFilter" class="filter-input select-input">
+              <option value="">Semua</option>
+              <option value="video">Video</option>
+              <option value="ebook">Ebook</option>
+            </select>
+          </div>
+
+          <!-- Category Filter (Blog only) -->
+          <div v-if="type === 'blog'" class="filter-group">
+            <label class="filter-label">Kategori</label>
+            <select v-model="categoryIdFilter" class="filter-input select-input">
+              <option value="">Semua</option>
+              <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
+            </select>
+          </div>
         </div>
 
-        <!-- Membership Filter (Member only) -->
-        <div v-if="type === 'member'" class="filter-group">
-          <label class="filter-label">Membership</label>
-          <select v-model="membershipFilter" class="filter-input select-input">
-            <option value="">Semua</option>
-            <option value="premium">Premium</option>
-            <option value="regular">Regular</option>
-          </select>
-        </div>
-
-        <!-- Status Filter (Member, Pertanyaan, Payment) -->
-        <div v-if="type === 'member' || type === 'pertanyaan' || type === 'payment'" class="filter-group">
-          <label class="filter-label">Status</label>
-          <select v-model="statusFilter" class="filter-input select-input">
-            <option value="">Semua</option>
-            
-            <template v-if="type === 'member'">
-              <option value="aktif">Aktif</option>
-              <option value="nonaktif">Nonaktif</option>
-            </template>
-            
-            <template v-else-if="type === 'pertanyaan'">
-              <option value="selesai">Selesai</option>
-              <option value="direspond">Direspond</option>
-              <option value="belum_direspond">Belum direspond</option>
-            </template>
-            
-            <template v-else-if="type === 'payment'">
-              <option value="diverifikasi">Diterima</option>
-              <option value="ditolak">Ditolak</option>
-              <option value="menunggu">Menunggu</option>
-            </template>
-          </select>
-        </div>
-
-        <!-- Content Type Filter (Konten only) -->
-        <div v-if="type === 'konten'" class="filter-group">
-          <label class="filter-label">Tipe Konten</label>
-          <select v-model="contentTypeFilter" class="filter-input select-input">
-            <option value="">Semua</option>
-            <option value="video">Video</option>
-            <option value="ebook">Ebook</option>
-          </select>
-        </div>
-
-        <!-- Category Filter (Blog only) -->
-        <div v-if="type === 'blog'" class="filter-group">
-          <label class="filter-label">Kategori</label>
-          <select v-model="categoryIdFilter" class="filter-input select-input">
-            <option value="">Semua</option>
-            <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-          </select>
+        <div class="filters-right">
+          <!-- Clear Filters Button -->
+          <button v-if="hasActiveFilters" class="clear-filters-btn" @click="resetFilters">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="clear-icon"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Reset Filter
+          </button>
         </div>
       </div>
 
-      <div class="filters-right">
-        <!-- Clear Filters Button -->
-        <button v-if="hasActiveFilters" class="clear-filters-btn" @click="resetFilters">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="clear-icon"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          Reset Filter
-        </button>
-      </div>
-    </div>
+      <!-- Table Card -->
+      <div class="table-card">
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="th-num">#</th>
+                <th
+                  v-for="col in columns"
+                  :key="col.key"
+                  :class="['th', col.sortable ? 'sortable' : '']"
+                  @click="col.sortable && sort(col.key)"
+                >
+                  <div class="th-inner">
+                    {{ col.label }}
+                    <span v-if="col.sortable" class="sort-icon">
+                      <svg v-if="sortKey === col.key && sortDir === 'asc'" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+                      <svg v-else-if="sortKey === col.key && sortDir === 'desc'" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                      <svg v-else viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="2"><polyline points="18 15 12 9 6 15"/><polyline points="6 9 12 15 18 9" opacity=".4"/></svg>
+                    </span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-if="!paginated.length">
+                <td :colspan="columns.length + 1" class="empty-row">
+                  <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <span>Tidak ada data ditemukan</span>
+                  </div>
+                </td>
+              </tr>
+              <tr v-for="(row, idx) in paginated" :key="row.id" class="data-row">
+                <td class="td-num">{{ (page - 1) * perPage + idx + 1 }}</td>
+                <td v-for="col in columns" :key="col.key" class="td">
+                  <template v-if="col.badge">
+                    <span :class="['badge', badgeClass(col.key, displayVal(row, col))]">
+                      {{ displayVal(row, col) }}
+                    </span>
+                  </template>
+                  <template v-else>
+                    <span class="td-text" :title="displayVal(row, col)">{{ displayVal(row, col) }}</span>
+                  </template>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-    <!-- Table Card -->
-    <div class="table-card">
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th class="th-num">#</th>
-              <th
-                v-for="col in columns"
-                :key="col.key"
-                :class="['th', col.sortable ? 'sortable' : '']"
-                @click="col.sortable && sort(col.key)"
-              >
-                <div class="th-inner">
-                  {{ col.label }}
-                  <span v-if="col.sortable" class="sort-icon">
-                    <svg v-if="sortKey === col.key && sortDir === 'asc'" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
-                    <svg v-else-if="sortKey === col.key && sortDir === 'desc'" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-                    <svg v-else viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="2"><polyline points="18 15 12 9 6 15"/><polyline points="6 9 12 15 18 9" opacity=".4"/></svg>
-                  </span>
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="!paginated.length">
-              <td :colspan="columns.length + 1" class="empty-row">
-                <div class="empty-state">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                  <span>Tidak ada data ditemukan</span>
-                </div>
-              </td>
-            </tr>
-            <tr v-for="(row, idx) in paginated" :key="row.id" class="data-row">
-              <td class="td-num">{{ (page - 1) * perPage + idx + 1 }}</td>
-              <td v-for="col in columns" :key="col.key" class="td">
-                <template v-if="col.badge">
-                  <span :class="['badge', badgeClass(col.key, displayVal(row, col))]">
-                    {{ displayVal(row, col) }}
-                  </span>
-                </template>
-                <template v-else>
-                  <span class="td-text" :title="displayVal(row, col)">{{ displayVal(row, col) }}</span>
-                </template>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Pagination -->
-      <div v-if="totalPages > 1" class="pagination">
-        <button class="pg-btn" :disabled="page === 1" @click="page = 1">«</button>
-        <button class="pg-btn" :disabled="page === 1" @click="page--">‹</button>
-        <button
-          v-for="p in pageRange"
-          :key="p"
-          :class="['pg-btn', p === page ? 'pg-active' : '']"
-          @click="page = p"
-        >{{ p }}</button>
-        <button class="pg-btn" :disabled="page === totalPages" @click="page++">›</button>
-        <button class="pg-btn" :disabled="page === totalPages" @click="page = totalPages">»</button>
-        <span class="pg-info">Hal {{ page }} dari {{ totalPages }}</span>
+        <!-- Pagination -->
+        <div v-if="totalPages > 1" class="pagination">
+          <button class="pg-btn" :disabled="page === 1" @click="page = 1">«</button>
+          <button class="pg-btn" :disabled="page === 1" @click="page--">‹</button>
+          <button
+            v-for="p in pageRange"
+            :key="p"
+            :class="['pg-btn', p === page ? 'pg-active' : '']"
+            @click="page = p"
+          >{{ p }}</button>
+          <button class="pg-btn" :disabled="page === totalPages" @click="page++">›</button>
+          <button class="pg-btn" :disabled="page === totalPages" @click="page = totalPages">»</button>
+          <span class="pg-info">Hal {{ page }} dari {{ totalPages }}</span>
+        </div>
       </div>
     </div>
   </KetuaLayout>
@@ -338,7 +341,11 @@ function badgeClass(colKey, val) {
 /* ── Header ── */
 .page-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 20px 0; border-bottom: 1px solid #e5e7eb; margin-bottom: 24px; gap: 16px;
+  padding: 20px 32px; border-bottom: 1px solid #e5e7eb; margin-bottom: 24px; gap: 16px;
+}
+
+.content-area {
+  padding: 0 32px 40px;
 }
 .header-left { display: flex; align-items: center; gap: 12px; }
 .back-btn {

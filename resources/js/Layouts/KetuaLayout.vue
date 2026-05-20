@@ -196,7 +196,6 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
   margin-left: 200px;
   flex: 1;
   min-height: 100vh;
-  padding: 0 24px 40px;
 }
 
 /* Print */

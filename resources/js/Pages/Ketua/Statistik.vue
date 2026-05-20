@@ -12,64 +12,66 @@
       </button>
     </div>
 
-    <div class="stats-grid">
+    <div class="content-area">
+      <div class="stats-grid">
 
-      <StatCard title="Statistik Member"
-        :series="stats.member.series"
-        :stats="stats.member.stats"
-        :labels1M="labels1M" :labels1Y="monthNames" :labelsMax="maxYears"
-        :year="navYear" :month="navMonth"
-        :today="today" :thisMonth="thisMonth" :thisYear="thisYear"
-        defaultPeriod="1Y"
-        :detailUrl="route('ketua.statistik.detail', { type: 'member' })"
-        @prev="navigate('prev', $event)" @next="navigate('next', $event)"
-      />
+        <StatCard title="Statistik Member"
+          :series="stats.member.series"
+          :stats="stats.member.stats"
+          :labels1M="labels1M" :labels1Y="monthNames" :labelsMax="maxYears"
+          :year="navYear" :month="navMonth"
+          :today="today" :thisMonth="thisMonth" :thisYear="thisYear"
+          defaultPeriod="1Y"
+          :detailUrl="route('ketua.statistik.detail', { type: 'member' })"
+          @prev="navigate('prev', $event)" @next="navigate('next', $event)"
+        />
 
-      <StatCard title="Statistik Konten"
-        :series="stats.konten.series"
-        :stats="stats.konten.stats"
-        :labels1M="labels1M" :labels1Y="monthNames" :labelsMax="maxYears"
-        :year="navYear" :month="navMonth"
-        :today="today" :thisMonth="thisMonth" :thisYear="thisYear"
-        defaultPeriod="1Y"
-        :detailUrl="route('ketua.statistik.detail', { type: 'konten' })"
-        @prev="navigate('prev', $event)" @next="navigate('next', $event)"
-      />
+        <StatCard title="Statistik Konten"
+          :series="stats.konten.series"
+          :stats="stats.konten.stats"
+          :labels1M="labels1M" :labels1Y="monthNames" :labelsMax="maxYears"
+          :year="navYear" :month="navMonth"
+          :today="today" :thisMonth="thisMonth" :thisYear="thisYear"
+          defaultPeriod="1Y"
+          :detailUrl="route('ketua.statistik.detail', { type: 'konten' })"
+          @prev="navigate('prev', $event)" @next="navigate('next', $event)"
+        />
 
-      <StatCard title="Statistik Blog"
-        :series="stats.blog.series"
-        :stats="stats.blog.stats"
-        :labels1M="labels1M" :labels1Y="monthNames" :labelsMax="maxYears"
-        :year="navYear" :month="navMonth"
-        :today="today" :thisMonth="thisMonth" :thisYear="thisYear"
-        defaultPeriod="1Y"
-        :detailUrl="route('ketua.statistik.detail', { type: 'blog' })"
-        @prev="navigate('prev', $event)" @next="navigate('next', $event)"
-      />
+        <StatCard title="Statistik Blog"
+          :series="stats.blog.series"
+          :stats="stats.blog.stats"
+          :labels1M="labels1M" :labels1Y="monthNames" :labelsMax="maxYears"
+          :year="navYear" :month="navMonth"
+          :today="today" :thisMonth="thisMonth" :thisYear="thisYear"
+          defaultPeriod="1Y"
+          :detailUrl="route('ketua.statistik.detail', { type: 'blog' })"
+          @prev="navigate('prev', $event)" @next="navigate('next', $event)"
+        />
 
-      <StatCard title="Statistik Pertanyaan"
-        :series="stats.pertanyaan.series"
-        :stats="stats.pertanyaan.stats"
-        :labels1M="labels1M" :labels1Y="monthNames" :labelsMax="maxYears"
-        :year="navYear" :month="navMonth"
-        :today="today" :thisMonth="thisMonth" :thisYear="thisYear"
-        defaultPeriod="1Y"
-        :detailUrl="route('ketua.statistik.detail', { type: 'pertanyaan' })"
-        @prev="navigate('prev', $event)" @next="navigate('next', $event)"
-      />
+        <StatCard title="Statistik Pertanyaan"
+          :series="stats.pertanyaan.series"
+          :stats="stats.pertanyaan.stats"
+          :labels1M="labels1M" :labels1Y="monthNames" :labelsMax="maxYears"
+          :year="navYear" :month="navMonth"
+          :today="today" :thisMonth="thisMonth" :thisYear="thisYear"
+          defaultPeriod="1Y"
+          :detailUrl="route('ketua.statistik.detail', { type: 'pertanyaan' })"
+          @prev="navigate('prev', $event)" @next="navigate('next', $event)"
+        />
 
-      <StatCard title="Statistik Pendapatan"
-        :series="stats.payment.series"
-        :stats="stats.payment.stats"
-        :labels1M="labels1M" :labels1Y="monthNames" :labelsMax="maxYears"
-        :year="navYear" :month="navMonth"
-        :today="today" :thisMonth="thisMonth" :thisYear="thisYear"
-        unit="jt" defaultPeriod="1M"
-        class="pendapatan-card"
-        :detailUrl="route('ketua.statistik.detail', { type: 'payment' })"
-        @prev="navigate('prev', $event)" @next="navigate('next', $event)"
-      />
+        <StatCard title="Statistik Pendapatan"
+          :series="stats.payment.series"
+          :stats="stats.payment.stats"
+          :labels1M="labels1M" :labels1Y="monthNames" :labelsMax="maxYears"
+          :year="navYear" :month="navMonth"
+          :today="today" :thisMonth="thisMonth" :thisYear="thisYear"
+          unit="jt" defaultPeriod="1M"
+          class="pendapatan-card"
+          :detailUrl="route('ketua.statistik.detail', { type: 'payment' })"
+          @prev="navigate('prev', $event)" @next="navigate('next', $event)"
+        />
 
+      </div>
     </div>
   </KetuaLayout>
 </template>
@@ -125,7 +127,7 @@ function handleCetak() { window.print(); }
 <style scoped>
 .page-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 20px 0; border-bottom: 1px solid #e5e7eb; margin-bottom: 24px;
+  padding: 20px 32px; border-bottom: 1px solid #e5e7eb; margin-bottom: 24px;
 }
 .page-title { font-size: 18px; font-weight: 700; color: #111; margin: 0; }
 .btn-cetak {
@@ -151,6 +153,10 @@ function handleCetak() { window.print(); }
 }
 .btn-cetak:hover { filter: brightness(0.9); }
 .btn-cetak svg { width: 16px; height: 16px; }
+
+.content-area {
+  padding: 0 32px 40px;
+}
 
 .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .pendapatan-card { grid-column: 2 / 3; }
