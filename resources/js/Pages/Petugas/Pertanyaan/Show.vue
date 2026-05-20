@@ -11,16 +11,6 @@
         </Link>
         <h1 class="page-title">Pertanyaan #{{ conversation.ticket_number }}</h1>
       </div>
-      <button 
-        v-if="!conversation.is_closed" 
-        @click="closeConversation" 
-        class="btn-close-ticket"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right: 6px;">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-        Selesaikan Pertanyaan
-      </button>
     </div>
     <div class="divider" />
 
@@ -113,12 +103,6 @@ function formatTimeOnly(dateStr) {
   return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
 }
 
-function closeConversation() {
-  router.post(route('petugas.pertanyaan.close', props.conversation.id), {}, {
-    preserveScroll: true
-  });
-}
-
 onMounted(scrollToBottom);
 </script>
 
@@ -131,28 +115,6 @@ onMounted(scrollToBottom);
   background: #fff;
 }
 
-.btn-close-ticket {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-family: inherit;
-  line-height: 1;
-  height: 38px;
-  font-weight: 500;
-  cursor: pointer;
-  text-decoration: none;
-  transition: filter 0.2s;
-  border: 1px solid transparent;
-  box-sizing: border-box;
-  background: #10b981;
-  color: #fff;
-  border-color: #10b981;
-}
-.btn-close-ticket:hover { filter: brightness(0.9); }
 .page-header { display: flex; align-items: center; gap: 12px; }
 
 .back-btn {

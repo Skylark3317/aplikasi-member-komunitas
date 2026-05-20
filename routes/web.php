@@ -84,7 +84,6 @@ Route::middleware(['auth', 'verified', 'role:staff'])
         Route::get('/pertanyaan', [\App\Http\Controllers\Petugas\PertanyaanController::class, 'index'])->name('pertanyaan.index');
         Route::get('/pertanyaan/{conversation}', [\App\Http\Controllers\Petugas\PertanyaanController::class, 'show'])->name('pertanyaan.show');
         Route::post('/pertanyaan/{conversation}/balas', [\App\Http\Controllers\Petugas\PertanyaanController::class, 'reply'])->name('pertanyaan.reply');
-        Route::post('/pertanyaan/{conversation}/selesai', [\App\Http\Controllers\Petugas\PertanyaanController::class, 'close'])->name('pertanyaan.close');
 
         // Profil
         Route::get('/profil', [\App\Http\Controllers\Petugas\ProfilController::class, 'show'])->name('profil');

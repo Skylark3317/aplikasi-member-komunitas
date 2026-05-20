@@ -57,20 +57,4 @@ class PertanyaanController extends Controller
 
         return back()->with('success', 'Balasan dikirim.');
     }
-
-    /**
-     * Menyelesaikan pertanyaan di database SQL
-     */
-    public function close(Conversation $conversation)
-    {
-        if ($conversation->is_closed) {
-            return back()->with('error', 'Pertanyaan sudah diselesaikan sebelumnya.');
-        }
-
-        $conversation->update([
-            'is_closed' => true
-        ]);
-
-        return back()->with('success', 'Pertanyaan selesai. Tiket telah ditutup!');
-    }
 }

@@ -218,20 +218,23 @@ function markAsResolved() {
 .btn-tandai-selesai {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  background: #007bff;
+  background: var(--primary-color, #10b981);
   color: #fff;
-  border: none;
+  border: 1px solid transparent;
   padding: 8px 16px;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: filter 0.2s ease;
+  height: 38px;
+  box-sizing: border-box;
 }
 
 .btn-tandai-selesai:hover {
-  background: #0056b3;
+  filter: brightness(0.9);
 }
 
 .check-icon {
@@ -434,21 +437,24 @@ function markAsResolved() {
 .btn-send-chat {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  background: #007bff;
+  background: var(--primary-color, #10b981);
   color: #fff;
-  border: none;
+  border: 1px solid transparent;
   padding: 8px 16px;
   border-radius: 12px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: filter 0.2s ease;
   flex-shrink: 0;
+  height: 38px;
+  box-sizing: border-box;
 }
 
 .btn-send-chat:hover:not(:disabled) {
-  background: #0056b3;
+  filter: brightness(0.9);
 }
 
 .btn-send-chat:disabled {

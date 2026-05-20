@@ -48,8 +48,10 @@
         
         <div v-else :class="['content-grid', activeTab === 'video' ? 'video-grid' : 'ebook-grid']">
           <div v-for="item in paginatedContents" :key="item.id" class="content-card" @click="openViewer(item)">
-            <!-- Thumbnail (Fully plain empty solid grey exactly like mockups!) -->
+            <!-- Thumbnail -->
             <div :class="['card-thumbnail', activeTab === 'video' ? 'video-thumb' : 'ebook-thumb']">
+              <img v-if="item.thumbnail_url" :src="`/storage/${item.thumbnail_url}`" alt="Thumbnail" />
+              <div v-else class="placeholder-thumb"></div>
             </div>
             
             <!-- Info -->
@@ -65,18 +67,19 @@
         <!-- Pagination -->
         <div class="pagination" v-if="totalPages > 1">
           <button 
-            class="page-link"
+            class="page-nav-btn"
             :disabled="currentPage === 1"
             @click="currentPage--"
           >
-            &lt; Sebelumnya
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            Sebelumnya
           </button>
           
           <div class="page-numbers">
             <button 
               v-for="page in totalPages" 
               :key="page"
-              :class="['page-num', currentPage === page ? 'active' : '']"
+              :class="['page-num-btn', currentPage === page ? 'active' : '']"
               @click="currentPage = page"
             >
               {{ page }}
@@ -84,11 +87,12 @@
           </div>
 
           <button 
-            class="page-link"
+            class="page-nav-btn"
             :disabled="currentPage === totalPages"
             @click="currentPage++"
           >
-            Berikutnya &gt;
+            Berikutnya
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
           </button>
         </div>
       </div>
@@ -220,24 +224,23 @@ function formatDate(dateStr) {
 /* ── Premium Interface (Image 2 & 3) ── */
 .tabs-container {
   display: flex;
-  gap: 10px;
-  margin-bottom: 32px;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .tab-btn {
-  padding: 8px 20px;
+  padding: 6px 16px;
   border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   border: none;
-  background: #e3f2fd;
-  color: #007bff;
-  transition: all 0.15s ease;
+  background: #eff6ff;
+  color: var(--primary-color, #007bff);
 }
 
 .tab-btn.active {
-  background: #007bff;
+  background: var(--primary-color, #007bff);
   color: #fff;
 }
 
@@ -286,20 +289,28 @@ function formatDate(dateStr) {
 .card-thumbnail {
   width: 100%;
   border-radius: 8px;
-  background: #f2f2f2;
-  transition: opacity 0.15s ease;
-}
-
-.content-card:hover .card-thumbnail {
-  opacity: 0.9;
+  overflow: hidden;
+  margin-bottom: 12px;
 }
 
 .video-thumb {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 10;
 }
 
 .ebook-thumb {
   aspect-ratio: 3 / 4;
+}
+
+.placeholder-thumb {
+  width: 100%;
+  height: 100%;
+  background: #f3f4f6;
+}
+
+.card-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .card-info {
@@ -327,68 +338,77 @@ function formatDate(dateStr) {
   color: #888;
 }
 
-/* ── Pagination (Image 2 & 3) ── */
+/* ── Pagination ── */
 .pagination {
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 16px;
-  margin-top: 24px;
-}
-
-.page-link {
-  background: none;
-  border: none;
-  font-size: 12px;
-  font-weight: 500;
-  color: #007bff;
-  cursor: pointer;
-  padding: 6px 12px;
-  display: flex;
   align-items: center;
-  transition: color 0.15s;
-}
-
-.page-link:hover:not(:disabled) {
-  color: #0056b3;
-}
-
-.page-link:disabled {
-  color: #9ca3af;
-  cursor: not-allowed;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 40px;
+  width: 100%;
 }
 
 .page-numbers {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
-.page-num {
-  background: none;
+.page-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
   border: none;
-  width: 36px;
-  height: 36px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--primary-color, #007bff);
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.page-nav-btn:hover:not(:disabled) {
+  background: #eff6ff;
+}
+
+.page-nav-btn:disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.page-num-btn {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: #555;
+  color: #4b5563;
   cursor: pointer;
-  border-radius: 8px;
-  transition: all 0.15s;
+  transition: all 0.2s ease;
 }
 
-.page-num:hover:not(.active) {
+.page-num-btn:hover:not(.active) {
   background: #f3f4f6;
   color: #111;
 }
 
-.page-num.active {
-  background: #007bff;
+.page-num-btn.active {
+  background: var(--primary-color, #007bff);
   color: #fff;
   font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.page-num-btn.active:hover {
+  filter: brightness(1.1);
 }
 
 /* ── Media Viewer Modal ── */
@@ -495,7 +515,7 @@ function formatDate(dateStr) {
 .ebook-large-icon {
   width: 40px;
   height: 40px;
-  color: #007bff;
+  color: var(--primary-color, #007bff);
 }
 
 .ebook-container p {
@@ -508,7 +528,7 @@ function formatDate(dateStr) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #007bff;
+  background: var(--primary-color, #007bff);
   color: #fff;
   padding: 10px 24px;
   border-radius: 6px;

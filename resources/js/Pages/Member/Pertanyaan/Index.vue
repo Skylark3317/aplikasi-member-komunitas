@@ -174,20 +174,20 @@ function formatDate(dateStr) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #007bff;
+  background: var(--primary-color, #10b981);
   color: #fff;
-  border: none;
+  border: 1px solid transparent;
   padding: 8px 16px;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.15s ease;
+  transition: filter 0.2s ease;
 }
 
 .btn-buat-pertanyaan:hover {
-  background: #0056b3;
+  filter: brightness(0.9);
 }
 
 .divider { 
@@ -344,7 +344,7 @@ function formatDate(dateStr) {
 }
 
 .active-arrow {
-  color: #007bff;
+  color: var(--primary-color, #10b981);
 }
 
 .page-numbers {
@@ -370,7 +370,7 @@ function formatDate(dateStr) {
 }
 
 .active-page {
-  background: #007bff;
+  background: var(--primary-color, #10b981);
   color: #fff !important;
 }
 
@@ -402,7 +402,7 @@ function formatDate(dateStr) {
 .empty-icon {
   width: 30px;
   height: 30px;
-  color: #007bff;
+  color: var(--primary-color, #10b981);
 }
 
 .empty-state-card h3 {
