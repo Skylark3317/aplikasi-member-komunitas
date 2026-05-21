@@ -42,7 +42,7 @@ class RegisteredUserController extends Controller
 
         \App\Models\MemberProfile::create([
             'member_id'   => $user->id,
-            'expire_date' => now()->addYear(),
+            'expire_date' => now(),
             'institution' => $request->institution,
             'department'  => $request->department,
             'address'     => $request->address ?? '-',
