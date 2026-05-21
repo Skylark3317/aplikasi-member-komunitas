@@ -67,7 +67,10 @@
         </div>
         
         <div class="user-info-text">
-          <span class="user-name">{{ $page.props.auth.user.name }}</span>
+          <span class="user-name">
+            {{ $page.props.auth.user.name }}
+            <i v-if="$page.props.auth.user.profile_completion_percent === 100" class="bi bi-patch-check-fill" style="color: #0d6efd; margin-left: 4px; font-size: 14px;" title="Profil Lengkap"></i>
+          </span>
           <span :class="['user-role', $page.props.auth.user.is_premium ? 'role-premium' : 'role-biasa']">
             {{ $page.props.auth.user.is_premium ? 'Member Premium' : 'Member' }}
           </span>

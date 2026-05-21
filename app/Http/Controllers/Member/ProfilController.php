@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Member;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 
@@ -54,7 +55,7 @@ class ProfilController extends Controller
     public function edit(Request $request)
     {
         $user = $request->user()->load('memberProfile');
-        
+
         $profileData = [
             'id'             => $user->id,
             'name'           => $user->name,
@@ -75,7 +76,8 @@ class ProfilController extends Controller
 
     public function update(Request $request)
     {
-        $user = $request->user();
+        // Load memberProfile relation upfront so the if-check below is reliable
+        $user = $request->user()->load('memberProfile');
 
         $rules = [
             'name'        => ['required', 'string', 'max:255'],
@@ -93,51 +95,49 @@ class ProfilController extends Controller
 
         $validated = $request->validate($rules);
 
-        $user->name = $validated['name'];
-        $user->telephone = $validated['telephone'] ?? $user->telephone;
+        // Save user fields — allow telephone to be cleared (defaults to '-' in DB to satisfy NOT NULL)
+        $user->name      = $validated['name'];
+        $user->telephone = $validated['telephone'] ?: '-';
 
-        if (isset($validated['password'])) {
+        if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
         }
 
         $user->save();
 
-        // Update member profile fields
+        // Update or create member profile
+        $profileFields = [
+            'institution' => $validated['institution'] ?? null,
+            'department'  => $validated['department'] ?? null,
+            'address'     => $validated['address'] ?: '-',
+        ];
+
         if ($user->memberProfile) {
-            $user->memberProfile->update([
-                'institution' => $validated['institution'],
-                'department'  => $validated['department'],
-                'address'     => $validated['address'] ?: '',
-            ]);
+            $user->memberProfile->update($profileFields);
         } else {
-            $user->memberProfile()->create([
-                'institution' => $validated['institution'] ?: '',
-                'department'  => $validated['department'] ?: '',
-                'address'     => $validated['address'] ?: '',
+            $user->memberProfile()->create(array_merge($profileFields, [
                 'status'      => 'nonactive',
                 'expire_date' => now(),
-            ]);
+            ]));
         }
 
         // Handle avatar upload
         if ($request->hasFile('avatar')) {
             $avatar = $request->file('avatar');
-            $ext = $avatar->getClientOriginalExtension();
-            
-            // Delete old avatars first
-            $extensions = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
-            foreach ($extensions as $e) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete('avatars/user_' . $user->id . '.' . $e);
+            $ext    = $avatar->getClientOriginalExtension();
+
+            // Delete all old avatar variants first
+            foreach (['png', 'jpg', 'jpeg', 'gif', 'webp'] as $e) {
+                Storage::disk('public')->delete('avatars/user_' . $user->id . '.' . $e);
             }
-            
+
             $avatar->storeAs('avatars', 'user_' . $user->id . '.' . $ext, 'public');
         }
 
         // Handle avatar delete
         if ($request->boolean('delete_avatar')) {
-            $extensions = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
-            foreach ($extensions as $e) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete('avatars/user_' . $user->id . '.' . $e);
+            foreach (['png', 'jpg', 'jpeg', 'gif', 'webp'] as $e) {
+                Storage::disk('public')->delete('avatars/user_' . $user->id . '.' . $e);
             }
         }
 

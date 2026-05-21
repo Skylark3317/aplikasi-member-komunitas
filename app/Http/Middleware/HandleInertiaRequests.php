@@ -48,6 +48,7 @@ class HandleInertiaRequests extends Middleware
                     'is_premium'        => $request->user()->isPremium(),
                     'membership_status' => $request->user()->membershipStatus(),
                     'avatar_url'        => $request->user()->avatar_url,
+                    'profile_completion_percent' => $request->user()->profileCompletionPercent(),
                 ] : null,
             ],
             'settings' => $settings,

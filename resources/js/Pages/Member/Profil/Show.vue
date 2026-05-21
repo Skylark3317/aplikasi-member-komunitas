@@ -28,7 +28,10 @@
           </div>
           
           <div class="basic-details">
-            <h2 class="user-fullname">{{ user.name }}</h2>
+            <h2 class="user-fullname">
+              {{ user.name }}
+              <i v-if="profileCompletion.percent === 100" class="bi bi-patch-check-fill" style="color: #0d6efd; font-size: 20px; margin-left: 6px; vertical-align: middle;" title="Profil Lengkap"></i>
+            </h2>
             <div class="meta-info-list">
               <div class="meta-item">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="meta-icon">
@@ -116,6 +119,53 @@
                 {{ user.is_premium && user.member_profile?.days_remaining ? Math.round(user.member_profile.days_remaining) + ' hari lagi' : '-' }}
               </span>
               <span class="stat-label">Sisa Masa Aktif Membership</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Completion Bar -->
+        <div class="completion-section">
+          <div class="completion-header">
+            <div class="completion-title-row">
+              <span class="completion-label">Kelengkapan Profil</span>
+              <span :class="['completion-percent-badge', profileCompletion.percent === 100 ? 'badge-complete' : 'badge-incomplete']">
+                {{ profileCompletion.percent }}%
+              </span>
+            </div>
+            <p class="completion-hint" v-if="profileCompletion.percent < 100">
+              Lengkapi profilmu untuk mendapatkan centang biru ✓ di samping namamu!
+            </p>
+            <p class="completion-hint complete-hint" v-else>
+              🎉 Profil kamu sudah lengkap! Kamu mendapatkan centang biru verified.
+            </p>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="progress-bar-track">
+            <div
+              class="progress-bar-fill"
+              :style="{ width: profileCompletion.percent + '%' }"
+              :class="profileCompletion.percent === 100 ? 'bar-complete' : 'bar-progress'"
+            ></div>
+          </div>
+
+          <!-- Field Checklist -->
+          <div class="completion-checklist">
+            <div
+              v-for="field in profileCompletion.fields"
+              :key="field.key"
+              :class="['checklist-item', field.filled ? 'item-filled' : 'item-empty']"
+            >
+              <span class="check-icon-wrap">
+                <svg v-if="field.filled" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="chk-icon">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="chk-icon">
+                  <circle cx="12" cy="12" r="10"/>
+                </svg>
+              </span>
+              <span class="check-field-name">{{ field.label }}</span>
+              <Link v-if="!field.filled" :href="route('member.profil.edit')" class="check-fill-link">Isi sekarang →</Link>
             </div>
           </div>
         </div>
@@ -223,8 +273,13 @@
 
         <div class="modal-body">
           <!-- The visual card -->
-          <div id="member-card-render" class="member-card-box">
-            <div class="card-brand">AMK</div>
+          <div 
+            id="member-card-render" 
+            class="member-card-box"
+            :class="{ 'has-bg': settings.card_background }"
+            :style="settings.card_background ? { backgroundImage: `url(/storage/${settings.card_background})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}"
+          >
+            <div class="card-brand"></div>
             
             <div class="card-body-row">
               <div class="card-avatar-wrapper">
@@ -243,10 +298,11 @@
             <div class="card-footer-row">
               <span class="card-validity">Berlaku hingga: {{ formatShortDate(user.member_profile?.expire_date) }}</span>
               <div class="card-qr-box">
-                <!-- QR Code placeholder representation matching mockup -->
-                <div class="qr-placeholder">
-                  <div class="qr-block"></div>
-                </div>
+                <img 
+                  :src="`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(user.member_profile?.member_number || user.email)}`" 
+                  alt="QR Code" 
+                  class="qr-code-img"
+                />
               </div>
             </div>
           </div>
@@ -267,15 +323,52 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import MemberLayout from '@/Layouts/MemberLayout.vue';
 
 const props = defineProps({
   user: Object,
 });
 
+const page = usePage();
+const settings = computed(() => page.props.settings || {});
+
 const showCardModal = ref(false);
+
+// Profile Completion Logic
+const profileCompletion = computed(() => {
+  const fields = [
+    {
+      key: 'avatar',
+      label: 'Foto Profil',
+      filled: !!props.user.avatar_url,
+    },
+    {
+      key: 'institution',
+      label: 'Institusi',
+      filled: !!props.user.member_profile?.institution && props.user.member_profile.institution !== '-',
+    },
+    {
+      key: 'department',
+      label: 'Departemen',
+      filled: !!props.user.member_profile?.department && props.user.member_profile.department !== '-',
+    },
+    {
+      key: 'telephone',
+      label: 'Nomor Telepon',
+      filled: !!props.user.telephone && props.user.telephone !== '-',
+    },
+    {
+      key: 'address',
+      label: 'Alamat',
+      filled: !!props.user.member_profile?.address && props.user.member_profile.address !== '-',
+    },
+  ];
+  const filled = fields.filter(f => f.filled).length;
+  const percent = Math.round((filled / fields.length) * 100);
+  return { fields, percent, filled, total: fields.length };
+});
 
 function openCardModal() {
   if (props.user.is_premium) {
@@ -368,80 +461,161 @@ function downloadCardAsImage() {
   const cardElement = document.getElementById('member-card-render');
   if (!cardElement) return;
 
-  // Real canvas draw representation to cleanly download the card as an image!
   const canvas = document.createElement('canvas');
   canvas.width = 800;
   canvas.height = 500;
   const ctx = canvas.getContext('2d');
 
-  // Background
-  const gradient = ctx.createLinearGradient(0, 0, 800, 500);
-  gradient.addColorStop(0, '#ebf5ff');
-  gradient.addColorStop(1, '#f3f4f6');
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, 800, 500);
+  // Helper to draw image like background-size: cover
+  const drawImageCover = (img, x, y, w, h) => {
+    const imgRatio = img.width / img.height;
+    const canvasRatio = w / h;
+    let sx, sy, sw, sh;
 
-  // Blue Card Base Box
-  ctx.fillStyle = '#ebf5ff';
-  ctx.beginPath();
-  ctx.roundRect(40, 40, 720, 420, 20);
-  ctx.fill();
-  ctx.lineWidth = 1.5;
-  ctx.strokeStyle = '#bfdbfe';
-  ctx.stroke();
+    if (imgRatio > canvasRatio) {
+      sh = img.height;
+      sw = sh * canvasRatio;
+      sx = (img.width - sw) / 2;
+      sy = 0;
+    } else {
+      sw = img.width;
+      sh = sw / canvasRatio;
+      sx = 0;
+      sy = (img.height - sh) / 2;
+    }
+    ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+  };
 
-  // Branding Text
-  ctx.fillStyle = '#111827';
-  ctx.font = 'bold 36px sans-serif';
-  ctx.fillText('AMK', 80, 110);
+  const drawCard = (bgImg = null) => {
+    ctx.clearRect(0, 0, 800, 500);
 
-  // Draw Avatar Placeholder Circle
-  ctx.fillStyle = '#d1d5db';
-  ctx.beginPath();
-  ctx.arc(170, 250, 80, 0, Math.PI * 2);
-  ctx.fill();
+    // Clip to rounded corner path of the card (24px corner radius matches the double density size)
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(0, 0, 800, 500, 24);
+    ctx.clip();
 
-  // Avatar Initials
-  ctx.fillStyle = '#111827';
-  ctx.font = 'bold 64px sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(props.user.name.charAt(0).toUpperCase(), 170, 250);
+    if (bgImg) {
+      // Draw background image using cover fit to match preview card aspect ratio perfectly
+      drawImageCover(bgImg, 0, 0, 800, 500);
+    } else {
+      // Fallback background
+      const gradient = ctx.createLinearGradient(0, 0, 800, 500);
+      gradient.addColorStop(0, '#ebf5ff');
+      gradient.addColorStop(1, '#f3f4f6');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 800, 500);
+    }
 
-  // User Name and ID Details
-  ctx.textAlign = 'left';
-  ctx.fillStyle = '#111827';
-  ctx.font = 'bold 42px sans-serif';
-  ctx.fillText(props.user.name, 290, 230);
-  
-  ctx.fillStyle = '#4b5563';
-  ctx.font = '30px sans-serif';
-  ctx.fillText(props.user.member_profile?.member_number || '-', 290, 280);
+    // Border matching the preview card rounded corners
+    ctx.strokeStyle = '#bfdbfe';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.roundRect(2, 2, 796, 496, 24);
+    ctx.stroke();
 
-  // Footer validity
-  ctx.fillStyle = '#6b7280';
-  ctx.font = '24px sans-serif';
-  ctx.fillText('Berlaku hingga: ' + formatShortDate(props.user.member_profile?.expire_date), 80, 410);
+    // Dynamic text colors to match preview behavior
+    const textColor = bgImg ? '#ffffff' : '#111827';
+    const subColor = bgImg ? '#ffffff' : '#4b5563';
+    const muteColor = bgImg ? '#ffffff' : '#6b7280';
 
-  // QR Code Draw Simulation
-  ctx.fillStyle = '#111827';
-  ctx.fillRect(600, 310, 100, 100);
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(610, 320, 80, 80);
-  ctx.fillStyle = '#111827';
-  ctx.fillRect(620, 330, 20, 20);
-  ctx.fillRect(650, 330, 20, 20);
-  ctx.fillRect(620, 360, 20, 20);
-  ctx.fillRect(650, 360, 20, 20);
+    const drawDetailsAndQR = () => {
+      // User Name and ID Details (x = 240px starts right after avatar + gap)
+      ctx.textAlign = 'left';
+      ctx.fillStyle = textColor;
+      ctx.font = 'bold 36px sans-serif';
+      ctx.fillText(props.user.name, 240, 235);
+      
+      ctx.fillStyle = subColor;
+      ctx.font = '600 24px sans-serif';
+      ctx.fillText(props.user.member_profile?.member_number || '-', 240, 280);
 
-  // Create link and download
-  const url = canvas.toDataURL('image/png');
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `Kartu_Member_${props.user.name.replace(/\s+/g, '_')}.png`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+      // Footer validity (x = 50px left margin)
+      ctx.fillStyle = muteColor;
+      ctx.font = '500 20px sans-serif';
+      ctx.fillText('Berlaku hingga: ' + formatShortDate(props.user.member_profile?.expire_date), 50, 440);
+
+      // Draw QR Code Image fetched from API (Placed at bottom-right corner)
+      const qrImg = new Image();
+      qrImg.crossOrigin = 'anonymous';
+      qrImg.onload = () => {
+        // Draw white card background for QR
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.roundRect(640, 340, 110, 110, 8);
+        ctx.fill();
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.drawImage(qrImg, 648, 348, 94, 94);
+
+        // Restore context to undo the clipping path
+        ctx.restore();
+
+        // Create link and download
+        const url = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Kartu_Member_${props.user.name.replace(/\s+/g, '_')}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      };
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(props.user.member_profile?.member_number || props.user.email)}`;
+    };
+
+    if (props.user.avatar_url) {
+      const avatarImg = new Image();
+      avatarImg.crossOrigin = 'anonymous';
+      avatarImg.onload = () => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(130, 250, 80, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.drawImage(avatarImg, 50, 170, 160, 160);
+        ctx.restore();
+        
+        // Border for avatar
+        ctx.strokeStyle = '#bfdbfe';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.arc(130, 250, 80, 0, Math.PI * 2);
+        ctx.stroke();
+
+        drawDetailsAndQR();
+      };
+      avatarImg.src = props.user.avatar_url;
+    } else {
+      // Draw Avatar Placeholder Circle
+      ctx.fillStyle = '#d1d5db';
+      ctx.beginPath();
+      ctx.arc(130, 250, 80, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Avatar Initials
+      ctx.fillStyle = '#4b5563';
+      ctx.font = 'bold 54px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(props.user.name.charAt(0).toUpperCase(), 130, 250);
+      ctx.textBaseline = 'alphabetic'; // Reset
+
+      drawDetailsAndQR();
+    }
+  };
+
+  const bgPath = settings.value.card_background;
+  if (bgPath) {
+    const bgImg = new Image();
+    bgImg.crossOrigin = 'anonymous';
+    bgImg.onload = () => {
+      drawCard(bgImg);
+    };
+    bgImg.src = `/storage/${bgPath}`;
+  } else {
+    drawCard();
+  }
 }
 </script>
 
@@ -564,6 +738,28 @@ function downloadCardAsImage() {
   font-weight: 700;
   color: #111827;
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Verified Badge */
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.verified-icon {
+  width: 24px;
+  height: 24px;
+  filter: drop-shadow(0 0 4px rgba(29, 155, 240, 0.4));
+}
+
+@keyframes popIn {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .meta-info-list {
@@ -827,6 +1023,7 @@ function downloadCardAsImage() {
 /* Member Card Box */
 .member-card-box {
   width: 100%;
+  aspect-ratio: 8 / 5;
   background: #ebf5ff;
   border: 1px solid #bfdbfe;
   border-radius: 12px;
@@ -834,9 +1031,27 @@ function downloadCardAsImage() {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  justify-content: space-between;
   position: relative;
   overflow: hidden;
+  /* Clip bleed-through background images / pseudo-elements */
+  transform: translateZ(0);
+  isolation: isolate;
+}
+
+.member-card-box.has-bg::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 1;
+  border-radius: 12px;
+}
+
+.card-brand,
+.card-body-row,
+.card-footer-row {
+  position: relative;
+  z-index: 2;
 }
 
 .card-brand {
@@ -888,12 +1103,18 @@ function downloadCardAsImage() {
   color: #111827;
   margin: 0;
 }
+.member-card-box.has-bg .card-user-name {
+  color: #ffffff;
+}
 
 .card-user-id {
   font-size: 13px;
   font-weight: 600;
   color: #4b5563;
   margin: 0;
+}
+.member-card-box.has-bg .card-user-id {
+  color: #ffffff;
 }
 
 .card-footer-row {
@@ -908,6 +1129,9 @@ function downloadCardAsImage() {
   color: #6b7280;
   font-weight: 500;
 }
+.member-card-box.has-bg .card-validity {
+  color: #ffffff;
+}
 
 .card-qr-box {
   width: 44px;
@@ -921,22 +1145,10 @@ function downloadCardAsImage() {
   justify-content: center;
 }
 
-.qr-placeholder {
+.qr-code-img {
   width: 100%;
   height: 100%;
-  background: #111827;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2px;
-  box-sizing: border-box;
-}
-
-.qr-block {
-  width: 100%;
-  height: 100%;
-  background: #fff;
-  border: 4px solid #111827;
+  object-fit: contain;
 }
 
 .btn-download-card {
@@ -963,5 +1175,154 @@ function downloadCardAsImage() {
 .download-icon {
   width: 14px;
   height: 14px;
+}
+
+/* ===== Profile Completion Section ===== */
+.completion-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 8px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.completion-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.completion-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.completion-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.completion-percent-badge {
+  font-size: 13px;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.2px;
+}
+
+.badge-complete {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.badge-incomplete {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.completion-hint {
+  font-size: 12.5px;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 500;
+}
+
+.complete-hint {
+  color: #065f46;
+  font-weight: 600;
+}
+
+/* Progress Bar */
+.progress-bar-track {
+  width: 100%;
+  height: 8px;
+  background: #f3f4f6;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bar-progress {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+
+.bar-complete {
+  background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+/* Checklist */
+.completion-checklist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: 1px solid;
+  transition: all 0.2s ease;
+}
+
+.item-filled {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #15803d;
+}
+
+.item-empty {
+  background: #fafafa;
+  border-color: #e5e7eb;
+  color: #6b7280;
+}
+
+.check-icon-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.chk-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.item-filled .chk-icon {
+  color: #16a34a;
+}
+
+.item-empty .chk-icon {
+  color: #d1d5db;
+}
+
+.check-field-name {
+  white-space: nowrap;
+}
+
+.check-fill-link {
+  font-size: 11.5px;
+  color: #2563eb;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  margin-left: 4px;
+  transition: color 0.15s;
+}
+
+.check-fill-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
 }
 </style>

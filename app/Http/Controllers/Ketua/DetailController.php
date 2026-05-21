@@ -80,6 +80,8 @@ class DetailController extends Controller
                 'alamat'     => $u->memberProfile?->address ?? '-',
                 'premium'    => in_array($u->id, $premiumIds) ? 'Premium' : 'Regular',
                 'aktif'      => $u->is_active ? 'Aktif' : 'Nonaktif',
+                'kelengkapan'=> $u->profileCompletionPercent() . '%',
+                '_sort_kelengkapan' => $u->profileCompletionPercent(),
                 'bergabung'  => $u->created_at->format('d M Y'),
                 '_sort_bergabung' => $u->created_at->timestamp,
             ])->values()->all();
@@ -91,6 +93,7 @@ class DetailController extends Controller
             ['key' => 'institusi',  'label' => 'Institusi',  'sortable' => true],
             ['key' => 'departemen', 'label' => 'Departemen', 'sortable' => true],
             ['key' => 'alamat',     'label' => 'Alamat',     'sortable' => true],
+            ['key' => '_sort_kelengkapan', 'label' => 'Kelengkapan', 'sortable' => true, 'display' => 'kelengkapan', 'badge' => true],
             ['key' => 'premium',    'label' => 'Membership', 'sortable' => true, 'badge' => true],
             ['key' => 'aktif',      'label' => 'Status',      'sortable' => true, 'badge' => true],
             ['key' => '_sort_bergabung', 'label' => 'Bergabung', 'sortable' => true, 'display' => 'bergabung'],

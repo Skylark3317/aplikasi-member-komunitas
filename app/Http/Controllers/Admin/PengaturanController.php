@@ -89,6 +89,25 @@ class PengaturanController extends Controller
             Setting::set('bg_image', null);
         }
 
+        // Handle card background image upload
+        if ($request->hasFile('card_background')) {
+            $request->validate(['card_background' => 'image|mimes:jpg,jpeg,png|max:1024']);
+            $old = Setting::get('card_background');
+            if ($old && Storage::disk('public')->exists($old)) {
+                Storage::disk('public')->delete($old);
+            }
+            $path = $request->file('card_background')->store('cards', 'public');
+            Setting::set('card_background', $path);
+        }
+
+        if ($request->boolean('delete_card_background')) {
+            $old = Setting::get('card_background');
+            if ($old && Storage::disk('public')->exists($old)) {
+                Storage::disk('public')->delete($old);
+            }
+            Setting::set('card_background', null);
+        }
+
         // Handle about image upload
         if ($request->hasFile('about_image')) {
             $request->validate(['about_image' => 'image|mimes:jpg,jpeg,png|max:1024']);

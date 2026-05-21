@@ -118,7 +118,7 @@ Route::middleware(['auth', 'verified', 'role:member'])
         // Profil
         Route::get('/profil', [\App\Http\Controllers\Member\ProfilController::class, 'show'])->name('profil.show');
         Route::get('/profil/edit', [\App\Http\Controllers\Member\ProfilController::class, 'edit'])->name('profil.edit');
-        Route::patch('/profil', [\App\Http\Controllers\Member\ProfilController::class, 'update'])->name('profil.update');
+        Route::match(['patch', 'post'], '/profil', [\App\Http\Controllers\Member\ProfilController::class, 'update'])->name('profil.update');
 
         // Premium & Pembayaran
         Route::get('/premium', [\App\Http\Controllers\Member\PremiumController::class, 'index'])->name('premium.index');

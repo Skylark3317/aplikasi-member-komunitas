@@ -198,6 +198,41 @@
           <span v-if="form.errors.bg_image" class="error-msg">{{ form.errors.bg_image }}</span>
         </div>
 
+        <!-- Card Background image -->
+        <div class="field-group">
+          <label class="field-label">Gambar Latar Belakang Kartu Member</label>
+          <div class="img-preview-box">
+            <img v-if="cardBgPreview" :src="cardBgPreview" alt="Latar Belakang Kartu" />
+          </div>
+          <p class="field-hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            Format JPG atau PNG, ukuran maksimal 1MB
+          </p>
+          <div class="btn-row">
+            <label class="btn-upload">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              Unggah background kartu
+              <input type="file" accept=".jpg,.jpeg,.png" @change="onCardBgChange" hidden />
+            </label>
+            <button type="button" class="btn-delete" @click="deleteCardBg">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+              </svg>
+              Hapus background kartu
+            </button>
+          </div>
+          <span v-if="form.errors.card_background" class="error-msg">{{ form.errors.card_background }}</span>
+        </div>
+
         <!-- Hero section -->
         <div class="field-group">
           <label class="field-label">Judul Hero Section</label>
@@ -296,6 +331,8 @@ const form = useForm({
   delete_logo:         false,
   bg_image:            null,
   delete_bg_image:     false,
+  card_background:     null,
+  delete_card_background: false,
   about_image:         null,
   delete_about_image:  false,
 });
@@ -303,6 +340,7 @@ const form = useForm({
 // Image previews
 const logoPreview  = ref(s.community_logo ? `/storage/${s.community_logo}` : null);
 const bgPreview    = ref(s.bg_image       ? `/storage/${s.bg_image}`       : null);
+const cardBgPreview = ref(s.card_background ? `/storage/${s.card_background}` : null);
 const aboutPreview = ref(s.about_image    ? `/storage/${s.about_image}`    : null);
 
 const initials = computed(() =>
@@ -350,6 +388,23 @@ function deleteBg() {
   form.delete_bg_image = true;
   bgPreview.value = null;
   form.errors.bg_image = null;
+}
+
+function onCardBgChange(e) {
+  const file = e.target.files[0];
+  if (file && validateFile(file, 'card_background')) {
+    form.card_background = file;
+    form.delete_card_background = false;
+    cardBgPreview.value = URL.createObjectURL(file);
+  } else {
+    e.target.value = '';
+  }
+}
+function deleteCardBg() {
+  form.card_background = null;
+  form.delete_card_background = true;
+  cardBgPreview.value = null;
+  form.errors.card_background = null;
 }
 
 function onAboutChange(e) {

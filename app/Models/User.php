@@ -139,4 +139,19 @@ class User extends Authenticatable implements MustVerifyEmail
         }
         return null;
     }
+
+    public function profileCompletionPercent(): int
+    {
+        $profile = $this->memberProfile;
+        $fields = [
+            'avatar' => !empty($this->avatar_url),
+            'institution' => !empty($profile?->institution) && $profile->institution !== '-',
+            'department' => !empty($profile?->department) && $profile->department !== '-',
+            'telephone' => !empty($this->telephone) && $this->telephone !== '-',
+            'address' => !empty($profile?->address) && $profile->address !== '-',
+        ];
+        
+        $filledCount = count(array_filter($fields));
+        return (int) round(($filledCount / count($fields)) * 100);
+    }
 }

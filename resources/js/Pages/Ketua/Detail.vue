@@ -333,19 +333,43 @@ const BADGE_COLORS = {
 };
 
 function badgeClass(colKey, val) {
+  if (colKey === '_sort_kelengkapan') {
+    const num = parseInt(val) || 0;
+    if (num === 100) return 'badge-green';
+    if (num >= 60) return 'badge-blue';
+    if (num >= 40) return 'badge-orange';
+    return 'badge-red';
+  }
   return BADGE_COLORS[val] ?? 'badge-gray';
 }
 </script>
 
 <style scoped>
+/* Restrict the layout container of KetuaLayout to the viewport size */
+:deep(.admin-main) {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-width: calc(100vw - 200px);
+}
+
 /* ── Header ── */
 .page-header {
+  flex-shrink: 0;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 20px 32px; border-bottom: 1px solid #e5e7eb; margin-bottom: 24px; gap: 16px;
+  padding: 20px 32px; border-bottom: 1px solid #e5e7eb; gap: 16px;
+  background: #fff;
 }
 
 .content-area {
-  padding: 0 32px 40px;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 32px 24px;
+  background: #f9fafb;
+  overflow: hidden;
 }
 .header-left { display: flex; align-items: center; gap: 12px; }
 .back-btn {
@@ -380,6 +404,7 @@ function badgeClass(colKey, val) {
 
 /* ── Filters Bar ── */
 .filters-bar {
+  flex-shrink: 0;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -388,7 +413,7 @@ function badgeClass(colKey, val) {
   border-radius: 12px;
   border: 1px solid #e5e7eb;
   padding: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
 }
 .filters-left {
@@ -478,11 +503,29 @@ function badgeClass(colKey, val) {
 .search-clear:hover { color: #374151; }
 
 /* Table Card */
-.table-card { background: #fff; border-radius: 14px; border: 1px solid #e5e7eb; overflow: hidden; }
-.table-wrap { overflow-x: auto; }
-.data-table { width: 100%; border-collapse: collapse; }
+.table-card {
+  flex: 1;
+  min-height: 0;
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.table-wrap {
+  flex: 1;
+  overflow: auto;
+  background: #f9fafb;
+}
+.data-table { width: 100%; border-collapse: collapse; background: #fff; }
 
-thead { background: #f9fafb; }
+thead {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #f9fafb;
+}
 .th-num, .td-num {
   width: 48px; text-align: center; font-size: 12px; color: #9ca3af;
   padding: 12px 8px; border-bottom: 1px solid #e5e7eb;
@@ -526,8 +569,10 @@ thead { background: #f9fafb; }
 
 /* Pagination */
 .pagination {
+  flex-shrink: 0;
   display: flex; align-items: center; gap: 4px;
   padding: 14px 16px; border-top: 1px solid #f3f4f6; flex-wrap: wrap;
+  background: #fff;
 }
 .pg-btn {
   min-width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e5e7eb;
