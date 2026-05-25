@@ -60,12 +60,13 @@ class PremiumController extends Controller
         // Generate Invoice
         $fee = (float) Setting::get('membership_fee', 50000);
         $invoiceNumber = 'INV' . str_pad(rand(1, 99999), 5, '0', STR_PAD_LEFT);
+        $countdown = (int) Setting::get('invoice_countdown', 24); // default 24 jam
 
         $invoice = Invoice::create([
             'user_id'     => $user->id,
             'number'      => $invoiceNumber,
             'amount'      => $fee,
-            'due_date'    => now()->addDays(7),
+            'due_date'    => now()->addHours($countdown),
             'is_accepted' => false,
         ]);
 

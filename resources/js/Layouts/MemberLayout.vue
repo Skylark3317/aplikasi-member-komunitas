@@ -199,7 +199,7 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
   gap: 10px;
   padding: 10px 20px;
   font-size: 13.5px;
-  color: #555;
+  color: var(--surface-color);
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
   cursor: pointer;
@@ -312,13 +312,13 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
 
 .role-biasa {
   background: #e3f2fd;
-  color: #007bff;
+  color: var(--surface-color);
   border: 1px solid #bbdefb;
 }
 
 .role-premium {
   background: linear-gradient(135deg, #fef3c7, #fde68a);
-  color: #b45309;
+  color: var(--surface-color);
   border: 1.5px solid #f59e0b;
 }
 

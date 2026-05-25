@@ -51,7 +51,7 @@ class PertanyaanSeeder extends Seeder
         ];
 
         foreach ($questions as $index => $qData) {
-            $member = $members->random();
+            $member = $members[$index % $members->count()];
             
             $conversation = Conversation::create([
                 'submitter_id' => $member->id,

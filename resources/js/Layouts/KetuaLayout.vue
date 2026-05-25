@@ -126,7 +126,7 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
   gap: 10px;
   padding: 10px 20px;
   font-size: 13.5px;
-  color: #555;
+  color: var(--surface-color);
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
   cursor: pointer;
@@ -150,7 +150,7 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
 .user-role {
   font-size: 11px;
   background: #dbeafe;
-  color: var(--primary-color);
+  color: var(--surface-color);
   padding: 2px 9px;
   border-radius: 10px;
   display: inline-block;
