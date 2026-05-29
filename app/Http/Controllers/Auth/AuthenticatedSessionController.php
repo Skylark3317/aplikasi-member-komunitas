@@ -54,6 +54,12 @@ class AuthenticatedSessionController extends Controller
 
         $user = $request->user();
 
+        // If member previously requested account deletion but logs in within 7 days → cancel deletion
+        if ($user->delete_requested_at) {
+            $user->update(['delete_requested_at' => null]);
+            session()->flash('success', 'Permintaan hapus akun Anda telah dibatalkan karena Anda login kembali.');
+        }
+
         if ($user->isSuperAdmin()) {
             return redirect()->intended(route('superadmin.kelol-akun.index', absolute: false));
         } elseif ($user->isKetua()) {

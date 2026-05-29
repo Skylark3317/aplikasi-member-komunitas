@@ -11,64 +11,19 @@ use Inertia\Inertia;
 class PertanyaanController extends Controller
 {
     /**
-     * Menampilkan daftar tiket pertanyaan milik member.
+     * Menampilkan daftar pertanyaan milik member (langsung redirect ke room chat).
      */
     public function index()
     {
-        $conversations = Conversation::with(['submitter', 'messages' => function($q) {
-            $q->latest();
-        }])
-        ->where('submitter_id', auth()->id())
-        ->latest()
-        ->get();
-
-        return Inertia::render('Member/Pertanyaan/Index', [
-            'conversations' => $conversations
-        ]);
-    }
-
-    /**
-     * Menampilkan form untuk membuat pertanyaan baru.
-     */
-    public function create()
-    {
         if (!auth()->user()->isPremium()) {
             abort(403, 'Akses ditolak. Fitur ini hanya untuk member premium.');
         }
 
-        return Inertia::render('Member/Pertanyaan/Create');
-    }
-
-    /**
-     * Menyimpan pertanyaan baru ke database.
-     */
-    public function store(Request $request)
-    {
-        if (!auth()->user()->isPremium()) {
-            abort(403, 'Akses ditolak. Fitur ini hanya untuk member premium.');
-        }
-
-        $request->validate([
-            'content' => 'required|string',
+        $conversation = Conversation::firstOrCreate([
+            'submitter_id' => auth()->id(),
         ]);
 
-        $ticketCount = Conversation::count() + 101;
-        $ticketNumber = 'TKT-' . str_pad($ticketCount, 4, '0', STR_PAD_LEFT);
-
-        $conversation = Conversation::create([
-            'submitter_id'  => auth()->id(),
-            'ticket_number' => $ticketNumber,
-            'is_closed'     => false,
-        ]);
-
-        Message::create([
-            'conversation_id' => $conversation->id,
-            'sender_id'       => auth()->id(),
-            'content'         => $request->content,
-        ]);
-
-        return redirect()->route('member.pertanyaan.show', $conversation->id)
-            ->with('success', 'Pertanyaan berhasil diajukan.');
+        return redirect()->route('member.pertanyaan.show', $conversation->id);
     }
 
     /**
@@ -83,6 +38,12 @@ class PertanyaanController extends Controller
         if ($conversation->submitter_id !== auth()->id()) {
             abort(403, 'Akses ditolak.');
         }
+
+        // Mark incoming messages as read
+        Message::where('conversation_id', $conversation->id)
+            ->where('sender_id', '!=', auth()->id())
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
 
         $conversation->load(['submitter', 'messages.sender']);
 
@@ -104,10 +65,6 @@ class PertanyaanController extends Controller
             abort(403, 'Akses ditolak.');
         }
 
-        if ($conversation->is_closed) {
-            return back()->with('error', 'Tiket sudah ditutup.');
-        }
-
         $request->validate([
             'content' => 'required|string',
         ]);
@@ -116,32 +73,9 @@ class PertanyaanController extends Controller
             'conversation_id' => $conversation->id,
             'sender_id'       => auth()->id(),
             'content'         => $request->content,
+            'is_read'         => false,
         ]);
 
         return back()->with('success', 'Balasan dikirim.');
-    }
-
-    /**
-     * Menyelesaikan pertanyaan di database SQL
-     */
-    public function close(Conversation $conversation)
-    {
-        if (!auth()->user()->isPremium()) {
-            abort(403, 'Akses ditolak. Fitur ini hanya untuk member premium.');
-        }
-
-        if ($conversation->submitter_id !== auth()->id()) {
-            abort(403, 'Akses ditolak.');
-        }
-
-        if ($conversation->is_closed) {
-            return back()->with('error', 'Pertanyaan sudah diselesaikan sebelumnya.');
-        }
-
-        $conversation->update([
-            'is_closed' => true
-        ]);
-
-        return back()->with('success', 'Pertanyaan ini telah ditandai sebagai selesai.');
     }
 }

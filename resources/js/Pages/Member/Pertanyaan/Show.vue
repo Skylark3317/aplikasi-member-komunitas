@@ -1,470 +1,465 @@
 <template>
   <MemberLayout>
-    <Head :title="`Pertanyaan #${conversation.id} - AMK`" />
+    <Head title="Tanya Jawab - AMK" />
 
-    <!-- Top Bar -->
-    <div class="top-bar">
-      <div class="top-left">
-        <Link :href="route('member.pertanyaan.index')" class="back-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="back-icon">
-            <polyline points="15 18 9 12 15 6"/>
-          </svg>
-        </Link>
-        <h1 class="page-title">Pertanyaan #{{ conversation.id }}</h1>
-      </div>
-
-      <!-- Right action button (Image 2) -->
-      <div v-if="!conversation.is_closed" class="top-right-actions">
-        <button @click="markAsResolved" class="btn-tandai-selesai">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="check-icon">
-            <circle cx="12" cy="12" r="10"/>
-            <polyline points="9 11 12 14 22 4"/>
-          </svg>
-          <span>Tandai sebagai selesai</span>
-        </button>
-      </div>
-    </div>
-    <div class="divider" />
-
-    <!-- Content Area -->
-    <div class="content-area">
-      <!-- Closed Alert Banner (Image 3) -->
-      <div v-if="conversation.is_closed && showClosedAlert" class="closed-alert-banner">
-        <span>Pertanyaan ini telah ditandai sebagai selesai.</span>
-        <button @click="showClosedAlert = false" class="btn-close-alert">×</button>
-      </div>
-
-      <!-- Messages Stream -->
-      <div class="messages-stream" ref="chatScrollContainer">
-        <div v-for="(group, dateStr) in groupedMessages" :key="dateStr" class="date-group-wrapper">
-          <!-- Date Separator in center -->
-          <div class="date-separator">{{ dateStr }}</div>
-
-          <!-- Messages in that day -->
-          <div class="messages-list">
-            <div 
-              v-for="msg in group" 
-              :key="msg.id" 
-              :class="['message-bubble-row', msg.sender_id === $page.props.auth.user.id ? 'msg-member' : 'msg-staff']"
-            >
-              <!-- Member bubble (Image 2 - light grey box on right) -->
-              <div v-if="msg.sender_id === $page.props.auth.user.id" class="member-bubble-box">
-                <div class="bubble-header">
-                  <span>Saya</span>
-                  <span class="bullet">•</span>
-                  <span>{{ formatTimeOnly(msg.created_at) }}</span>
-                </div>
-                <div class="bubble-content">{{ msg.content }}</div>
-              </div>
-
-              <!-- Staff bubble (Image 2 - plain text on left, no box) -->
-              <div v-else class="staff-plain-box">
-                <div class="plain-header">
-                  <span class="staff-name">{{ msg.sender ? msg.sender.name : 'Petugas' }}</span>
-                  <span class="bullet">•</span>
-                  <span class="staff-time">{{ formatTimeOnly(msg.created_at) }}</span>
-                </div>
-                <div class="plain-content">{{ msg.content }}</div>
-              </div>
+    <div class="chat-container-layout">
+      <!-- Chat Main Room -->
+      <div class="chat-main-room">
+        <!-- Active Chat Header -->
+        <div class="chat-room-header">
+          <div class="header-avatar-container">
+            <!-- Show community support icon / avatar -->
+            <div class="header-avatar-placeholder">
+              CS
             </div>
           </div>
+          <div class="header-info">
+            <h2 class="header-name">Layanan Tanya Jawab Petugas</h2>
+            <span class="header-sub">Semua petugas kami siap membantu Anda</span>
+          </div>
         </div>
-      </div>
 
-      <!-- Bottom Chat Bar (only visible when not closed) -->
-      <div v-if="!conversation.is_closed" class="chat-input-bar-container">
-        <form @submit.prevent="submit" class="pill-chat-input-box">
-          <textarea 
-            v-model="form.content" 
-            placeholder="Tulis Pertanyaan..."
-            rows="1"
-            class="chat-textarea"
-            @keydown.enter.prevent="submitOnEnter"
-          ></textarea>
+        <!-- Messages scrollable area -->
+        <div class="chat-messages-area" ref="scrollContainer">
+          <div class="chat-messages-inner">
+            <template v-for="(msg, index) in conversation.messages" :key="msg.id">
+              <!-- Date Separator if first message of day -->
+              <div v-if="shouldShowDateSep(msg, index)" class="date-separator-row">
+                <span class="date-separator-bubble">{{ formatDateOnly(msg.created_at) }}</span>
+              </div>
 
-          <button 
-            type="submit" 
-            :disabled="form.processing || !form.content.trim()"
-            class="btn-send-chat"
-          >
-            <!-- Send Icon -->
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="send-icon-sm">
-              <line x1="22" y1="2" x2="11" y2="13"/>
-              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-            </svg>
-            <span>Kirim</span>
-          </button>
-        </form>
+              <!-- Message Row -->
+              <div :class="['message-bubble-row', msg.sender_id === currentUser.id ? 'msg-outgoing' : 'msg-incoming']">
+                <!-- Avatar for incoming messages -->
+                <div v-if="msg.sender_id !== currentUser.id" class="bubble-avatar-container">
+                  <img 
+                    v-if="msg.sender?.avatar_url" 
+                    :src="msg.sender.avatar_url" 
+                    alt="Avatar" 
+                    class="bubble-avatar-img"
+                  />
+                  <div v-else class="bubble-avatar-placeholder">
+                    {{ msg.sender?.name.charAt(0).toUpperCase() }}
+                  </div>
+                </div>
+
+                <!-- Bubble itself -->
+                <div class="bubble-content-box">
+                  <!-- Sender Name inside bubble for staff/admins -->
+                  <div 
+                    v-if="msg.sender_id !== currentUser.id" 
+                    class="bubble-sender-name"
+                  >
+                    {{ msg.sender?.name || 'Petugas' }}
+                  </div>
+                  
+                  <div class="bubble-text">
+                    {{ msg.content }}
+                  </div>
+
+                  <div class="bubble-meta">
+                    <span class="bubble-time">{{ formatTimeOnly(msg.created_at) }}</span>
+                    <!-- Status checkmark for current user's messages (member's messages) -->
+                    <span v-if="msg.sender_id === currentUser.id" class="tick-wrapper">
+                      <svg v-if="msg.is_read" class="tick-svg blue-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      <svg v-else class="tick-svg gray-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <!-- Chat Input Footer -->
+        <div class="chat-room-footer">
+          <form @submit.prevent="submitReply" class="chat-input-form">
+            <input 
+              v-model="form.content" 
+              type="text" 
+              placeholder="Tulis pesan ke petugas..." 
+              class="chat-room-input"
+              required
+              ref="inputField"
+              :disabled="form.processing"
+            />
+            <button type="submit" class="chat-room-send-btn" :disabled="form.processing || !form.content.trim()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="send-icon-svg">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+              <span>Kirim</span>
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   </MemberLayout>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue';
-import { Head, Link, useForm, router } from '@inertiajs/vue3';
+import { ref, computed, onMounted, nextTick, watch } from 'vue';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
 import MemberLayout from '@/Layouts/MemberLayout.vue';
 
 const props = defineProps({
   conversation: Object,
 });
 
+const page = usePage();
+const currentUser = computed(() => page.props.auth.user);
+const scrollContainer = ref(null);
+const inputField = ref(null);
+
 const form = useForm({
   content: '',
 });
 
-const chatScrollContainer = ref(null);
-const showClosedAlert = ref(true);
+function submitReply() {
+  form.post(route('member.pertanyaan.reply', props.conversation.id), {
+    preserveScroll: true,
+    onSuccess: () => {
+      form.reset('content');
+      scrollToBottom();
+      nextTick(() => {
+        if (inputField.value) inputField.value.focus();
+      });
+    }
+  });
+}
 
 function scrollToBottom() {
   nextTick(() => {
-    if (chatScrollContainer.value) {
-      chatScrollContainer.value.scrollTop = chatScrollContainer.value.scrollHeight;
+    if (scrollContainer.value) {
+      scrollContainer.value.scrollTop = scrollContainer.value.scrollHeight;
     }
   });
+}
+
+function shouldShowDateSep(msg, index) {
+  if (index === 0) return true;
+  const prevMsg = props.conversation.messages[index - 1];
+  const prevDate = new Date(prevMsg.created_at).toDateString();
+  const currDate = new Date(msg.created_at).toDateString();
+  return prevDate !== currDate;
+}
+
+function formatDateOnly(dateStr) {
+  const date = new Date(dateStr);
+  const now = new Date();
+  if (date.toDateString() === now.toDateString()) {
+    return 'HARI INI';
+  }
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  if (date.toDateString() === yesterday.toDateString()) {
+    return 'KEMARIN';
+  }
+  return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).toUpperCase();
+}
+
+function formatTimeOnly(dateStr) {
+  const date = new Date(dateStr);
+  return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 }
 
 onMounted(() => {
   scrollToBottom();
+  if (inputField.value) inputField.value.focus();
 });
 
-// Group messages by Indonesian formatted date (e.g. "8 April 2026")
-const groupedMessages = computed(() => {
-  const groups = {};
-  if (!props.conversation.messages) return groups;
-
-  // Sorting oldest first
-  const sorted = [...props.conversation.messages].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-
-  sorted.forEach(msg => {
-    const d = new Date(msg.created_at);
-    const dateStr = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-    if (!groups[dateStr]) {
-      groups[dateStr] = [];
-    }
-    groups[dateStr].push(msg);
-  });
-
-  return groups;
-});
-
-function formatTimeOnly(dateStr) {
-  const date = new Date(dateStr);
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  return `${hours}:${minutes}`;
-}
-
-function submit() {
-  if (!form.content.trim()) return;
-
-  form.post(route('member.pertanyaan.reply', props.conversation.id), {
-    onSuccess: () => {
-      form.reset();
-      scrollToBottom();
-    }
-  });
-}
-
-function submitOnEnter(e) {
-  if (!e.shiftKey) {
-    submit();
-  }
-}
-
-function markAsResolved() {
-  if (confirm('Apakah Anda yakin ingin menandai pertanyaan ini sebagai selesai?')) {
-    router.post(route('member.pertanyaan.close', props.conversation.id), {}, {
-      onSuccess: () => {
-        scrollToBottom();
-      }
-    });
-  }
-}
+watch(() => props.conversation.messages, () => {
+  scrollToBottom();
+}, { deep: true });
 </script>
 
 <style scoped>
-/* Top bar */
-.top-bar {
+.chat-container-layout {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 32px;
-  background: #fff;
-}
-.top-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.back-link {
-  color: #111;
-  display: flex;
-  align-items: center;
-  padding: 4px;
-}
-.back-icon { 
-  width: 18px; 
-  height: 18px; 
+  width: 100%;
+  height: 100vh;
+  background: #efeae2;
+  overflow: hidden;
 }
 
-.page-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #111;
+/* Chat Room */
+.chat-main-room {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #efeae2;
+  position: relative;
 }
 
-/* Tandai sebagai selesai button */
-.btn-tandai-selesai {
-  display: inline-flex;
+.chat-room-header {
+  height: 64px;
+  background: #f0f2f5;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  z-index: 10;
+}
+
+.header-avatar-container {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.header-avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--primary-color, #2563eb);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 15px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  background: var(--primary-color, #10b981);
-  color: #fff;
-  border: 1px solid transparent;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: filter 0.2s ease;
-  height: 38px;
-  box-sizing: border-box;
 }
 
-.btn-tandai-selesai:hover {
-  filter: brightness(0.9);
+.header-info {
+  display: flex;
+  flex-direction: column;
 }
 
-.check-icon {
-  width: 14px;
-  height: 14px;
-}
-
-.divider { 
-  height: 1px; 
-  background: #e5e7eb; 
+.header-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
   margin: 0;
 }
 
-/* Content Area */
-.content-area {
-  background: #f9fafb;
-  min-height: calc(100vh - 65px);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+.header-sub {
+  font-size: 12px;
+  color: #64748b;
 }
 
-/* Closed Alert Banner */
-.closed-alert-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #def7ec;
-  border: 1px solid #bbf7d0;
-  color: #03543f;
-  padding: 12px 24px;
-  margin: 24px 32px 0;
-  border-radius: 8px;
-  font-size: 13.5px;
-  font-weight: 600;
-}
-
-.btn-close-alert {
-  background: transparent;
-  border: none;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-  color: #03543f;
-  line-height: 1;
-  padding: 0;
-}
-
-/* Messages Stream */
-.messages-stream {
-  flex-grow: 1;
+/* Chat Messages Scrollable Area */
+.chat-messages-area {
+  flex: 1;
   overflow-y: auto;
-  padding: 32px 32px 100px;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
+  padding: 24px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='%23b5c0c9' fill-opacity='0.1'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm1-61c3.148 0 5.7-2.552 5.7-5.7 0-3.148-2.552-5.7-5.7-5.7-3.148 0-5.7 2.552-5.7 5.7 0 3.148 2.552 5.7 5.7 5.7zm56 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z'/%3E%3C/g%3E%3C/svg%3E");
 }
 
-.date-group-wrapper {
+.chat-messages-inner {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 12px;
 }
 
-.date-separator {
-  text-align: center;
-  font-size: 12.5px;
-  color: #6b7280;
+/* Date separator bubble */
+.date-separator-row {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.date-separator-bubble {
+  background: #ffffff;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 11.5px;
   font-weight: 600;
-  margin: 10px 0;
+  color: #54656f;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  letter-spacing: 0.5px;
 }
 
-.messages-list {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
+/* Message Bubble Rows */
 .message-bubble-row {
   display: flex;
-  width: 100%;
-}
-
-.msg-member {
-  justify-content: flex-end;
-}
-
-.msg-staff {
-  justify-content: flex-start;
-}
-
-/* Member bubble (right side card box) */
-.member-bubble-box {
-  max-width: 60%;
-  background: #f3f4f6;
-  border-radius: 12px;
-  padding: 14px 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.01);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.bubble-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11.5px;
-  color: #9ca3af;
-  font-weight: 600;
-}
-
-.bullet {
-  font-weight: bold;
-}
-
-.bubble-content {
-  font-size: 14.5px;
-  color: #1f2937;
-  line-height: 1.5;
-  word-break: break-word;
-  white-space: pre-wrap;
-}
-
-/* Staff plain box (left side plain text) */
-.staff-plain-box {
-  max-width: 60%;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.plain-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11.5px;
-  color: #9ca3af;
-  font-weight: 600;
-}
-
-.staff-name {
-  color: #1f2937;
-  font-weight: 700;
-}
-
-.plain-content {
-  font-size: 14.5px;
-  color: #1f2937;
-  line-height: 1.5;
-  word-break: break-word;
-  white-space: pre-wrap;
-}
-
-/* Bottom Chat Bar */
-.chat-input-bar-container {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 24px 32px 32px;
-  display: flex;
-  justify-content: center;
-  background: linear-gradient(to top, #f9fafb 80%, rgba(249, 250, 251, 0));
-  box-sizing: border-box;
-}
-
-.pill-chat-input-box {
-  width: 100%;
-  max-width: 760px;
-  background: #fff;
-  border: 1px solid #d1d5db;
-  border-radius: 20px;
-  padding: 8px 16px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-}
-
-.chat-textarea {
-  flex-grow: 1;
-  border: none;
-  background: transparent;
-  font-size: 14px;
-  font-family: inherit;
-  resize: none;
-  outline: none;
-  color: #111827;
-  padding: 8px 0;
-  max-height: 80px;
-  box-sizing: border-box;
-}
-
-.chat-textarea::placeholder {
-  color: #9ca3af;
-}
-
-.btn-send-chat {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-end;
   gap: 8px;
-  background: var(--primary-color, #10b981);
-  color: #fff;
-  border: 1px solid transparent;
-  padding: 8px 16px;
+  max-width: 65%;
+}
+
+.msg-incoming {
+  align-self: flex-start;
+}
+
+.msg-outgoing {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+/* Bubble Avatar styling */
+.bubble-avatar-container {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-bottom: 2px;
+}
+
+.bubble-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bubble-avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #cbd5e1;
+  color: #475569;
+  font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Bubble Content Styling */
+.bubble-content-box {
+  background: #ffffff;
+  padding: 8px 12px 6px;
   border-radius: 12px;
-  font-size: 13px;
+  box-shadow: 0 1.5px 2px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+
+.msg-incoming .bubble-content-box {
+  border-bottom-left-radius: 2px;
+}
+
+.msg-outgoing .bubble-content-box {
+  background: var(--surface-color, #2563eb);
+  border-bottom-right-radius: 2px;
+}
+
+.msg-outgoing .bubble-text {
+  color: #ffffff;
+}
+
+.msg-outgoing .bubble-time {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.msg-outgoing .tick-svg.blue-tick {
+  color: #ffffff;
+}
+
+.msg-outgoing .tick-svg.gray-tick {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Inside-bubble Sender Name (for Admins) */
+.bubble-sender-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #b25e29;
+  margin-bottom: 4px;
+}
+
+.bubble-text {
+  font-size: 14.2px;
+  color: #111b21;
+  line-height: 1.5;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.bubble-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 4px;
+  float: right;
+  margin-left: 24px;
+}
+
+.bubble-time {
+  font-size: 11px;
+  color: #667781;
+}
+
+/* Tick icons */
+.tick-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.tick-svg {
+  width: 15px;
+  height: 15px;
+}
+
+.gray-tick {
+  color: #8696a0;
+}
+
+.blue-tick {
+  color: #53bdeb;
+}
+
+/* Footer & Input */
+.chat-room-footer {
+  background: #f0f2f5;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #e2e8f0;
+}
+
+.chat-input-form {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+}
+
+.chat-room-input {
+  flex: 1;
+  padding: 10px 18px;
+  background: #ffffff;
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+  font-size: 14.5px;
+  outline: none;
+  color: #111b21;
+}
+
+.chat-room-input:focus {
+  border-color: var(--primary-color, #2563eb);
+}
+
+.chat-room-send-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary-color, #2563eb);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0 18px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: filter 0.2s ease;
-  flex-shrink: 0;
-  height: 38px;
-  box-sizing: border-box;
+  transition: background 0.15s;
 }
 
-.btn-send-chat:hover:not(:disabled) {
+.chat-room-send-btn:hover:not(:disabled) {
   filter: brightness(0.9);
 }
 
-.btn-send-chat:disabled {
-  background: #e5e7eb;
-  color: #9ca3af;
+.chat-room-send-btn:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-.send-icon-sm {
-  width: 14px;
-  height: 14px;
+.send-icon-svg {
+  width: 16px;
+  height: 16px;
 }
 </style>

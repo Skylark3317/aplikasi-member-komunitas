@@ -9,10 +9,17 @@ class Message extends Model
 {
     use HasFactory;
 
+    protected $touches = ['conversation'];
+
     protected $fillable = [
         'conversation_id',
         'sender_id',
         'content',
+        'is_read',
+    ];
+
+    protected $casts = [
+        'is_read' => 'boolean',
     ];
 
     public function conversation()

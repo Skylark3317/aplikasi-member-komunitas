@@ -13,19 +13,34 @@
         <h1 class="page-title">Pembayaran</h1>
       </div>
       
-      <!-- Top Action Button (Only in Step 1) -->
-      <button 
-        v-if="step === 1" 
-        @click="submitPayment" 
-        class="btn-top-send"
-        :disabled="form.processing"
-      >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="send-icon-sm">
-          <line x1="22" y1="2" x2="11" y2="13"/>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-        </svg>
-        <span>Kirim bukti pembayaran</span>
-      </button>
+      <!-- Top Actions -->
+      <div class="top-actions">
+        <button 
+          v-if="step !== 3" 
+          @click="cancelInvoice" 
+          class="btn-top-cancel"
+          :disabled="isCanceling"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="cancel-icon-sm">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+          <span>Batalkan Pesanan</span>
+        </button>
+
+        <button 
+          v-if="step === 1" 
+          @click="submitPayment" 
+          class="btn-top-send"
+          :disabled="form.processing"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="send-icon-sm">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+          <span>Kirim bukti pembayaran</span>
+        </button>
+      </div>
     </div>
     <div class="divider" />
 
@@ -278,7 +293,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import MemberLayout from '@/Layouts/MemberLayout.vue';
 
 const props = defineProps({
@@ -291,6 +306,7 @@ const props = defineProps({
 const showAlert = ref(true);
 const fileInput = ref(null);
 const localImagePreview = ref(null);
+const isCanceling = ref(false);
 
 // Determine the active visual step (1: Pembayaran, 2: Verifikasi, 3: Aktif)
 const step = computed(() => {
@@ -354,6 +370,17 @@ function submitPayment() {
   form.post(route('member.premium.pay'), {
     forceFormData: true,
   });
+}
+
+function cancelInvoice() {
+  if (confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')) {
+    isCanceling.value = true;
+    router.delete(route('member.premium.cancel_invoice', props.invoice.id), {
+      onFinish: () => {
+        isCanceling.value = false;
+      }
+    });
+  }
 }
 
 // Visual labels and formatting helpers
@@ -438,6 +465,42 @@ function formatDueDate(dateStr) {
   font-size: 20px;
   font-weight: 600;
   color: #111;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-top-cancel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fef2f2;
+  color: #ef4444;
+  border: 1px solid #fca5a5;
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-top-cancel:hover:not(:disabled) {
+  background: #fee2e2;
+  border-color: #f87171;
+}
+
+.btn-top-cancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cancel-icon-sm {
+  width: 14px;
+  height: 14px;
 }
 
 .btn-top-send {

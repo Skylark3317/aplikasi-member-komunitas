@@ -92,22 +92,37 @@ class StatistikController extends Controller
         }
 
         // ── PERTANYAAN ───────────────────────────────────────────────────────
+        $answeredIdsQuery = function($query) {
+            $query->select('conversation_id')
+                ->from('messages')
+                ->whereIn('id', function($q) {
+                    $q->selectRaw('max(id)')
+                        ->from('messages')
+                        ->groupBy('conversation_id');
+                })
+                ->whereIn('sender_id', function($q) {
+                    $q->select('id')
+                        ->from('users')
+                        ->whereIn('role', ['staff', 'super_admin']);
+                });
+        };
+
         $pertTotal   = Conversation::count();
-        $pertDijawab = Conversation::where('is_closed',true)->count();
-        $pertBelum   = Conversation::where('is_closed',false)->count();
+        $pertDijawab = Conversation::whereIn('id', $answeredIdsQuery)->count();
+        $pertBelum   = Conversation::whereNotIn('id', $answeredIdsQuery)->count();
 
         $djYearly = $blYearly = $djMonthly = $blMonthly = $djMax = $blMax = [];
         for ($m = 1; $m <= 12; $m++) {
-            $djYearly[] = Conversation::where('is_closed',true)->whereYear('created_at',$currentYear)->whereMonth('created_at',$m)->count();
-            $blYearly[] = Conversation::where('is_closed',false)->whereYear('created_at',$currentYear)->whereMonth('created_at',$m)->count();
+            $djYearly[] = Conversation::whereIn('id', $answeredIdsQuery)->whereYear('created_at',$currentYear)->whereMonth('created_at',$m)->count();
+            $blYearly[] = Conversation::whereNotIn('id', $answeredIdsQuery)->whereYear('created_at',$currentYear)->whereMonth('created_at',$m)->count();
         }
         for ($d = 1; $d <= $daysInMonth; $d++) {
-            $djMonthly[] = Conversation::where('is_closed',true)->whereYear('created_at',$currentYear)->whereMonth('created_at',$currentMonth)->whereDay('created_at',$d)->count();
-            $blMonthly[] = Conversation::where('is_closed',false)->whereYear('created_at',$currentYear)->whereMonth('created_at',$currentMonth)->whereDay('created_at',$d)->count();
+            $djMonthly[] = Conversation::whereIn('id', $answeredIdsQuery)->whereYear('created_at',$currentYear)->whereMonth('created_at',$currentMonth)->whereDay('created_at',$d)->count();
+            $blMonthly[] = Conversation::whereNotIn('id', $answeredIdsQuery)->whereYear('created_at',$currentYear)->whereMonth('created_at',$currentMonth)->whereDay('created_at',$d)->count();
         }
         foreach ($maxYears as $y) {
-            $djMax[] = Conversation::where('is_closed',true)->whereYear('created_at',$y)->count();
-            $blMax[] = Conversation::where('is_closed',false)->whereYear('created_at',$y)->count();
+            $djMax[] = Conversation::whereIn('id', $answeredIdsQuery)->whereYear('created_at',$y)->count();
+            $blMax[] = Conversation::whereNotIn('id', $answeredIdsQuery)->whereYear('created_at',$y)->count();
         }
 
         // ── PAYMENT ──────────────────────────────────────────────────────────

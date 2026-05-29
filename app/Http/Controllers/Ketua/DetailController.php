@@ -77,6 +77,9 @@ class DetailController extends Controller
                 'telepon'    => $u->telephone ?? '-',
                 'institusi'  => $u->memberProfile?->institution ?? '-',
                 'departemen' => $u->memberProfile?->department ?? '-',
+                'jenis_kelamin' => $u->memberProfile?->gender ?? '-',
+                'golongan_darah' => $u->memberProfile?->blood_type ?? '-',
+                'pendidikan' => $u->memberProfile?->last_education ?? '-',
                 'alamat'     => $u->memberProfile?->address ?? '-',
                 'premium'    => in_array($u->id, $premiumIds) ? 'Premium' : 'Regular',
                 'aktif'      => $u->is_active ? 'Aktif' : 'Nonaktif',
@@ -91,8 +94,11 @@ class DetailController extends Controller
             ['key' => 'email',      'label' => 'Email',      'sortable' => true],
             ['key' => 'telepon',    'label' => 'Telepon',    'sortable' => false],
             ['key' => 'institusi',  'label' => 'Institusi',  'sortable' => true],
-            ['key' => 'departemen', 'label' => 'Departemen', 'sortable' => true],
-            ['key' => 'alamat',     'label' => 'Alamat',     'sortable' => true],
+            ['key' => 'departemen', 'label' => 'Jurusan',    'sortable' => true],
+            ['key' => 'jenis_kelamin', 'label' => 'Jenis Kelamin', 'sortable' => true],
+            ['key' => 'golongan_darah', 'label' => 'Gol. Darah', 'sortable' => true],
+            ['key' => 'pendidikan', 'label' => 'Pendidikan', 'sortable' => true],
+            ['key' => 'alamat',     'label' => 'Alamat Rumah',     'sortable' => true],
             ['key' => '_sort_kelengkapan', 'label' => 'Kelengkapan', 'sortable' => true, 'display' => 'kelengkapan', 'badge' => true],
             ['key' => 'premium',    'label' => 'Membership', 'sortable' => true, 'badge' => true],
             ['key' => 'aktif',      'label' => 'Status',      'sortable' => true, 'badge' => true],
@@ -178,19 +184,26 @@ class DetailController extends Controller
     {
         $query = Conversation::with(['submitter:id,name', 'messages.sender:id,name,role']);
 
+        $answeredIdsQuery = function($q) {
+            $q->select('conversation_id')
+                ->from('messages')
+                ->whereIn('id', function($sub) {
+                    $sub->selectRaw('max(id)')
+                        ->from('messages')
+                        ->groupBy('conversation_id');
+                })
+                ->whereIn('sender_id', function($sub) {
+                    $sub->select('id')
+                        ->from('users')
+                        ->whereIn('role', ['staff', 'super_admin']);
+                });
+        };
+
         if ($request->filled('status')) {
-            if ($request->status === 'selesai') {
-                $query->where('is_closed', true);
-            } elseif ($request->status === 'direspond') {
-                $query->where('is_closed', false)
-                    ->whereHas('messages.sender', function($q) {
-                        $q->whereIn('role', ['staff', 'super_admin']);
-                    });
+            if ($request->status === 'selesai' || $request->status === 'direspond') {
+                $query->whereIn('id', $answeredIdsQuery);
             } elseif ($request->status === 'belum_direspond') {
-                $query->where('is_closed', false)
-                    ->whereDoesntHave('messages.sender', function($q) {
-                        $q->whereIn('role', ['staff', 'super_admin']);
-                    });
+                $query->whereNotIn('id', $answeredIdsQuery);
             }
         }
 
@@ -209,18 +222,13 @@ class DetailController extends Controller
                     ->first(fn($m) => in_array($m->sender?->role, ['staff', 'super_admin']))
                     ?->sender?->name;
 
-                // Determine status based on closed state and responder presence
-                if ($c->is_closed) {
-                    $status = 'Selesai';
-                } elseif ($petugasName) {
-                    $status = 'Direspond';
-                } else {
-                    $status = 'Belum direspond';
-                }
+                // Determine last message sender to get status
+                $lastMsg = $c->messages->sortByDesc('created_at')->first();
+                $isAnswered = $lastMsg && in_array($lastMsg->sender?->role, ['staff', 'super_admin']);
+                $status = $isAnswered ? 'Direspond' : 'Belum direspond';
 
                 return [
                     'id'      => $c->id,
-                    'tiket'   => $c->ticket_number,
                     'penanya' => $c->submitter?->name ?? '-',
                     'petugas' => $petugasName ?? '-',
                     'status'  => $status,
@@ -230,7 +238,7 @@ class DetailController extends Controller
             })->values()->all();
 
         $columns = [
-            ['key' => 'tiket',   'label' => 'No. Tiket', 'sortable' => true],
+            ['key' => 'id',      'label' => 'ID Percakapan', 'sortable' => true],
             ['key' => 'penanya', 'label' => 'Penanya',   'sortable' => true],
             ['key' => 'petugas', 'label' => 'Petugas',   'sortable' => true],
             ['key' => 'status',  'label' => 'Status',    'sortable' => true, 'badge' => true],

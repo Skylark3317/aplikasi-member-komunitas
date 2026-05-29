@@ -91,6 +91,125 @@ class DatabaseSeeder extends Seeder
                 'department' => 'Ilmu Komputer',
                 'address' => 'Jl. Kaliurang, Yogyakarta'
             ],
+            [
+                'name' => 'Andi Wijaya',
+                'email' => 'andi@amk.com',
+                'institution' => 'Universitas Diponegoro',
+                'department' => 'Teknik Komputer',
+                'address' => 'Jl. Tembalang, Semarang'
+            ],
+            [
+                'name' => 'Dewi Lestari',
+                'email' => 'dewi@amk.com',
+                'institution' => 'Universitas Padjadjaran',
+                'department' => 'Matematika',
+                'address' => 'Jl. Raya Bandung Sumedang, Jatinangor'
+            ],
+            [
+                'name' => 'Eko Prasetyo',
+                'email' => 'eko@amk.com',
+                'institution' => 'Institut Teknologi Sepuluh Nopember',
+                'department' => 'Teknik Elektro',
+                'address' => 'Jl. Raya ITS, Surabaya'
+            ],
+            [
+                'name' => 'Fitri Handayani',
+                'email' => 'fitri@amk.com',
+                'institution' => 'Universitas Airlangga',
+                'department' => 'Statistika',
+                'address' => 'Jl. Dharmawangsa, Surabaya'
+            ],
+            [
+                'name' => 'Genta Perkasa',
+                'email' => 'genta@amk.com',
+                'institution' => 'Universitas Brawijaya',
+                'department' => 'Teknologi Informasi',
+                'address' => 'Jl. Veteran, Malang'
+            ],
+            [
+                'name' => 'Hesti Purwanti',
+                'email' => 'hesti@amk.com',
+                'institution' => 'Universitas Sebelas Maret',
+                'department' => 'Informatika',
+                'address' => 'Jl. Ir. Sutami, Surakarta'
+            ],
+            [
+                'name' => 'Indra Lesmana',
+                'email' => 'indra@amk.com',
+                'institution' => 'Universitas Hasanuddin',
+                'department' => 'Teknik Elektro',
+                'address' => 'Jl. Perintis Kemerdekaan, Makassar'
+            ],
+            [
+                'name' => 'Julia Perez',
+                'email' => 'julia@amk.com',
+                'institution' => 'Universitas Sumatera Utara',
+                'department' => 'Ilmu Komputer',
+                'address' => 'Jl. Dr. Mansyur, Medan'
+            ],
+            [
+                'name' => 'Kevin Sanjaya',
+                'email' => 'kevin@amk.com',
+                'institution' => 'Universitas Riau',
+                'department' => 'Sistem Informasi',
+                'address' => 'Jl. HR. Subrantas, Pekanbaru'
+            ],
+            [
+                'name' => 'Larasati Putri',
+                'email' => 'larasati@amk.com',
+                'institution' => 'Universitas Andalas',
+                'department' => 'Teknik Komputer',
+                'address' => 'Jl. Limau Manis, Padang'
+            ],
+            [
+                'name' => 'Muhammad Rizky',
+                'email' => 'rizky@amk.com',
+                'institution' => 'Universitas Lambung Mangkurat',
+                'department' => 'Teknologi Informasi',
+                'address' => 'Jl. Brigjen H. Hasan Basri, Banjarmasin'
+            ],
+            [
+                'name' => 'Novita Sari',
+                'email' => 'novita@amk.com',
+                'institution' => 'Universitas Mulawarman',
+                'department' => 'Ilmu Komputer',
+                'address' => 'Jl. Kuaro, Samarinda'
+            ],
+            [
+                'name' => 'Onky Alexander',
+                'email' => 'onky@amk.com',
+                'institution' => 'Universitas Sam Ratulangi',
+                'department' => 'Teknik Elektro',
+                'address' => 'Jl. Kampus Bahu, Manado'
+            ],
+            [
+                'name' => 'Putri Wulandari',
+                'email' => 'putri@amk.com',
+                'institution' => 'Universitas Udayana',
+                'department' => 'Teknologi Informasi',
+                'address' => 'Jl. Kampus Bukit Jimbaran, Badung'
+            ],
+            [
+                'name' => 'Rian Hidayat',
+                'email' => 'rian@amk.com',
+                'institution' => 'Universitas Mataram',
+                'department' => 'Teknik Informatika',
+                'address' => 'Jl. Majapahit, Mataram'
+            ],
+            [
+                'name' => 'Shinta Amelia',
+                'email' => 'shinta@amk.com',
+                'institution' => 'Universitas Pattimura',
+                'department' => 'Matematika',
+                'address' => 'Jl. Ir. M. Putuhena, Ambon'
+            ],
+            [
+                'name' => 'Taufik Hidayat',
+                'email' => 'taufik@amk.com',
+                'institution' => 'Universitas Cenderawasih',
+                'department' => 'Teknik Elektro',
+                'address' => 'Jl. Kampus Baru Waena, Jayapura'
+            ],
         ];
 
         $memberModels = [];

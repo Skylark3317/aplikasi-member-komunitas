@@ -199,17 +199,17 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
   gap: 10px;
   padding: 10px 20px;
   font-size: 13.5px;
-  color: var(--surface-color);
+  color: var(--primary-color);
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
   cursor: pointer;
 }
 .nav-item:hover {
-  background: #f0f4ff;
+  background: var(--surface-color);
   color: var(--primary-color);
 }
 .nav-item.active {
-  background: #f3f4f6;
+  background: var(--surface-color);
   color: var(--primary-color);
   font-weight: 600;
 }
@@ -221,7 +221,7 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
 }
 
 .premium-link-text {
-  color: #d97706;
+  color: #ffcc92;
   font-weight: 600;
 }
 
@@ -311,14 +311,13 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
 }
 
 .role-biasa {
-  background: #e3f2fd;
-  color: var(--surface-color);
-  border: 1px solid #bbdefb;
+  background: var(--surface-color);
+  color: var(--primary-color);
 }
 
 .role-premium {
   background: linear-gradient(135deg, #fef3c7, #fde68a);
-  color: var(--surface-color);
+  color: var(--primary-color);
   border: 1.5px solid #f59e0b;
 }
 

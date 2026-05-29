@@ -28,18 +28,55 @@
         </div>
 
         <div class="form-group">
+          <label>Jenis Kelamin</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" v-model="form.gender" value="Laki-laki" />
+              Laki-laki
+            </label>
+            <label class="radio-label">
+              <input type="radio" v-model="form.gender" value="Perempuan" />
+              Perempuan
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Golongan Darah</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" v-model="form.blood_type" value="A" /> A
+            </label>
+            <label class="radio-label">
+              <input type="radio" v-model="form.blood_type" value="B" /> B
+            </label>
+            <label class="radio-label">
+              <input type="radio" v-model="form.blood_type" value="AB" /> AB
+            </label>
+            <label class="radio-label">
+              <input type="radio" v-model="form.blood_type" value="O" /> O
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="last_education">Pendidikan Terakhir</label>
+          <input id="last_education" v-model="form.last_education" type="text" placeholder="Pendidikan Terakhir" autocomplete="off" />
+        </div>
+
+        <div class="form-group">
           <label for="institution">Institusi</label>
-          <input id="institution" v-model="form.institution" type="text" placeholder="Institusi" />
+          <input id="institution" v-model="form.institution" type="text" placeholder="Institusi" autocomplete="off" />
         </div>
 
         <div class="form-group">
-          <label for="department">Departemen</label>
-          <input id="department" v-model="form.department" type="text" placeholder="Departemen" />
+          <label for="department">Jurusan</label>
+          <input id="department" v-model="form.department" type="text" placeholder="Jurusan" autocomplete="off" />
         </div>
 
         <div class="form-group">
-          <label for="address">Alamat</label>
-          <textarea id="address" v-model="form.address" placeholder="Alamat" rows="3"></textarea>
+          <label for="address">Alamat Rumah</label>
+          <textarea id="address" v-model="form.address" placeholder="Alamat Rumah" rows="3"></textarea>
         </div>
 
         <div class="form-group">
@@ -103,6 +140,9 @@ const form = useForm({
   name: '',
   email: '',
   phone: '',
+  gender: '',
+  blood_type: '',
+  last_education: '',
   institution: '',
   department: '',
   address: '',
@@ -136,7 +176,7 @@ const submit = () => {
   margin-bottom: 6px;
 }
 .required { color: #dc2626; }
-.form-group input, .form-group textarea {
+.form-group input:not([type="radio"]), .form-group textarea, .form-group select {
   width: 100%;
   border: 1px solid #d1d5db;
   border-radius: 4px;
@@ -147,7 +187,27 @@ const submit = () => {
   transition: border-color 0.2s;
   font-family: inherit;
 }
-.form-group input:focus, .form-group textarea:focus { border-color: var(--primary-color); }
+.form-group input:not([type="radio"]):focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--primary-color); }
+
+.radio-group {
+  display: flex;
+  gap: 16px;
+  margin-top: 4px;
+}
+.radio-label {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  font-weight: 400 !important;
+  font-size: 14px;
+  margin-bottom: 0 !important;
+  cursor: pointer;
+}
+.radio-label input[type="radio"] {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
+}
 .input-icon-wrap { position: relative; }
 .input-icon-wrap input { padding-right: 42px; }
 .toggle-pw {

@@ -11,8 +11,6 @@ class Conversation extends Model
 
     protected $fillable = [
         'submitter_id',
-        'ticket_number',
-        'is_closed',
     ];
 
     public function submitter()

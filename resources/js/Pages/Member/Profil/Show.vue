@@ -135,9 +135,6 @@
             <p class="completion-hint" v-if="profileCompletion.percent < 100">
               Lengkapi profilmu untuk mendapatkan centang biru ✓ di samping namamu!
             </p>
-            <p class="completion-hint complete-hint" v-else>
-              🎉 Profil kamu sudah lengkap! Kamu mendapatkan centang biru verified.
-            </p>
           </div>
 
           <!-- Progress Bar -->
@@ -216,8 +213,23 @@
           </div>
 
           <div class="info-row">
-            <span class="info-label">Departemen</span>
+            <span class="info-label">Jurusan</span>
             <span class="info-value">{{ user.member_profile?.department || '-' }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="info-label">Jenis Kelamin</span>
+            <span class="info-value">{{ user.member_profile?.gender || '-' }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="info-label">Golongan Darah</span>
+            <span class="info-value">{{ user.member_profile?.blood_type || '-' }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="info-label">Pendidikan Terakhir</span>
+            <span class="info-value">{{ user.member_profile?.last_education || '-' }}</span>
           </div>
 
           <div class="info-row">
@@ -226,7 +238,7 @@
           </div>
 
           <div class="info-row">
-            <span class="info-label">Alamat</span>
+            <span class="info-label">Alamat Rumah</span>
             <span class="info-value">{{ user.member_profile?.address || '-' }}</span>
           </div>
         </div>
@@ -260,6 +272,37 @@
             <span>Unduh surat keanggotaan</span>
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Zona Bahaya: Hapus Akun -->
+    <div class="danger-zone-section">
+      <h3 class="danger-title">⚠️ Zona Bahaya</h3>
+
+      <!-- Pending deletion notice -->
+      <div v-if="user.delete_requested_at" class="deletion-pending-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="warn-icon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div>
+          <p class="deletion-pending-title">Penghapusan akun sedang menunggu</p>
+          <p class="deletion-pending-sub">
+            Akun Anda akan dihapus permanen pada <strong>{{ deletionDeadline }}</strong>.
+            Jika Anda login sebelum tanggal tersebut, penghapusan akan dibatalkan otomatis.
+          </p>
+        </div>
+        <form @submit.prevent="cancelDeletion">
+          <button type="submit" class="btn-cancel-deletion">Batalkan Hapus Akun</button>
+        </form>
+      </div>
+
+      <!-- Request deletion -->
+      <div v-else class="deletion-info-box">
+        <div>
+          <p class="deletion-box-title">Hapus Akun</p>
+          <p class="deletion-box-sub">Setelah Anda mengajukan permintaan hapus akun, Anda akan di-logout. Akun akan dihapus permanen setelah <strong>7 hari tidak login</strong>. Jika Anda login kembali sebelum 7 hari, permintaan ini akan dibatalkan otomatis.</p>
+        </div>
+        <form @submit.prevent="requestDeletion">
+          <button type="submit" class="btn-request-deletion">Ajukan Hapus Akun</button>
+        </form>
       </div>
     </div>
 
@@ -324,7 +367,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, usePage, router } from '@inertiajs/vue3';
 import MemberLayout from '@/Layouts/MemberLayout.vue';
 
 const props = defineProps({
@@ -351,8 +394,23 @@ const profileCompletion = computed(() => {
     },
     {
       key: 'department',
-      label: 'Departemen',
+      label: 'Jurusan',
       filled: !!props.user.member_profile?.department && props.user.member_profile.department !== '-',
+    },
+    {
+      key: 'gender',
+      label: 'Jenis Kelamin',
+      filled: !!props.user.member_profile?.gender && props.user.member_profile.gender !== '-',
+    },
+    {
+      key: 'blood_type',
+      label: 'Golongan Darah',
+      filled: !!props.user.member_profile?.blood_type && props.user.member_profile.blood_type !== '-',
+    },
+    {
+      key: 'last_education',
+      label: 'Pendidikan Terakhir',
+      filled: !!props.user.member_profile?.last_education && props.user.member_profile.last_education !== '-',
     },
     {
       key: 'telephone',
@@ -361,7 +419,7 @@ const profileCompletion = computed(() => {
     },
     {
       key: 'address',
-      label: 'Alamat',
+      label: 'Alamat Rumah',
       filled: !!props.user.member_profile?.address && props.user.member_profile.address !== '-',
     },
   ];
@@ -369,6 +427,24 @@ const profileCompletion = computed(() => {
   const percent = Math.round((filled / fields.length) * 100);
   return { fields, percent, filled, total: fields.length };
 });
+
+// Delete account logic
+const deletionDeadline = computed(() => {
+  if (!props.user.delete_requested_at) return null;
+  const d = new Date(props.user.delete_requested_at);
+  d.setDate(d.getDate() + 7);
+  return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+});
+
+function requestDeletion() {
+  if (!confirm('Yakin ingin mengajukan hapus akun? Anda akan di-logout dan akun akan dihapus permanen setelah 7 hari jika tidak login kembali.')) return;
+  router.post(route('member.hapus-akun.request'));
+}
+
+function cancelDeletion() {
+  if (!confirm('Batalkan permintaan hapus akun? Akun Anda akan tetap aman.')) return;
+  router.delete(route('member.hapus-akun.cancel'));
+}
 
 function openCardModal() {
   if (props.user.is_premium) {
@@ -439,7 +515,7 @@ function printLetter() {
   printWindow.document.write('<tr><td class="label">Bergabung Sejak</td><td>: ' + (props.user.created_at || '-') + '</td></tr>');
   printWindow.document.write('<tr><td class="label">Masa Berlaku Hingga</td><td>: ' + (props.user.member_profile?.expire_date || '-') + '</td></tr>');
   printWindow.document.write('<tr><td class="label">Institusi</td><td>: ' + (props.user.member_profile?.institution || '-') + '</td></tr>');
-  printWindow.document.write('<tr><td class="label">Departemen / Divisi</td><td>: ' + (props.user.member_profile?.department || '-') + '</td></tr>');
+  printWindow.document.write('<tr><td class="label">Jurusan</td><td>: ' + (props.user.member_profile?.department || '-') + '</td></tr>');
   printWindow.document.write('</table>');
   printWindow.document.write('<p>Demikian surat keterangan keanggotaan ini dibuat dengan sebenar-benarnya untuk dapat dipergunakan sebagaimana mestinya.</p>');
   printWindow.document.write('</div>');
@@ -1325,4 +1401,106 @@ function downloadCardAsImage() {
   color: #1d4ed8;
   text-decoration: underline;
 }
+
+/* ── Danger Zone ── */
+.danger-zone-section {
+  background: #fff;
+  border: 1.5px solid #fca5a5;
+  border-radius: 12px;
+  padding: 28px 32px;
+}
+
+.danger-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #dc2626;
+  margin: 0 0 20px;
+}
+
+.deletion-info-box {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.deletion-box-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 6px;
+}
+
+.deletion-box-sub {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 520px;
+}
+
+.deletion-pending-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 10px;
+  padding: 16px 20px;
+  flex-wrap: wrap;
+}
+
+.warn-icon {
+  width: 22px;
+  height: 22px;
+  color: #d97706;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.deletion-pending-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #92400e;
+  margin: 0 0 4px;
+}
+
+.deletion-pending-sub {
+  font-size: 13px;
+  color: #78350f;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.btn-request-deletion {
+  white-space: nowrap;
+  padding: 9px 18px;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.btn-request-deletion:hover { background: #dc2626; }
+
+.btn-cancel-deletion {
+  white-space: nowrap;
+  padding: 9px 18px;
+  background: #fff;
+  color: #92400e;
+  border: 1.5px solid #fcd34d;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+.btn-cancel-deletion:hover { background: #fef9c3; }
 </style>

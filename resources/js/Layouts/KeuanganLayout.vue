@@ -145,17 +145,17 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
   gap: 10px;
   padding: 10px 20px;
   font-size: 13.5px;
-  color: var(--surface-color);
+  color: var(--primary-color);
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
   cursor: pointer;
 }
 .nav-item:hover {
-  background: #f0f4ff;
+  background: var(--surface-color);
   color: var(--primary-color);
 }
 .nav-item.active {
-  background: #f3f4f6;
+  background: var(--surface-color);
   color: var(--primary-color);
   font-weight: 600;
 }
@@ -182,8 +182,8 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
 
 .user-role {
   font-size: 11px;
-  background: #dbeafe;
-  color: var(--surface-color);
+  background: var(--surface-color);
+  color: var(--primary-color);
   padding: 2px 9px;
   border-radius: 10px;
   display: inline-block;

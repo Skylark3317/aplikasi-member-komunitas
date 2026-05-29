@@ -149,11 +149,23 @@
             <div class="info-val">{{ user.member_profile.institution ?? '-' }}</div>
           </div>
           <div class="info-row">
-            <div class="info-key">Departemen</div>
+            <div class="info-key">Jurusan</div>
             <div class="info-val">{{ user.member_profile.department ?? '-' }}</div>
           </div>
           <div class="info-row">
-            <div class="info-key">Alamat</div>
+            <div class="info-key">Jenis Kelamin</div>
+            <div class="info-val">{{ user.member_profile.gender ?? '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-key">Golongan Darah</div>
+            <div class="info-val">{{ user.member_profile.blood_type ?? '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-key">Pendidikan Terakhir</div>
+            <div class="info-val">{{ user.member_profile.last_education ?? '-' }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-key">Alamat Rumah</div>
             <div class="info-val">{{ user.member_profile.address ?? '-' }}</div>
           </div>
         </template>
@@ -180,20 +192,40 @@
         </div>
       </div>
 
-      <!-- Toggle status button -->
-      <form @submit.prevent="toggleStatus">
-        <button
-          type="submit"
-          :class="['btn-toggle', user.is_active ? 'btn-nonaktif' : 'btn-aktif']"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="15" y1="9" x2="9" y2="15"/>
-            <line x1="9" y1="9" x2="15" y2="15"/>
-          </svg>
-          {{ user.is_active ? 'Nonaktifkan akun' : 'Aktifkan akun' }}
-        </button>
-      </form>
+      <!-- Actions -->
+      <div class="action-buttons">
+        <!-- Toggle status button -->
+        <form @submit.prevent="toggleStatus">
+          <button
+            type="submit"
+            :class="['btn-toggle', user.is_active ? 'btn-nonaktif' : 'btn-aktif']"
+            :disabled="user.id === $page.props.auth.user.id"
+            :title="user.id === $page.props.auth.user.id ? 'Anda tidak bisa mengubah status Anda sendiri' : ''"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+            {{ user.is_active ? 'Nonaktifkan akun' : 'Aktifkan akun' }}
+          </button>
+        </form>
+
+        <!-- Delete button -->
+        <form v-if="user.role !== 'member'" @submit.prevent="deleteAccount">
+          <button
+            type="submit"
+            class="btn-toggle btn-nonaktif"
+            :disabled="user.id === $page.props.auth.user.id"
+            :title="user.id === $page.props.auth.user.id ? 'Anda tidak bisa menghapus akun Anda sendiri' : ''"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+            Hapus akun
+          </button>
+        </form>
+      </div>
     </div>
   </AdminLayout>
 </template>
@@ -230,6 +262,11 @@ function roleLabel(role) {
 function toggleStatus() {
   if (!confirm(`Yakin ingin ${props.user.is_active ? 'menonaktifkan' : 'mengaktifkan'} akun ini?`)) return;
   router.patch(route('superadmin.kelol-akun.toggle-status', props.user.id));
+}
+
+function deleteAccount() {
+  if (!confirm('Yakin ingin menghapus akun ini secara permanen?')) return;
+  router.delete(route('superadmin.kelol-akun.destroy', props.user.id));
 }
 </script>
 
@@ -345,7 +382,13 @@ function toggleStatus() {
 .badge-aktif    { background: #d1fae5; color: #059669; }
 .badge-nonaktif { background: #fee2e2; color: #dc2626; }
 
-/* Toggle button */
+/* Actions */
+.action-buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 .btn-toggle {
   display: flex;
   align-items: center;
@@ -358,8 +401,12 @@ function toggleStatus() {
   cursor: pointer;
   transition: opacity 0.2s;
 }
+.btn-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .btn-toggle svg { width: 16px; height: 16px; }
-.btn-toggle:hover { opacity: 0.85; }
+.btn-toggle:hover:not(:disabled) { opacity: 0.85; }
 
 .btn-nonaktif { background: #ef4444; color: #fff; }
 .btn-aktif    { background: #22c55e; color: #fff; }

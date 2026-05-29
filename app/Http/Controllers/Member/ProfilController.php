@@ -17,16 +17,17 @@ class ProfilController extends Controller
         $memberProfile = $user->memberProfile;
 
         $profileData = [
-            'id'           => $user->id,
-            'name'         => $user->name,
-            'email'        => $user->email,
-            'telephone'    => $user->telephone,
-            'role'         => $user->role,
-            'is_active'    => $user->is_active,
-            'created_at'   => $user->created_at?->translatedFormat('j F Y'),
-            'is_premium'   => $user->isPremium(),
-            'status'       => $user->membershipStatus(),
-            'avatar_url'   => $user->avatar_url,
+            'id'                   => $user->id,
+            'name'                 => $user->name,
+            'email'                => $user->email,
+            'telephone'            => $user->telephone,
+            'role'                 => $user->role,
+            'is_active'            => $user->is_active,
+            'created_at'           => $user->created_at?->translatedFormat('j F Y'),
+            'is_premium'           => $user->isPremium(),
+            'status'               => $user->membershipStatus(),
+            'avatar_url'           => $user->avatar_url,
+            'delete_requested_at'  => $user->delete_requested_at?->toISOString(),
         ];
 
         if ($memberProfile) {
@@ -36,6 +37,9 @@ class ProfilController extends Controller
 
             $profileData['member_profile'] = [
                 'member_number'  => 'M' . str_pad($user->id, 5, '0', STR_PAD_LEFT),
+                'gender'         => $memberProfile->gender,
+                'blood_type'     => $memberProfile->blood_type,
+                'last_education' => $memberProfile->last_education,
                 'institution'    => $memberProfile->institution,
                 'department'     => $memberProfile->department,
                 'address'        => $memberProfile->address,
@@ -63,9 +67,12 @@ class ProfilController extends Controller
             'telephone'      => $user->telephone,
             'avatar_url'     => $user->avatar_url,
             'member_profile' => $user->memberProfile ? [
-                'institution' => $user->memberProfile->institution,
-                'department'  => $user->memberProfile->department,
-                'address'     => $user->memberProfile->address,
+                'gender'         => $user->memberProfile->gender,
+                'blood_type'     => $user->memberProfile->blood_type,
+                'last_education' => $user->memberProfile->last_education,
+                'institution'    => $user->memberProfile->institution,
+                'department'     => $user->memberProfile->department,
+                'address'        => $user->memberProfile->address,
             ] : null,
         ];
 
@@ -80,12 +87,15 @@ class ProfilController extends Controller
         $user = $request->user()->load('memberProfile');
 
         $rules = [
-            'name'        => ['required', 'string', 'max:255'],
-            'telephone'   => ['nullable', 'string', 'max:20'],
-            'institution' => ['nullable', 'string', 'max:255'],
-            'department'  => ['nullable', 'string', 'max:255'],
-            'address'     => ['nullable', 'string'],
-            'avatar'      => ['nullable', 'image', 'max:1024'],
+            'name'           => ['required', 'string', 'max:255'],
+            'telephone'      => ['nullable', 'string', 'max:20'],
+            'gender'         => ['nullable', 'string', 'max:255'],
+            'blood_type'     => ['nullable', 'string', 'max:255'],
+            'last_education' => ['nullable', 'string', 'max:255'],
+            'institution'    => ['nullable', 'string', 'max:255'],
+            'department'     => ['nullable', 'string', 'max:255'],
+            'address'        => ['nullable', 'string'],
+            'avatar'         => ['nullable', 'image', 'max:1024'],
         ];
 
         if ($request->filled('old_password') || $request->filled('password')) {
@@ -107,9 +117,12 @@ class ProfilController extends Controller
 
         // Update or create member profile
         $profileFields = [
-            'institution' => $validated['institution'] ?? null,
-            'department'  => $validated['department'] ?? null,
-            'address'     => $validated['address'] ?: '-',
+            'gender'         => $validated['gender'] ?? null,
+            'blood_type'     => $validated['blood_type'] ?? null,
+            'last_education' => $validated['last_education'] ?? null,
+            'institution'    => $validated['institution'] ?? null,
+            'department'     => $validated['department'] ?? null,
+            'address'        => $validated['address'] ?: '-',
         ];
 
         if ($user->memberProfile) {

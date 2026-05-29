@@ -96,7 +96,7 @@
           </div>
         </div>
 
-        <!-- Nomor Telepon, Institusi, Departemen, Alamat Section -->
+        <!-- Nomor Telepon, Institusi, Jurusan, Alamat Rumah Section -->
         <div class="form-section">
           <!-- Nomor Telepon -->
           <div class="form-group">
@@ -119,32 +119,84 @@
               type="text" 
               v-model="form.institution" 
               placeholder="Masukkan nama institusi Anda..."
+              autocomplete="off"
               :class="{ 'has-error': form.errors.institution }"
             />
             <span v-if="form.errors.institution" class="error-msg">{{ form.errors.institution }}</span>
           </div>
 
-          <!-- Departemen -->
+          <!-- Jurusan -->
           <div class="form-group">
-            <label for="department">Departemen</label>
+            <label for="department">Jurusan</label>
             <input 
               id="department" 
               type="text" 
               v-model="form.department" 
-              placeholder="Masukkan nama departemen / divisi..."
+              placeholder="Masukkan nama jurusan..."
+              autocomplete="off"
               :class="{ 'has-error': form.errors.department }"
             />
             <span v-if="form.errors.department" class="error-msg">{{ form.errors.department }}</span>
           </div>
 
+          <!-- Jenis Kelamin -->
+          <div class="form-group">
+            <label>Jenis Kelamin</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" v-model="form.gender" value="Laki-laki" />
+                Laki-laki
+              </label>
+              <label class="radio-label">
+                <input type="radio" v-model="form.gender" value="Perempuan" />
+                Perempuan
+              </label>
+            </div>
+            <span v-if="form.errors.gender" class="error-msg">{{ form.errors.gender }}</span>
+          </div>
+
+          <!-- Golongan Darah -->
+          <div class="form-group">
+            <label>Golongan Darah</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" v-model="form.blood_type" value="A" /> A
+              </label>
+              <label class="radio-label">
+                <input type="radio" v-model="form.blood_type" value="B" /> B
+              </label>
+              <label class="radio-label">
+                <input type="radio" v-model="form.blood_type" value="AB" /> AB
+              </label>
+              <label class="radio-label">
+                <input type="radio" v-model="form.blood_type" value="O" /> O
+              </label>
+            </div>
+            <span v-if="form.errors.blood_type" class="error-msg">{{ form.errors.blood_type }}</span>
+          </div>
+
+          <!-- Pendidikan Terakhir -->
+          <div class="form-group">
+            <label for="last_education">Pendidikan Terakhir</label>
+            <input 
+              id="last_education" 
+              type="text" 
+              v-model="form.last_education" 
+              placeholder="Masukkan pendidikan terakhir..."
+              autocomplete="off"
+              :class="{ 'has-error': form.errors.last_education }"
+            />
+            <span v-if="form.errors.last_education" class="error-msg">{{ form.errors.last_education }}</span>
+          </div>
+
           <!-- Alamat -->
           <div class="form-group">
-            <label for="address">Alamat</label>
+            <label for="address">Alamat Rumah</label>
             <textarea 
               id="address" 
               v-model="form.address" 
               rows="4"
-              placeholder="Masukkan alamat lengkap tempat tinggal..."
+              placeholder="Masukkan alamat rumah lengkap tempat tinggal..."
               :class="{ 'has-error': form.errors.address }"
             ></textarea>
             <span v-if="form.errors.address" class="error-msg">{{ form.errors.address }}</span>
@@ -262,6 +314,9 @@ const form = useForm({
   _method: 'PATCH',
   name: props.user.name,
   telephone: !props.user.telephone || props.user.telephone === '-' ? '' : props.user.telephone,
+  gender: !props.user.member_profile?.gender || props.user.member_profile.gender === '-' ? '' : props.user.member_profile.gender,
+  blood_type: !props.user.member_profile?.blood_type || props.user.member_profile.blood_type === '-' ? '' : props.user.member_profile.blood_type,
+  last_education: !props.user.member_profile?.last_education || props.user.member_profile.last_education === '-' ? '' : props.user.member_profile.last_education,
   institution: !props.user.member_profile?.institution || props.user.member_profile.institution === '-' ? '' : props.user.member_profile.institution,
   department: !props.user.member_profile?.department || props.user.member_profile.department === '-' ? '' : props.user.member_profile.department,
   address: !props.user.member_profile?.address || props.user.member_profile.address === '-' ? '' : props.user.member_profile.address,
@@ -568,6 +623,26 @@ function submit() {
 
 .form-group input.has-error, .form-group textarea.has-error {
   border-color: #ef4444;
+}
+
+.radio-group {
+  display: flex;
+  gap: 16px;
+  margin-top: 4px;
+}
+.radio-label {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500 !important;
+  font-size: 13.5px;
+  margin-bottom: 0 !important;
+  cursor: pointer;
+}
+.radio-label input[type="radio"] {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
 }
 
 .error-msg {

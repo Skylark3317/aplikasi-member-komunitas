@@ -17,6 +17,14 @@ class PremiumController extends Controller
         $user = $request->user();
         $status = $user->membershipStatus();
 
+        if ($status === 'pending_invoice' || $status === 'pending_verification') {
+            $latestInvoice = $user->invoices()->latest()->first();
+            if ($latestInvoice) {
+                return redirect()->route('member.premium.payment_detail', ['invoice' => $latestInvoice->id])
+                    ->with('info', 'Anda masih memiliki pesanan yang belum diselesaikan.');
+            }
+        }
+
         // Get bank settings
         $settings = [
             'bank_name'           => Setting::get('bank_name', 'Bank BRI'),
@@ -34,6 +42,16 @@ class PremiumController extends Controller
     public function join(Request $request)
     {
         $user = $request->user();
+
+        // Check if there is already a pending invoice
+        $status = $user->membershipStatus();
+        if ($status === 'pending_invoice' || $status === 'pending_verification') {
+            $latestInvoice = $user->invoices()->latest()->first();
+            if ($latestInvoice) {
+                return redirect()->route('member.premium.payment_detail', ['invoice' => $latestInvoice->id])
+                    ->with('info', 'Anda masih memiliki tagihan yang belum selesai.');
+            }
+        }
 
         $request->validate([
             'institution' => 'nullable|string|max:255',
@@ -155,5 +173,25 @@ class PremiumController extends Controller
 
         return redirect()->route('member.premium.payment_detail', ['invoice' => $invoice->id])
             ->with('success', 'Bukti pembayaran berhasil diunggah. Menunggu verifikasi.');
+    }
+
+    public function cancelInvoice(Request $request, Invoice $invoice)
+    {
+        $user = $request->user();
+
+        if ($invoice->user_id !== $user->id) {
+            abort(403);
+        }
+
+        if ($invoice->is_accepted || ($invoice->payment && $invoice->payment->status === 'diverifikasi')) {
+            return back()->with('error', 'Invoice ini sudah dibayar dan tidak dapat dibatalkan.');
+        }
+
+        if ($invoice->payment) {
+            $invoice->payment->delete();
+        }
+        $invoice->delete();
+
+        return redirect()->route('member.premium.index')->with('success', 'Pesanan Member Premium berhasil dibatalkan.');
     }
 }
