@@ -1,68 +1,128 @@
 /* Import Google Font — must be first */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Geist:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import "bootstrap-icons/font/bootstrap-icons.css";
+@import 'tailwindcss';
 
-/* ─── Global Reset & Base ───────────────────────────────── */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
+@source "../../storage/framework/views/*.php";
+@source "../**/*.blade.php";
+@source "../**/*.js";
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+      'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-fira-sans: 'Fira Sans', sans-serif;
+  --font-geist: 'Geist', sans-serif;
+
+  --color-primary: var(--color-primary);
+  --color-surface: var(--color-surface);
+
+  --color-overlay: rgba(0, 0, 0, 0.6);
+
+  --color-onyx-50: #F2F2F2;
+  --color-onyx-100: #E6E6E6;
+  --color-onyx-200: #CCCCCC;
+  --color-onyx-300: #B3B3B3;
+  --color-onyx-400: #999999;
+  --color-onyx-500: #808080;
+  --color-onyx-600: #666666;
+  --color-onyx-700: #4D4D4D;
+  --color-onyx-800: #333333;
+  --color-onyx-900: #1A1A1A;
+  --color-onyx-950: #121212;
+
+  --color-success-50: #E6FFED;
+  --color-success-100: #CDFEDC;
+  --color-success-200: #9BFDB8;
+  --color-success-300: #68FD95;
+  --color-success-400: #36FC71;
+  --color-success-500: #04FB4E;
+  --color-success-600: #03C93E;
+  --color-success-700: #02972F;
+  --color-success-800: #02641F;
+  --color-success-900: #013210;
+  --color-success-950: #01230B;
+
+  --color-warning-50: #FFEEE5;
+  --color-warning-100: #FFDCCC;
+  --color-warning-200: #FFB999;
+  --color-warning-300: #FF9666;
+  --color-warning-400: #FF7433;
+  --color-warning-500: #FF5100;
+  --color-warning-600: #CC4100;
+  --color-warning-700: #993000;
+  --color-warning-800: #662000;
+  --color-warning-900: #331000;
+  --color-warning-950: #240B00;
+
+  --color-danger-50: #FFE6E5;
+  --color-danger-100: #FFCECC;
+  --color-danger-200: #FF9C99;
+  --color-danger-300: #FF6B66;
+  --color-danger-400: #FF3A33;
+  --color-danger-500: #FF0900;
+  --color-danger-600: #CC0700;
+  --color-danger-700: #990500;
+  --color-danger-800: #660300;
+  --color-danger-900: #330200;
+  --color-danger-950: #240100;
 }
 
-html {
-  font-size: 16px;
-  scroll-behavior: smooth;
-}
+@layer components {
+  /* ─── Global Reset & Base ───────────────────────────────── */
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
 
-body {
-  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  color: #1f2937;
-  background: #ffffff;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
+  body {
+    color: #1f2937;
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
+  }
 
-/* ─── App Wrapper ───────────────────────────────────────── */
-.app-wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
+  /* ─── App Wrapper ───────────────────────────────────────── */
+  .app-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
 
-.app-wrapper > main {
-  flex: 1;
-}
+  .app-wrapper > main {
+    flex: 1;
+  }
 
-/* ─── Scrollbar ─────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #f1f5f9; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  /* ─── Scrollbar ─────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #f1f5f9; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-/* ─── Utility ───────────────────────────────────────────── */
-img { max-width: 100%; display: block; }
-a { color: inherit; }
+  /* ─── Utility ───────────────────────────────────────────── */
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
 
-/* ─── Print ─────────────────────────────────────────────── */
-@media print {
-  .sidebar, .navbar, .topbar, .btn-print, .card-nav { display: none !important; }
-  .admin-main { margin-left: 0 !important; }
-}
+  /* ─── Print ─────────────────────────────────────────────── */
+  @media print {
+    .sidebar, .navbar, .topbar, .btn-print, .card-nav { display: none !important; }
+    .admin-main { margin-left: 0 !important; }
+  }
 
-/* ─── Sticky Headers in Admin/Role Dashboards ───────────── */
-.admin-main .top-bar,
-.admin-main .page-header {
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 40 !important;
-  background-color: #ffffff !important;
-  border-bottom: 1px solid #e5e7eb !important;
-}
+  /* ─── Sticky Headers in Admin/Role Dashboards ───────────── */
+  .admin-main .top-bar,
+  .admin-main .page-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 40 !important;
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #e5e7eb !important;
+  }
 
-/* Reset for page-header inside top-bar to prevent nested sticky overlays */
-.admin-main .top-bar .page-header {
-  position: static !important;
-  background-color: transparent !important;
-  border-bottom: none !important;
-  padding: 0 !important;
+  /* Reset for page-header inside top-bar to prevent nested sticky overlays */
+  .admin-main .top-bar .page-header {
+    position: static !important;
+    background-color: transparent !important;
+    border-bottom: none !important;
+    padding: 0 !important;
+  }
 }
