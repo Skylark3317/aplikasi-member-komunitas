@@ -20,8 +20,8 @@ class StatistikController extends Controller
     public function index(Request $request): Response
     {
         $now          = Carbon::now();
-        $currentYear  = (int) $request->get('year', $now->year);
-        $currentMonth = (int) $request->get('month', $now->month);
+        $currentYear  = (int) $request->input('year', $now->year);
+        $currentMonth = (int) $request->input('month', $now->month);
         $daysInMonth  = Carbon::create($currentYear, $currentMonth, 1)->daysInMonth;
         $monthNames   = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
         $maxYearStart = $now->year - 9;
@@ -92,37 +92,36 @@ class StatistikController extends Controller
         }
 
         // ── PERTANYAAN ───────────────────────────────────────────────────────
-        $answeredIdsQuery = function($query) {
-            $query->select('conversation_id')
-                ->from('messages')
-                ->whereIn('id', function($q) {
-                    $q->selectRaw('max(id)')
-                        ->from('messages')
-                        ->groupBy('conversation_id');
-                })
-                ->whereIn('sender_id', function($q) {
-                    $q->select('id')
-                        ->from('users')
-                        ->whereIn('role', ['staff', 'super_admin']);
-                });
-        };
+        $pertTotal = Conversation::count();
+        
+        $selesaiFn = fn($q) => $q->where('is_closed', true);
+        $direspondFn = fn($q) => $q->where('is_closed', false)
+            ->whereHas('messages.sender', fn($sq) => $sq->whereIn('role', ['staff', 'super_admin']));
+        $belumFn = fn($q) => $q->where('is_closed', false)
+            ->whereDoesntHave('messages.sender', fn($sq) => $sq->whereIn('role', ['staff', 'super_admin']));
 
-        $pertTotal   = Conversation::count();
-        $pertDijawab = Conversation::whereIn('id', $answeredIdsQuery)->count();
-        $pertBelum   = Conversation::whereNotIn('id', $answeredIdsQuery)->count();
+        $pertSelesai   = $selesaiFn(Conversation::query())->count();
+        $pertDirespond = $direspondFn(Conversation::query())->count();
+        $pertBelum     = $belumFn(Conversation::query())->count();
 
-        $djYearly = $blYearly = $djMonthly = $blMonthly = $djMax = $blMax = [];
+        $slYearly = $drYearly = $blYearly = $slMonthly = $drMonthly = $blMonthly = $slMax = $drMax = $blMax = [];
         for ($m = 1; $m <= 12; $m++) {
-            $djYearly[] = Conversation::whereIn('id', $answeredIdsQuery)->whereYear('created_at',$currentYear)->whereMonth('created_at',$m)->count();
-            $blYearly[] = Conversation::whereNotIn('id', $answeredIdsQuery)->whereYear('created_at',$currentYear)->whereMonth('created_at',$m)->count();
+            $base = Conversation::whereYear('created_at', $currentYear)->whereMonth('created_at', $m);
+            $slYearly[] = $selesaiFn(clone $base)->count();
+            $drYearly[] = $direspondFn(clone $base)->count();
+            $blYearly[] = $belumFn(clone $base)->count();
         }
         for ($d = 1; $d <= $daysInMonth; $d++) {
-            $djMonthly[] = Conversation::whereIn('id', $answeredIdsQuery)->whereYear('created_at',$currentYear)->whereMonth('created_at',$currentMonth)->whereDay('created_at',$d)->count();
-            $blMonthly[] = Conversation::whereNotIn('id', $answeredIdsQuery)->whereYear('created_at',$currentYear)->whereMonth('created_at',$currentMonth)->whereDay('created_at',$d)->count();
+            $base = Conversation::whereYear('created_at', $currentYear)->whereMonth('created_at', $currentMonth)->whereDay('created_at', $d);
+            $slMonthly[] = $selesaiFn(clone $base)->count();
+            $drMonthly[] = $direspondFn(clone $base)->count();
+            $blMonthly[] = $belumFn(clone $base)->count();
         }
         foreach ($maxYears as $y) {
-            $djMax[] = Conversation::whereIn('id', $answeredIdsQuery)->whereYear('created_at',$y)->count();
-            $blMax[] = Conversation::whereNotIn('id', $answeredIdsQuery)->whereYear('created_at',$y)->count();
+            $base = Conversation::whereYear('created_at', $y);
+            $slMax[] = $selesaiFn(clone $base)->count();
+            $drMax[] = $direspondFn(clone $base)->count();
+            $blMax[] = $belumFn(clone $base)->count();
         }
 
         // ── PAYMENT ──────────────────────────────────────────────────────────
@@ -193,13 +192,15 @@ class StatistikController extends Controller
                 ],
                 'pertanyaan' => [
                     'stats'  => [
-                        ['label'=>'Total',         'value'=> $pertTotal],
-                        ['label'=>'Dijawab',       'value'=> $pertDijawab],
-                        ['label'=>'Belum dijawab', 'value'=> $pertBelum],
+                        ['label'=>'Total',           'value'=> $pertTotal],
+                        ['label'=>'Selesai',         'value'=> $pertSelesai],
+                        ['label'=>'Direspond',       'value'=> $pertDirespond],
+                        ['label'=>'Belum direspond', 'value'=> $pertBelum],
                     ],
                     'series' => [
-                        ['label'=>'Dijawab',       'color'=>'#22c55e','data1M'=>$djMonthly,'data1Y'=>$djYearly,'dataMax'=>$djMax],
-                        ['label'=>'Belum dijawab', 'color'=>'#f87171','data1M'=>$blMonthly,'data1Y'=>$blYearly,'dataMax'=>$blMax],
+                        ['label'=>'Selesai',         'color'=>'#22c55e','data1M'=>$slMonthly,'data1Y'=>$slYearly,'dataMax'=>$slMax],
+                        ['label'=>'Direspond',       'color'=>'#3b82f6','data1M'=>$drMonthly,'data1Y'=>$drYearly,'dataMax'=>$drMax],
+                        ['label'=>'Belum direspond', 'color'=>'#f87171','data1M'=>$blMonthly,'data1Y'=>$blYearly,'dataMax'=>$blMax],
                     ],
                 ],
                 'payment' => [

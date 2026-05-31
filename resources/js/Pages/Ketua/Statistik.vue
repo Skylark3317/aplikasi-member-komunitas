@@ -16,12 +16,14 @@
       <div class="stats-grid">
 
         <StatCard title="Statistik Member"
+          class="full-width-card"
           :series="stats.member.series"
           :stats="stats.member.stats"
           :labels1M="labels1M" :labels1Y="monthNames" :labelsMax="maxYears"
           :year="navYear" :month="navMonth"
           :today="today" :thisMonth="thisMonth" :thisYear="thisYear"
           defaultPeriod="1Y"
+          variant="stacked-area"
           :detailUrl="route('ketua.statistik.detail', { type: 'member' })"
           @prev="navigate('prev', $event)" @next="navigate('next', $event)"
         />
@@ -33,6 +35,7 @@
           :year="navYear" :month="navMonth"
           :today="today" :thisMonth="thisMonth" :thisYear="thisYear"
           defaultPeriod="1Y"
+          variant="stacked-column"
           :detailUrl="route('ketua.statistik.detail', { type: 'konten' })"
           @prev="navigate('prev', $event)" @next="navigate('next', $event)"
         />
@@ -44,6 +47,7 @@
           :year="navYear" :month="navMonth"
           :today="today" :thisMonth="thisMonth" :thisYear="thisYear"
           defaultPeriod="1Y"
+          variant="grouped-bar"
           :detailUrl="route('ketua.statistik.detail', { type: 'blog' })"
           @prev="navigate('prev', $event)" @next="navigate('next', $event)"
         />
@@ -55,6 +59,7 @@
           :year="navYear" :month="navMonth"
           :today="today" :thisMonth="thisMonth" :thisYear="thisYear"
           defaultPeriod="1Y"
+          variant="donut"
           :detailUrl="route('ketua.statistik.detail', { type: 'pertanyaan' })"
           @prev="navigate('prev', $event)" @next="navigate('next', $event)"
         />
@@ -66,7 +71,7 @@
           :year="navYear" :month="navMonth"
           :today="today" :thisMonth="thisMonth" :thisYear="thisYear"
           unit="jt" defaultPeriod="1M"
-          class="pendapatan-card"
+          variant="smooth-area"
           :detailUrl="route('ketua.statistik.detail', { type: 'payment' })"
           @prev="navigate('prev', $event)" @next="navigate('next', $event)"
         />
@@ -159,10 +164,11 @@ function handleCetak() { window.print(); }
 }
 
 .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.pendapatan-card { grid-column: 2 / 3; }
+.full-width-card { grid-column: 1 / -1; }
 
 @media print {
-  .btn-cetak { display: none; }
-  .stats-grid { grid-template-columns: 1fr 1fr !important; gap: 12px; }
+  .btn-cetak { display: none !important; }
+  .stats-grid { display: flex !important; flex-direction: column !important; gap: 24px !important; width: 100% !important; }
+  .stats-grid > * { width: 100% !important; max-width: 100% !important; box-sizing: border-box; }
 }
 </style>

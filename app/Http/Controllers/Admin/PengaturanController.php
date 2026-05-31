@@ -34,6 +34,10 @@ class PengaturanController extends Controller
             'hero_description'    => 'nullable|string',
             'about_title'         => 'nullable|string|max:255',
             'about_description'   => 'nullable|string',
+            'stat_member_aktif'   => 'nullable|integer|min:0',
+            'stat_member_pasif'   => 'nullable|integer|min:0',
+            'stat_member_company' => 'nullable|integer|min:0',
+            'stat_member_personal'=> 'nullable|integer|min:0',
         ]);
 
         $fields = [
@@ -45,6 +49,8 @@ class PengaturanController extends Controller
             'primary_color', 'surface_color',
             'hero_title', 'hero_description',
             'about_title', 'about_description',
+            'stat_member_aktif', 'stat_member_pasif',
+            'stat_member_company', 'stat_member_personal',
         ];
 
         foreach ($fields as $field) {

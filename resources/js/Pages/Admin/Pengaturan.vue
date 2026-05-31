@@ -289,6 +289,30 @@
           <textarea v-model="form.about_description" class="field-textarea" rows="5" />
         </div>
 
+        <div class="section-divider" />
+
+        <!-- Statistik Member -->
+        <div class="field-group">
+          <label class="field-label">Statistik Member Aktif</label>
+          <input v-model="form.stat_member_aktif" type="number" min="0" class="field-input field-quarter" />
+          <span v-if="form.errors.stat_member_aktif" class="error-msg">{{ form.errors.stat_member_aktif }}</span>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Statistik Member Pasif</label>
+          <input v-model="form.stat_member_pasif" type="number" min="0" class="field-input field-quarter" />
+          <span v-if="form.errors.stat_member_pasif" class="error-msg">{{ form.errors.stat_member_pasif }}</span>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Statistik Member Company</label>
+          <input v-model="form.stat_member_company" type="number" min="0" class="field-input field-quarter" />
+          <span v-if="form.errors.stat_member_company" class="error-msg">{{ form.errors.stat_member_company }}</span>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Statistik Member Personal</label>
+          <input v-model="form.stat_member_personal" type="number" min="0" class="field-input field-quarter" />
+          <span v-if="form.errors.stat_member_personal" class="error-msg">{{ form.errors.stat_member_personal }}</span>
+        </div>
+
       </form>
     </div>
   </AdminLayout>
@@ -327,6 +351,10 @@ const form = useForm({
   hero_description:    s.hero_description    ?? '',
   about_title:         s.about_title         ?? '',
   about_description:   s.about_description   ?? '',
+  stat_member_aktif:   s.stat_member_aktif   ?? '',
+  stat_member_pasif:   s.stat_member_pasif   ?? '',
+  stat_member_company: s.stat_member_company ?? '',
+  stat_member_personal: s.stat_member_personal ?? '',
   logo:                null,
   delete_logo:         false,
   bg_image:            null,

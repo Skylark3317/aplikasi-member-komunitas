@@ -12,7 +12,7 @@
       <nav class="sidebar-nav">
         <Link
           :href="route('ketua.statistik')"
-          :class="['nav-item', isActive('ketua.statistik') ? 'active' : '']"
+          :class="['nav-item', isActive('ketua.statistik') && !isDetailRoute() ? 'active' : '']"
         >
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <line x1="18" y1="20" x2="18" y2="10"/>
@@ -21,6 +21,15 @@
           </svg>
           <span>Statistik</span>
         </Link>
+        
+        <div class="sub-nav">
+          <div class="sub-nav-title">Detail Statistik</div>
+          <Link :href="route('ketua.statistik.detail', { type: 'member' })" :class="['sub-nav-item', isDetailType('member') ? 'active' : '']">Member</Link>
+          <Link :href="route('ketua.statistik.detail', { type: 'konten' })" :class="['sub-nav-item', isDetailType('konten') ? 'active' : '']">Konten</Link>
+          <Link :href="route('ketua.statistik.detail', { type: 'blog' })" :class="['sub-nav-item', isDetailType('blog') ? 'active' : '']">Blog</Link>
+          <Link :href="route('ketua.statistik.detail', { type: 'pertanyaan' })" :class="['sub-nav-item', isDetailType('pertanyaan') ? 'active' : '']">Pertanyaan</Link>
+          <Link :href="route('ketua.statistik.detail', { type: 'payment' })" :class="['sub-nav-item', isDetailType('payment') ? 'active' : '']">Pendapatan</Link>
+        </div>
       </nav>
 
       <!-- User section with popup -->
@@ -72,6 +81,14 @@ function isActive(routeName) {
   const current = $page.url;
   if (routeName === 'ketua.statistik') return current.startsWith('/ketua/statistik');
   return false;
+}
+
+function isDetailRoute() {
+  return $page.url.startsWith('/ketua/statistik/detail');
+}
+
+function isDetailType(type) {
+  return $page.url.startsWith(`/ketua/statistik/detail/${type}`);
 }
 
 onMounted(() => document.addEventListener('click', closePopup));
@@ -126,14 +143,48 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
   gap: 10px;
   padding: 10px 20px;
   font-size: 13.5px;
-  color: var(--primary-color);
+  color: #555;
   text-decoration: none;
   transition: background 0.15s, color 0.15s;
   cursor: pointer;
 }
-.nav-item:hover { background: var(--surface-color); color: var(--primary-color); }
-.nav-item.active { background: var(--surface-color); color: var(--primary-color); font-weight: 600; }
+.nav-item:hover { background: #f0f4ff; color: var(--primary-color); }
+.nav-item.active { background: #f3f4f6; color: var(--primary-color); font-weight: 600; }
 .nav-icon { width: 18px; height: 18px; flex-shrink: 0; }
+
+.sub-nav {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.sub-nav-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  padding: 8px 20px 4px;
+  letter-spacing: 0.05em;
+}
+.sub-nav-item {
+  padding: 8px 20px 8px 48px;
+  font-size: 13px;
+  color: #6b7280;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.sub-nav-item:hover { color: var(--primary-color); background: #f9fafb; }
+.sub-nav-item.active { color: var(--primary-color); font-weight: 600; background: #f3f4f6; position: relative; }
+.sub-nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 36px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--primary-color);
+}
 
 /* User */
 .sidebar-user {
@@ -149,7 +200,7 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
 .user-name { font-weight: 600; font-size: 13.5px; color: #111; }
 .user-role {
   font-size: 11px;
-  background: var(--surface-color);
+  background: #dbeafe;
   color: var(--primary-color);
   padding: 2px 9px;
   border-radius: 10px;
@@ -200,7 +251,10 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
 
 /* Print */
 @media print {
-  .sidebar { display: none; }
-  .admin-main { margin-left: 0; }
+  @page { size: portrait; margin: 1cm; }
+  body { background: #fff !important; }
+  .sidebar { display: none !important; }
+  .admin-wrapper { min-height: auto !important; display: block !important; width: 100% !important; }
+  .admin-main { margin-left: 0 !important; width: 100% !important; padding: 0 !important; display: block !important; }
 }
 </style>

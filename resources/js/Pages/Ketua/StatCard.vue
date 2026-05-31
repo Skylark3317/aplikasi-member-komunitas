@@ -7,23 +7,23 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       </button>
       <span v-else class="card-title">{{ title }}</span>
-      <div class="period-group">
+      <div v-if="variant !== 'donut'" class="period-group">
         <button v-for="p in PERIODS" :key="p.key"
           :class="['pd-btn', activePeriod === p.key ? 'active' : '']"
           @click="setPeriod(p.key)">{{ p.label }}</button>
       </div>
     </div>
 
-    <!-- Live / Hover / Pinned Value -->
+    <!-- Live / Total Value -->
     <div class="live-block">
       <div class="live-val">{{ displayValue }}</div>
       <div class="live-lbl">{{ displayLabel }}</div>
-      <div v-if="trendDiff !== 0" :class="['trend-pill', trendDiff >= 0 ? 'up' : 'dn']">
+      <div v-if="variant !== 'donut' && trendDiff !== 0" :class="['trend-pill', trendDiff >= 0 ? 'up' : 'dn']">
         {{ trendDiff >= 0 ? '▲' : '▼' }} {{ Math.abs(trendDiff) }}
         <span class="tp-pct">({{ trendPct }}%)</span>
       </div>
     </div>
-    
+
     <!-- Stats Row (overall DB totals) -->
     <div class="stats-row">
       <div v-for="s in stats" :key="s.label" class="st-it">
@@ -32,96 +32,28 @@
       </div>
     </div>
 
-    <!-- SVG Line Chart -->
-    <div class="chart-box" ref="chartEl"
-      @mousemove="onMove" @mouseleave="onLeave" @click="onClickChart">
-      <svg class="chart-svg" viewBox="0 0 600 130" preserveAspectRatio="none">
-        <defs>
-          <linearGradient :id="gid" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" :stop-color="series[0]?.color ?? '#3b82f6'" stop-opacity="0.25"/>
-            <stop offset="100%" :stop-color="series[0]?.color ?? '#3b82f6'" stop-opacity="0.01"/>
-          </linearGradient>
-        </defs>
-        <!-- Area fill: only for first series -->
-        <path v-if="areaPath(0)" :d="areaPath(0)" :fill="`url(#${gid})`"/>
-        <!-- Lines: one per series -->
-        <polyline
-          v-for="(s, si) in series" :key="si"
-          :points="linePoints(si)"
-          fill="none"
-          :stroke="s.color"
-          :stroke-width="si === 0 ? 2.2 : 1.8"
-          :stroke-dasharray="si > 0 ? '0' : '0'"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          :opacity="si === 0 ? 1 : 0.75"
-        />
-        <!-- Live marker dots — one per series -->
-        <template v-if="activeIdx === null">
-          <circle
-            v-for="(s, si) in series" :key="'live-'+si"
-            v-if="liveCoords[si]"
-            :cx="liveCoords[si].x" :cy="liveCoords[si].y"
-            :r="si === 0 ? 5 : 4"
-            :fill="s.color"
-            stroke="white" stroke-width="2"
-          />
-        </template>
-        <!-- Hover / pinned dots — one per series -->
-        <template v-if="activeIdx !== null">
-          <circle
-            v-for="(s, si) in series" :key="'hover-'+si"
-            v-if="allCoords[si]?.[activeIdx]"
-            :cx="allCoords[si][activeIdx].x" :cy="allCoords[si][activeIdx].y"
-            :r="si === 0 ? 6 : 4.5"
-            :fill="s.color"
-            stroke="white" :stroke-width="si === 0 ? 2.5 : 2"
-          />
-        </template>
-        <!-- Hover vertical line -->
-        <line
-          v-if="activeIdx !== null && allCoords[0]?.[activeIdx]"
-          :x1="allCoords[0][activeIdx].x" y1="0"
-          :x2="allCoords[0][activeIdx].x" y2="130"
-          stroke="#9ca3af" stroke-width="1" stroke-dasharray="4 3"
-        />
-        <!-- Live vertical line (when not hovering) -->
-        <line
-          v-if="activeIdx === null && liveCoords[0]"
-          :x1="liveCoords[0].x" y1="0"
-          :x2="liveCoords[0].x" y2="130"
-          stroke="#9ca3af" stroke-width="1" stroke-dasharray="4 3"
-        />
-      </svg>
+    <!-- Vue Chart.js Charts -->
+    <div class="chart-container" :class="variant">
+      
+      <!-- Main Chart Area -->
+      <div v-if="variant !== 'donut'" class="chart-wrap main-chart">
+        <Line v-if="isLine" :data="chartData" :options="chartOptions" />
+        <Bar v-else-if="isBar" :data="chartData" :options="chartOptions" />
+      </div>
 
-      <!-- Tooltip -->
-      <div v-if="activeIdx !== null" class="tip" :style="tipStyle">
-        <div v-for="(s, si) in series" :key="si" class="tip-row">
-          <span class="tip-dot" :style="{ background: s.color }"/>
-          <span class="tip-lbl">{{ s.label }}:</span>
-          <span class="tip-val">{{ formatVal(activeSeriesData(si)[activeIdx]) }}</span>
+      <!-- Donut Chart -->
+      <div v-if="variant === 'donut' || variant === 'stacked-area'" class="chart-wrap donut-chart" :class="{ 'side-donut': variant === 'stacked-area' }">
+        <Doughnut :data="donutData" :options="donutOptions" />
+        <div v-if="variant === 'donut'" class="donut-center-text">
+          <div class="pct-val">{{ donutPercentage }}%</div>
+          <div class="pct-lbl">Selesai</div>
         </div>
-        <div class="tip-date">{{ activeLabels[activeIdx] }}</div>
-        <div v-if="isPinned" class="tip-pin"><i class="bi bi-pin-angle-fill"></i> Klik lagi untuk lepas</div>
       </div>
-    </div>
 
-    <!-- X-axis labels -->
-    <div class="x-row">
-      <span v-for="(l, i) in xAxisLabels" :key="i" class="x-lbl"
-        :style="{ left: xPct(i) + '%' }">{{ l }}</span>
-    </div>
-
-    <!-- Legend -->
-    <div class="legend-row">
-      <div v-for="s in series" :key="s.label" class="lg-item">
-        <span class="lg-dot" :style="{ background: s.color }"/>
-        <span class="lg-lbl">{{ s.label }}</span>
-      </div>
     </div>
 
     <!-- Nav (prev/next) -->
-    <div v-if="activePeriod !== 'Max'" class="nav-row">
+    <div v-if="variant !== 'donut' && activePeriod !== 'Max'" class="nav-row">
       <button class="nav-btn" @click="$emit('prev', activePeriod)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         {{ activePeriod === '1M' ? 'Bulan sebelumnya' : 'Tahun sebelumnya' }}
@@ -138,15 +70,18 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { router } from '@inertiajs/vue3';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend, Filler } from 'chart.js';
+import { Line, Bar, Doughnut } from 'vue-chartjs';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend, Filler);
 
 const MONTH_FULL = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const PERIODS = [{ key:'1M', label:'1B' }, { key:'1Y', label:'1T' }, { key:'Max', label:'Maks' }];
-const W = 600, H = 130, PT = 12, PB = 12;
 
 const props = defineProps({
   title:     { type: String, default: '' },
   stats:     { type: Array,  default: () => [] },
-  series:    { type: Array,  default: () => [] }, // [{label, color, data1M, data1Y, dataMax}]
+  series:    { type: Array,  default: () => [] },
   labels1M:  { type: Array,  default: () => [] },
   labels1Y:  { type: Array,  default: () => [] },
   labelsMax: { type: Array,  default: () => [] },
@@ -155,9 +90,13 @@ const props = defineProps({
   today:     { type: Number, default: 1 },
   thisMonth: { type: Number, default: 1 },
   thisYear:  { type: Number, default: 2026 },
-  detailUrl:     { type: String,  default: '' },
-  unit:          { type: String, default: '' },
+  detailUrl: { type: String,  default: '' },
+  unit:      { type: String, default: '' },
   defaultPeriod: { type: String, default: '1Y' },
+  variant: {
+    type: String,
+    default: 'smooth-area', // stacked-area, stacked-column, grouped-bar, donut, smooth-area
+  },
 });
 
 const emit = defineEmits(['prev', 'next']);
@@ -169,10 +108,7 @@ function goDetail() {
 const activePeriod = ref(props.defaultPeriod);
 function setPeriod(k) { activePeriod.value = k; }
 
-// Active data per series
-function activeSeriesData(si) {
-  const s = props.series[si];
-  if (!s) return [];
+function activeSeriesData(s) {
   if (activePeriod.value === '1M') return s.data1M ?? [];
   if (activePeriod.value === '1Y') return s.data1Y ?? [];
   return s.dataMax ?? [];
@@ -184,10 +120,158 @@ const activeLabels = computed(() => {
   return props.labelsMax;
 });
 
-// Live time index
+const isLine = computed(() => props.variant === 'stacked-area' || props.variant === 'smooth-area');
+const isBar = computed(() => props.variant === 'stacked-column' || props.variant === 'grouped-bar');
+const isDonut = computed(() => props.variant === 'donut');
+
+// -- Chart Data --
+const chartData = computed(() => {
+  return {
+    labels: activeLabels.value,
+    datasets: props.series.map((s, i) => {
+      let typeConfig = {};
+      let bg = s.color;
+
+      if (props.variant === 'stacked-area') {
+        typeConfig = { fill: true, tension: 0.1 };
+        bg = s.color + '40'; // 25% opacity
+      } else if (props.variant === 'smooth-area') {
+        typeConfig = { fill: true, tension: 0.4 };
+        bg = s.color + '40';
+      }
+
+      return {
+        label: s.label,
+        backgroundColor: bg,
+        borderColor: s.color,
+        borderWidth: isBar.value ? 0 : 2,
+        pointRadius: 1,
+        pointHoverRadius: 4,
+        data: activeSeriesData(s),
+        ...typeConfig
+      };
+    })
+  };
+});
+
+const chartOptions = computed(() => {
+  const isStacked = props.variant === 'stacked-area' || props.variant === 'stacked-column';
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    resizeDelay: 0,
+    plugins: {
+      legend: { display: true, position: 'bottom', labels: { boxWidth: 10, font: { size: 11, family: 'Inter' } } },
+      tooltip: { 
+        mode: 'index', 
+        intersect: false,
+        callbacks: {
+          label: function(context) {
+            let label = context.dataset.label || '';
+            if (label) label += ': ';
+            let val = context.parsed.y;
+            if (props.unit === 'jt') {
+              label += `Rp${val.toFixed(2).replace('.', ',')}jt`;
+            } else {
+              label += val.toLocaleString('id-ID');
+            }
+            return label;
+          }
+        }
+      }
+    },
+    scales: {
+      x: { stacked: isStacked, grid: { display: false } },
+      y: { 
+        stacked: isStacked, 
+        border: { display: false }, 
+        grid: { color: '#f3f4f6' },
+        ticks: {
+          callback: function(value) {
+            if (props.unit === 'jt') return value + 'jt';
+            return value;
+          }
+        }
+      }
+    },
+    interaction: { mode: 'nearest', axis: 'x', intersect: false }
+  };
+});
+
+// -- Donut Data --
+const donutData = computed(() => {
+  // Use stats array (skip 'Total' usually at index 0)
+  const items = props.stats.length > 2 ? props.stats.slice(1) : props.stats;
+  
+  // Extract number from string if formatted like "Rp1.5jt"
+  const parseVal = (v) => {
+    if (typeof v === 'number') return v;
+    const n = parseFloat(String(v).replace(/[^0-9.]/g, ''));
+    return isNaN(n) ? 0 : n;
+  };
+
+  return {
+    labels: items.map(s => s.label),
+    datasets: [{
+      data: items.map(s => parseVal(s.value)),
+      backgroundColor: props.series.map(s => s.color).concat(['#e5e7eb']),
+      borderWidth: 0,
+      hoverOffset: 4
+    }]
+  };
+});
+
+const donutOptions = computed(() => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  resizeDelay: 0,
+  cutout: '75%',
+  plugins: {
+    legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11, family: 'Inter' } } },
+    tooltip: {
+      callbacks: {
+        label: function(context) {
+          let label = context.label || '';
+          if (label) label += ': ';
+          
+          let val = context.parsed;
+          if (props.unit === 'jt') {
+             label += `Rp${val.toFixed(2).replace('.', ',')}jt`;
+          } else {
+             label += val.toLocaleString('id-ID');
+          }
+
+          const dataset = context.dataset;
+          const total = dataset.data.reduce((acc, curr) => acc + curr, 0);
+          if (total > 0) {
+            const percentage = Math.round((val / total) * 100);
+            label += ` (${percentage}%)`;
+          }
+          
+          return label;
+        }
+      }
+    }
+  }
+}));
+
+const donutPercentage = computed(() => {
+  if (props.stats.length >= 3) {
+    const total = props.stats[0].value;
+    const answered = props.stats[1].value;
+    if (total > 0) return Math.round((answered / total) * 100);
+  }
+  return 0;
+});
+
+// -- Live Block Calculations --
 const liveIdx = computed(() => {
-  const n = activeSeriesData(0).length;
+  const s = props.series[0];
+  if (!s) return 0;
+  const d = activeSeriesData(s);
+  const n = d.length;
   if (!n) return 0;
+
   if (activePeriod.value === '1Y') {
     if (props.year === props.thisYear) return Math.min(props.thisMonth - 1, n - 1);
     return n - 1;
@@ -197,149 +281,41 @@ const liveIdx = computed(() => {
       return Math.min(props.today - 1, n - 1);
     return n - 1;
   }
-  // Max: find thisYear in labelsMax
+  // Max
   const idx = props.labelsMax.indexOf(String(props.thisYear));
   return idx >= 0 ? idx : n - 1;
 });
 
-// Y scale across all series
-const globalMax = computed(() => {
-  let m = 0.01;
-  for (let si = 0; si < props.series.length; si++) {
-    const d = activeSeriesData(si);
-    const mx = Math.max(...d.map(v => Number(v) || 0));
-    if (mx > m) m = mx;
-  }
-  return m;
-});
-const globalMin = computed(() => {
-  let mn = 0;
-  for (let si = 0; si < props.series.length; si++) {
-    const d = activeSeriesData(si);
-    const mx = Math.min(...d.map(v => Number(v) || 0));
-    if (mx < mn) mn = mx;
-  }
-  return mn;
-});
-const valRange = computed(() => globalMax.value - globalMin.value || 0.01);
-
-function toX(i, n) { return n <= 1 ? W / 2 : (i / (n - 1)) * W; }
-function toY(v) {
-  return PT + (1 - (Number(v) - globalMin.value) / valRange.value) * (H - PT - PB);
-}
-
-// Coords per series
-const allCoords = computed(() =>
-  props.series.map((_, si) => {
-    const d = activeSeriesData(si);
-    return d.map((v, i) => ({ x: toX(i, d.length), y: toY(v) }));
-  })
-);
-
-const liveCoords = computed(() =>
-  allCoords.value.map(c => c[liveIdx.value] ?? null)
-);
-
-function linePoints(si) {
-  const c = allCoords.value[si] ?? [];
-  return c.map(p => `${p.x},${p.y}`).join(' ');
-}
-
-function areaPath(si) {
-  const c = allCoords.value[si] ?? [];
-  if (!c.length) return '';
-  const bot = H - PB;
-  return `M${c[0].x},${bot} L${c[0].x},${c[0].y} ` +
-    c.slice(1).map(p => `L${p.x},${p.y}`).join(' ') +
-    ` L${c[c.length - 1].x},${bot} Z`;
-}
-
-// Hover + pinned
-const chartEl  = ref(null);
-const hoverIdx = ref(null);
-const pinnedIdx = ref(null);
-const isPinned  = computed(() => pinnedIdx.value !== null);
-const activeIdx = computed(() => pinnedIdx.value ?? hoverIdx.value);
-
-const hoverX = ref(0);
-
-function idxFromEvent(e) {
-  const rect = chartEl.value.getBoundingClientRect();
-  const pct  = (e.clientX - rect.left) / rect.width;
-  const n    = activeSeriesData(0).length;
-  return Math.max(0, Math.min(n - 1, Math.round(pct * (n - 1))));
-}
-function onMove(e) {
-  if (!isPinned.value) {
-    hoverIdx.value = idxFromEvent(e);
-    hoverX.value = e.clientX - chartEl.value.getBoundingClientRect().left;
-  }
-}
-function onLeave() { if (!isPinned.value) hoverIdx.value = null; }
-function onClickChart(e) {
-  const idx = idxFromEvent(e);
-  if (isPinned.value && pinnedIdx.value === idx) {
-    pinnedIdx.value = null; // unpin same spot
-  } else {
-    pinnedIdx.value = idx; // pin new spot
-  }
-  hoverX.value = e.clientX - chartEl.value.getBoundingClientRect().left;
-}
-
-const tipStyle = computed(() => {
-  if (!chartEl.value || activeIdx.value === null) return {};
-  const w = chartEl.value.getBoundingClientRect().width;
-  const x = activeIdx.value !== null
-    ? (allCoords.value[0]?.[activeIdx.value]?.x ?? 0) / W * w
-    : hoverX.value;
-  const left = x > w / 2 ? x - 160 : x + 14;
-  return { left: `${Math.max(0, left)}px`, top: '6px' };
-});
-
-// Display value (top big number) = SUM of all series at displayIdx
-const displayIdx = computed(() => activeIdx.value ?? liveIdx.value);
 const displayValue = computed(() => {
-  const total = props.series.reduce((sum, _, si) => {
-    const d = activeSeriesData(si);
-    return sum + Number(d[displayIdx.value] ?? 0);
+  if (props.variant === 'donut') {
+    return props.stats[0]?.value || 0; // Total
+  }
+  const total = props.series.reduce((sum, s) => {
+    return sum + Number(activeSeriesData(s)[liveIdx.value] ?? 0);
   }, 0);
   return formatVal(total);
 });
-const displayLabel = computed(() => activeLabels.value[displayIdx.value] ?? '');
 
-// Trend: sum of all series at liveIdx vs sum at first index
+const displayLabel = computed(() => {
+  if (props.variant === 'donut') return 'Total Keseluruhan';
+  return activeLabels.value[liveIdx.value] ?? '';
+});
+
 const trendDiff = computed(() => {
-  const liveSum  = props.series.reduce((s, _, si) => s + Number(activeSeriesData(si)[liveIdx.value]  ?? 0), 0);
-  const firstSum = props.series.reduce((s, _, si) => s + Number(activeSeriesData(si)[0] ?? 0), 0);
+  const liveSum  = props.series.reduce((s, sObj) => s + Number(activeSeriesData(sObj)[liveIdx.value]  ?? 0), 0);
+  const firstSum = props.series.reduce((s, sObj) => s + Number(activeSeriesData(sObj)[0] ?? 0), 0);
   return Math.round((liveSum - firstSum) * 100) / 100;
 });
 const trendPct = computed(() => {
-  const firstSum = props.series.reduce((s, _, si) => s + Number(activeSeriesData(si)[0] ?? 0), 0);
+  const firstSum = props.series.reduce((s, sObj) => s + Number(activeSeriesData(sObj)[0] ?? 0), 0);
   if (!firstSum) return '0.00';
   return ((trendDiff.value / firstSum) * 100).toFixed(2);
 });
 
-// Nav label
 const navLabel = computed(() => {
   if (activePeriod.value === '1M') return `${MONTH_FULL[props.month - 1]} ${props.year}`;
   return `${props.year}`;
 });
-
-// X-axis labels (5 evenly spaced)
-const xAxisLabels = computed(() => {
-  const src = activeLabels.value;
-  if (!src.length) return [];
-  const target = Math.min(5, src.length);
-  return Array.from({ length: target }, (_, i) =>
-    src[Math.round(i * (src.length - 1) / (target - 1))]
-  );
-});
-function xPct(i) {
-  const n = xAxisLabels.value.length;
-  return n <= 1 ? 50 : (i / (n - 1)) * 100;
-}
-
-const gid = computed(() => `g-${props.title.replace(/\s+/g,'')}`);
 
 function formatVal(v) {
   if (v === undefined || v === null) return '—';
@@ -354,6 +330,7 @@ function formatVal(v) {
   background: #fff; border-radius: 14px; border: 1px solid #e5e7eb;
   padding: 18px 18px 12px; display: flex; flex-direction: column; gap: 10px;
   font-family: 'Inter', sans-serif;
+  overflow: hidden;
 }
 .card-top { display: flex; justify-content: space-between; align-items: center; }
 .card-title { font-size: 11px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: .05em; }
@@ -385,43 +362,70 @@ function formatVal(v) {
 .st-val { font-size: 15px; font-weight: 700; color: #111; }
 .st-lbl { font-size: 11px; color: #9ca3af; }
 
-/* Chart */
-.chart-box { position: relative; height: 140px; cursor: crosshair; user-select: none; }
-.chart-svg { width: 100%; height: 100%; display: block; }
-
-/* Tooltip */
-.tip {
-  position: absolute; background: #fff; border: 1px solid #e5e7eb;
-  border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,.12);
-  padding: 10px 14px; pointer-events: none; min-width: 140px; z-index: 20;
+/* Chart Container */
+.chart-container {
+  display: flex;
+  gap: 16px;
+  margin-top: 4px;
 }
-.tip-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
-.tip-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.tip-lbl { font-size: 11px; color: #6b7280; flex: 1; }
-.tip-val { font-size: 13px; font-weight: 700; color: #111; }
-.tip-date { font-size: 11px; color: #9ca3af; margin-top: 4px; border-top: 1px solid #f3f4f6; padding-top: 4px; }
-.tip-pin { font-size: 10px; color: #9ca3af; margin-top: 2px; }
 
-/* X-axis */
-.x-row { position: relative; height: 16px; }
-.x-lbl { position: absolute; transform: translateX(-50%); font-size: 10.5px; color: #9ca3af; white-space: nowrap; }
-
-/* Legend */
-.legend-row { display: flex; gap: 12px; flex-wrap: wrap; }
-.lg-item { display: flex; align-items: center; gap: 5px; }
-.lg-dot { width: 8px; height: 8px; border-radius: 50%; }
-.lg-lbl { font-size: 11.5px; color: #6b7280; }
+/* chart-wrap must be position:relative with a FIXED height — required by Chart.js ResizeObserver */
+.chart-wrap {
+  position: relative;
+}
+.main-chart {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+.donut-chart {
+  position: relative;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.side-donut {
+  width: 150px;
+  flex-shrink: 0;
+}
+.donut-center-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+.pct-val {
+  font-size: 28px;
+  font-weight: 800;
+  color: #111;
+  line-height: 1;
+}
+.pct-lbl {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
 
 /* Nav */
-.nav-row { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #f3f4f6; padding-top: 8px; }
+.nav-row { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #f3f4f6; padding-top: 8px; margin-top: auto; }
 .nav-btn { display: flex; align-items: center; gap: 4px; background: none; border: none; cursor: pointer; font-size: 12px; color: #6b7280; padding: 4px 8px; border-radius: 6px; transition: background .15s; }
 .nav-btn:hover { background: #f3f4f6; color: #111; }
 .nav-btn svg { width: 14px; height: 14px; }
 .nav-center { font-size: 12px; font-weight: 700; color: #374151; }
 
 @media print {
-  .stat-card { break-inside: avoid; border: 1px solid #ccc; }
-  .period-group, .nav-row { display: none; }
-  .chart-box { height: 120px; }
+  .stat-card { break-inside: avoid; border: 1px solid #ccc; width: 100% !important; max-width: 100% !important; box-sizing: border-box; }
+  .period-group, .nav-row { display: none !important; }
+  .chart-container, .main-chart, .donut-chart { width: 100% !important; max-width: 100% !important; }
+  canvas { max-width: 100% !important; height: auto !important; }
 }
 </style>

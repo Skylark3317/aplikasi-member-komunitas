@@ -15,7 +15,7 @@ class KelolAkunController extends Controller
 {
     public function index(Request $request): Response
     {
-        $query = User::query(); // Show all users, or we can use where('id', '!=', auth()->id()); Let's show all.
+        $query = User::query()->where('role', '!=', 'super_admin');
 
         // Search by name or email
         if ($request->filled('search')) {
@@ -53,7 +53,9 @@ class KelolAkunController extends Controller
 
     public function show(User $user): Response
     {
-        // Let them see all roles
+        if ($user->role === 'super_admin') {
+            abort(404);
+        }
 
         $memberProfile = null;
         if ($user->role === 'member') {
@@ -77,9 +79,6 @@ class KelolAkunController extends Controller
 
             $data['member_profile'] = [
                 'member_number'  => 'M' . str_pad($user->id, 5, '0', STR_PAD_LEFT),
-                'gender'         => $memberProfile->gender,
-                'blood_type'     => $memberProfile->blood_type,
-                'last_education' => $memberProfile->last_education,
                 'institution'    => $memberProfile->institution,
                 'department'     => $memberProfile->department,
                 'address'        => $memberProfile->address,
@@ -112,7 +111,6 @@ class KelolAkunController extends Controller
         User::create([
             'name'      => $request->name,
             'email'     => $request->email,
-            'email_verified_at' => now(),
             'telephone' => $request->telephone,
             'role'      => $request->role,
             'password'  => Hash::make($request->password),
@@ -125,8 +123,8 @@ class KelolAkunController extends Controller
 
     public function toggleStatus(User $user)
     {
-        if ($user->id === auth()->id()) {
-            return back()->with('error', 'Tidak bisa menonaktifkan akun sendiri.');
+        if ($user->role === 'super_admin') {
+            abort(403);
         }
 
         $user->update(['is_active' => !$user->is_active]);
@@ -135,21 +133,5 @@ class KelolAkunController extends Controller
             ? 'Akun berhasil diaktifkan.'
             : 'Akun berhasil dinonaktifkan.'
         );
-    }
-
-    public function destroy(User $user)
-    {
-        if ($user->id === auth()->id()) {
-            return back()->with('error', 'Tidak bisa menghapus akun sendiri.');
-        }
-
-        if ($user->role === 'member') {
-            return back()->with('error', 'Akun member hanya bisa dihapus oleh member itu sendiri.');
-        }
-
-        $user->delete();
-
-        return redirect()->route('superadmin.kelol-akun.index')
-            ->with('success', 'Akun berhasil dihapus.');
     }
 }
