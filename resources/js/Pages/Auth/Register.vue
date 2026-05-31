@@ -1,255 +1,137 @@
-<template>
-  <AppLayout>
-    <Head title="Daftar Membership - AMK" />
-
-    <div class="page-header">
-      <div class="page-header-inner">
-        <h1 class="page-title">Daftar Membership</h1>
-      </div>
-    </div>
-
-    <div class="auth-wrapper">
-      <form @submit.prevent="submit" class="auth-form">
-        <div class="form-group">
-          <label for="name">Nama Lengkap <span class="required">*</span></label>
-          <input id="name" v-model="form.name" type="text" placeholder="Nama lengkap" required />
-          <span v-if="form.errors.name" class="field-error">{{ form.errors.name }}</span>
-        </div>
-
-        <div class="form-group">
-          <label for="email">Email <span class="required">*</span></label>
-          <input id="email" v-model="form.email" type="email" placeholder="example@mail.com" required />
-          <span v-if="form.errors.email" class="field-error">{{ form.errors.email }}</span>
-        </div>
-
-        <div class="form-group">
-          <label for="phone">Nomor Telepon</label>
-          <input id="phone" v-model="form.phone" type="tel" placeholder="Nomor telepon" />
-        </div>
-
-        <div class="form-group">
-          <label>Jenis Kelamin</label>
-          <div class="radio-group">
-            <label class="radio-label">
-              <input type="radio" v-model="form.gender" value="Laki-laki" />
-              Laki-laki
-            </label>
-            <label class="radio-label">
-              <input type="radio" v-model="form.gender" value="Perempuan" />
-              Perempuan
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Golongan Darah</label>
-          <div class="radio-group">
-            <label class="radio-label">
-              <input type="radio" v-model="form.blood_type" value="A" /> A
-            </label>
-            <label class="radio-label">
-              <input type="radio" v-model="form.blood_type" value="B" /> B
-            </label>
-            <label class="radio-label">
-              <input type="radio" v-model="form.blood_type" value="AB" /> AB
-            </label>
-            <label class="radio-label">
-              <input type="radio" v-model="form.blood_type" value="O" /> O
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="last_education">Pendidikan Terakhir</label>
-          <input id="last_education" v-model="form.last_education" type="text" placeholder="Pendidikan Terakhir" autocomplete="off" />
-        </div>
-
-        <div class="form-group">
-          <label for="institution">Institusi</label>
-          <input id="institution" v-model="form.institution" type="text" placeholder="Institusi" autocomplete="off" />
-        </div>
-
-        <div class="form-group">
-          <label for="department">Jurusan</label>
-          <input id="department" v-model="form.department" type="text" placeholder="Jurusan" autocomplete="off" />
-        </div>
-
-        <div class="form-group">
-          <label for="address">Alamat Rumah</label>
-          <textarea id="address" v-model="form.address" placeholder="Alamat Rumah" rows="3"></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="password">Password <span class="required">*</span></label>
-          <div class="input-icon-wrap">
-            <input
-              id="password"
-              v-model="form.password"
-              :type="showPw ? 'text' : 'password'"
-              placeholder="Password"
-              required
-            />
-            <button type="button" class="toggle-pw" @click="showPw = !showPw">
-              <i :class="showPw ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
-            </button>
-          </div>
-          <span v-if="form.errors.password" class="field-error">{{ form.errors.password }}</span>
-        </div>
-
-        <div class="form-group">
-          <label for="password_confirmation">Konfirmasi Password <span class="required">*</span></label>
-          <div class="input-icon-wrap">
-            <input
-              id="password_confirmation"
-              v-model="form.password_confirmation"
-              :type="showPwC ? 'text' : 'password'"
-              placeholder="Konfirmasi password"
-              required
-            />
-            <button type="button" class="toggle-pw" @click="showPwC = !showPwC">
-              <i :class="showPwC ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="form-hints">
-          <p>ⓘ Password minimal 8 karakter dengan kombinasi huruf dan angka</p>
-          <p>* Wajib diisi</p>
-        </div>
-
-        <button type="submit" class="btn-submit" :disabled="form.processing">Daftar</button>
-
-        <p class="auth-alt">
-          Sudah memiliki akun?
-          <Link :href="route('login')" class="link-blue">Login</Link>
-        </p>
-      </form>
-    </div>
-  </AppLayout>
-</template>
-
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
-import AppLayout from '@/Layouts/AppLayout.vue';
+import { Form, Link } from "@inertiajs/vue3";
+import { ref } from "vue";
+import PillButton from "../../Components/Ui/PillButton.vue";
+import HomeLayout from "../../Layouts/HomeLayout.vue";
 
-const showPw = ref(false);
-const showPwC = ref(false);
-
-const form = useForm({
-  name: '',
-  email: '',
-  phone: '',
-  gender: '',
-  blood_type: '',
-  last_education: '',
-  institution: '',
-  department: '',
-  address: '',
-  password: '',
-  password_confirmation: '',
-});
-
-const submit = () => {
-  form.post(route('register'), { onFinish: () => form.reset('password', 'password_confirmation') });
-};
+const passwordVisible = ref(false);
+const passwordConfirmationVisible = ref(false);
 </script>
 
-<style scoped>
-.page-header { background: var(--primary-color); padding: 110px 0 32px; }
-.page-header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-.page-title { color: #fff; font-size: 22px; font-weight: 700; }
-
-.auth-wrapper {
-  display: flex;
-  justify-content: center;
-  padding: 48px 24px 80px;
-  background: #f9fafb;
-}
-.auth-form { width: 100%; max-width: 480px; }
-.form-group { margin-bottom: 18px; }
-.form-group label {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  color: #111;
-  margin-bottom: 6px;
-}
-.required { color: #dc2626; }
-.form-group input:not([type="radio"]), .form-group textarea, .form-group select {
-  width: 100%;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  padding: 10px 14px;
-  font-size: 14px;
-  outline: none;
-  box-sizing: border-box;
-  transition: border-color 0.2s;
-  font-family: inherit;
-}
-.form-group input:not([type="radio"]):focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--primary-color); }
-
-.radio-group {
-  display: flex;
-  gap: 16px;
-  margin-top: 4px;
-}
-.radio-label {
-  display: flex !important;
-  align-items: center;
-  gap: 6px;
-  font-weight: 400 !important;
-  font-size: 14px;
-  margin-bottom: 0 !important;
-  cursor: pointer;
-}
-.radio-label input[type="radio"] {
-  width: auto;
-  margin: 0;
-  cursor: pointer;
-}
-.input-icon-wrap { position: relative; }
-.input-icon-wrap input { padding-right: 42px; }
-.toggle-pw {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: none;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.toggle-pw i {
-  font-size: 18px;
-  color: #6b7280;
-  transition: color 0.2s ease;
-}
-
-.toggle-pw:hover i {
-  color: var(--primary-color);
-}
-.field-error { color: #dc2626; font-size: 12px; margin-top: 4px; display: block; }
-.form-hints { margin-bottom: 16px; }
-.form-hints p { font-size: 12px; color: #6b7280; margin-bottom: 4px; }
-.btn-submit {
-  width: 100%; background: var(--primary-color); color: #fff; border: none;
-  padding: 12px; border-radius: 4px; font-size: 15px; font-weight: 600;
-  cursor: pointer; transition: background 0.2s;
-}
-.btn-submit:hover:not(:disabled) { background: var(--primary-color); }
-.btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }
-.auth-alt { text-align: center; margin-top: 16px; font-size: 14px; color: #555; }
-.link-blue { color: var(--primary-color); text-decoration: none; }
-.link-blue:hover { text-decoration: underline; }
-</style>
-
-
-
+<template>
+    <HomeLayout>
+        <section class="p-8 lg:p-0 lg:px-4 lg:py-8 lg:flex lg:justify-center bg-primary">
+            <div class="lg:w-full lg:max-w-270 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-white">
+                <h1 class="font-medium text-2xl">Daftar Membership</h1>
+            </div>
+        </section>
+        <section class="p-8 lg:p-0 lg:px-4 lg:py-16 lg:flex lg:justify-center">
+            <Form class="flex flex-col gap-8 lg:w-full lg:max-w-lg" :action="route('register')" method="post" v-slot="{ errors }">
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium" for="name">Nama lengkap *</label>
+                    <input class="w-full px-6 py-2 rounded-full ring ring-inset ring-onyx-400 placeholder:text-onyx-400" name="name" id="name" placeholder="Nama lengkap">
+                    <p class="text-danger-500 text-sm" v-if="errors.name">{{ errors.name }}</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium" for="email">Email *</label>
+                    <input class="w-full px-6 py-2 rounded-full ring ring-inset ring-onyx-400 placeholder:text-onyx-400" name="email" id="email" type="email" placeholder="Email">
+                    <p class="text-danger-500 text-sm" v-if="errors.email">{{ errors.email }}</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium" for="phone">Nomor telepon</label>
+                    <input class="w-full px-6 py-2 rounded-full ring ring-inset ring-onyx-400 placeholder:text-onyx-400" name="phone" id="phone" type="tel" placeholder="Nomor telepon">
+                    <p class="text-danger-500 text-sm" v-if="errors.phone">{{ errors.phone }}</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <span class="font-medium">Jenis kelamin</span>
+                    <div class="flex flex-col gap-2">
+                      <label class="flex items-center gap-2" for="gender_male">
+                        <input type="radio" name="gender" id="gender_male" value="Laki-laki">
+                        <span>Laki-laki</span>
+                      </label>
+                      <label class="flex items-center gap-2" for="gender_female">
+                        <input type="radio" name="gender" id="gender_female" value="Perempuan">
+                        <span>Perampuan</span>
+                      </label>
+                      <label class="flex items-center gap-2" for="gender_none">
+                        <input class="hidden" type="radio" name="gender" id="gender_none" value="" checked>
+                        <PillButton as="span" variant="outlined" type="button">Batalkan pilihan</PillButton>
+                      </label>
+                    </div>
+                    <p class="text-danger-500 text-sm" v-if="errors.gender">{{ errors.gender }}</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <span class="font-medium">Golongan darah</span>
+                    <div class="flex flex-col gap-2">
+                      <label class="flex items-center gap-2" for="blood_type_a">
+                        <input type="radio" name="blood_type" id="blood_type_a" value="A">
+                        <span>A</span>
+                      </label>
+                      <label class="flex items-center gap-2" for="blood_type_b">
+                        <input type="radio" name="blood_type" id="blood_type_b" value="B">
+                        <span>B</span>
+                      </label>
+                      <label class="flex items-center gap-2" for="blood_type_ab">
+                        <input type="radio" name="blood_type" id="blood_type_ab" value="AB">
+                        <span>AB</span>
+                      </label>
+                      <label class="flex items-center gap-2" for="blood_type_o">
+                        <input type="radio" name="blood_type" id="blood_type_o" value="O">
+                        <span>O</span>
+                      </label>
+                      <label class="flex items-center gap-2" for="blood_type_none">
+                        <input class="hidden" type="radio" name="blood_type" id="blood_type_none" value="" checked>
+                        <PillButton as="span" variant="outlined" type="button">Batalkan pilihan</PillButton>
+                      </label>
+                    </div>
+                    <p class="text-danger-500 text-sm" v-if="errors.blood_type">{{ errors.blood_type }}</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium" for="last_education">Pendidikan Terakhir</label>
+                    <input class="w-full px-6 py-2 rounded-full ring ring-inset ring-onyx-400 placeholder:text-onyx-400" name="last_education" id="last_education" placeholder="Pendidikan terakhir">
+                    <p class="text-danger-500 text-sm" v-if="errors.institution">{{ errors.last_education }}</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium" for="institution">Institusi</label>
+                    <input class="w-full px-6 py-2 rounded-full ring ring-inset ring-onyx-400 placeholder:text-onyx-400" name="institution" id="institution" placeholder="Institusi">
+                    <p class="text-danger-500 text-sm" v-if="errors.institution">{{ errors.institution }}</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium" for="department">Departemen</label>
+                    <input class="w-full px-6 py-2 rounded-full ring ring-inset ring-onyx-400 placeholder:text-onyx-400" name="department" id="department" placeholder="Departemen">
+                    <p class="text-danger-500 text-sm" v-if="errors.department">{{ errors.department }}</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium" for="address">Alamat rumah</label>
+                    <textarea class="w-full px-6 py-2 rounded-[1.25rem] min-h-32 ring ring-inset ring-onyx-400 placeholder:text-onyx-400" name="address" id="address" placeholder="Alamat rumah" />
+                    <p class="text-danger-500 text-sm" v-if="errors.address">{{ errors.address }}</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium" for="password">Password *</label>
+                    <div class="relative">
+                        <input class="w-full pl-6 pr-10 py-2 ring ring-inset ring-onyx-400 rounded-full placeholder:text-onyx-400" name="password" id="password" :type="passwordVisible ? 'text' : 'password'" placeholder="Password">
+                        <button type="button" class="absolute top-0 right-0 h-full aspect-square flex justify-center items-center" @click="passwordVisible = !passwordVisible">
+                            <svg v-if="passwordVisible" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-off-icon lucide-eye-off"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></svg>
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-icon lucide-eye"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
+                    </div>
+                    <p class="text-danger-500 text-sm" v-if="errors.password">{{ errors.password }}</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium" for="password">Konfirmasi password *</label>
+                    <div class="relative">
+                        <input class="w-full pl-6 pr-10 py-2 ring ring-inset ring-onyx-400 rounded-full placeholder:text-onyx-400" name="password_confirmation" id="password_confirmation" :type="passwordConfirmationVisible ? 'text' : 'password'" placeholder="Konfirmasi password">
+                        <button type="button" class="absolute top-0 right-0 h-full aspect-square flex justify-center items-center" @click="passwordConfirmationVisible = !passwordConfirmationVisible">
+                            <svg v-if="passwordConfirmationVisible" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-off-icon lucide-eye-off"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></svg>
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-icon lucide-eye"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
+                    </div>
+                    <p class="text-danger-500 text-sm" v-if="errors.password_confirmation">{{ errors.password_confirmation }}</p>
+                </div>
+                <div class="flex gap-2 text-onyx-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-alert-icon lucide-circle-alert"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                    Password minimal 8 karakter dengan kombinasi huruf dan angka
+                </div>
+                <div class="flex gap-2 text-onyx-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-alert-icon lucide-circle-alert"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                    * wajib diisi
+                </div>
+                <PillButton class="justify-center">Daftar membership</PillButton>
+                <p class="text-center">
+                    Sudah memiliki akun?
+                    <Link :href="route('login')" class="text-primary">Login</Link>
+                </p>
+            </Form>
+        </section>
+    </HomeLayout>
+</template>
