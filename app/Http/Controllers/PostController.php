@@ -27,26 +27,19 @@ class PostController extends Controller
         ]);
     }
 
-    public function show(string $slug): Response
+    public function show(string $slug)
     {
-        $post = Post::with(['category', 'author'])
-            ->published()
-            ->where('slug', $slug)
-            ->firstOrFail();
+        $foundPost = Post::with(['category', 'author'])->where('slug', $slug)->first();
 
-        $categories = Category::all(['id', 'name', 'slug']);
+        $post = $foundPost
+            ? [
+                ...$foundPost->toArray(),
+                'date' => $foundPost->created_at->timezone(config('app.timezone'))->format('d/m/Y H:i'),
+            ]
+            : null;
 
         return Inertia::render('Blog/Show', [
-            'post'       => [
-                'id'           => $post->id,
-                'title'        => $post->title,
-                'content'      => $post->content,
-                'published_at' => $post->published_at?->format('d/m/Y'),
-                'category'     => $post->category?->name,
-                'category_slug'=> $post->category?->slug,
-                'author'       => $post->author?->name,
-            ],
-            'categories' => $categories,
+            'post' => $post,
         ]);
     }
 
