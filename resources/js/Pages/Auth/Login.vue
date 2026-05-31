@@ -1,158 +1,44 @@
-<template>
-  <AppLayout>
-    <Head title="Login - AMK" />
-
-    <div class="page-header">
-      <div class="page-header-inner">
-        <h1 class="page-title">Login</h1>
-      </div>
-    </div>
-
-    <div class="auth-wrapper">
-      <form @submit.prevent="submit" class="auth-form">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input
-            id="email"
-            v-model="form.email"
-            type="email"
-            placeholder="example@mail.com"
-            autocomplete="username"
-            required
-          />
-          <span v-if="form.errors.email" class="field-error">{{ form.errors.email }}</span>
-        </div>
-
-        <div class="form-group">
-          <label for="password">Password</label>
-          <div class="input-icon-wrap">
-            <input
-              id="password"
-              v-model="form.password"
-              :type="showPassword ? 'text' : 'password'"
-              placeholder="Password"
-              autocomplete="current-password"
-              required
-            />
-            <button
-              type="button"
-              class="toggle-pw"
-              @click="showPassword = !showPassword">
-              <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
-            </button>
-          </div>
-          <span v-if="form.errors.password" class="field-error">{{ form.errors.password }}</span>
-          <div class="forgot-link-row">
-            <Link :href="route('password.request')" class="link-blue">Lupa password?</Link>
-          </div>
-        </div>
-
-        <button type="submit" class="btn-submit" :disabled="form.processing">Login</button>
-
-        <p class="auth-alt">
-          Belum daftar membership?
-          <Link :href="route('register')" class="link-blue">Daftar membership</Link>
-        </p>
-      </form>
-    </div>
-  </AppLayout>
-</template>
-
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
-import AppLayout from '@/Layouts/AppLayout.vue';
+import { Form, Link } from "@inertiajs/vue3";
+import { ref } from "vue";
+import PillButton from "../../Components/Ui/PillButton.vue";
+import HomeLayout from "../../Layouts/HomeLayout.vue";
 
-const showPassword = ref(false);
-const form = useForm({ email: '', password: '', remember: false });
-
-const submit = () => {
-  form.post(route('login'), { onFinish: () => form.reset('password') });
-};
+const passwordVisible = ref(false);
 </script>
 
-<style scoped>
-.page-header { background: var(--primary-color); padding: 110px 0 32px; }
-.page-header-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-.page-title { color: #fff; font-size: 22px; font-weight: 700; }
-
-.auth-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 56px 24px 80px;
-  background: #f9fafb;
-  min-height: 400px;
-}
-.auth-form { width: 100%; max-width: 440px; }
-.form-group { margin-bottom: 20px; }
-.form-group label {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  color: #111;
-  margin-bottom: 6px;
-}
-.form-group input {
-  width: 100%;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  padding: 10px 14px;
-  font-size: 14px;
-  outline: none;
-  box-sizing: border-box;
-  transition: border-color 0.2s;
-}
-.form-group input:focus { border-color: var(--primary-color); }
-.input-icon-wrap { position: relative; }
-.input-icon-wrap input { padding-right: 42px; }
-.toggle-pw {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: none;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.toggle-pw i {
-  font-size: 18px;
-  color: #6b7280;
-  transition: color 0.2s ease;
-}
-
-.toggle-pw:hover i {
-  color: var(--primary-color);
-}
-.forgot-link-row { text-align: right; margin-top: 6px; }
-.link-blue { color: var(--primary-color); text-decoration: none; font-size: 13px; }
-.link-blue:hover { text-decoration: underline; }
-.field-error { color: #dc2626; font-size: 12px; margin-top: 4px; display: block; }
-.btn-submit {
-  width: 100%;
-  background: var(--primary-color);
-  color: #fff;
-  border: none;
-  padding: 12px;
-  border-radius: 4px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-  margin-top: 8px;
-}
-.btn-submit:hover:not(:disabled) { background: var(--primary-color); }
-.btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }
-.auth-alt { text-align: center; margin-top: 16px; font-size: 14px; color: #555; }
-</style>
-
-
-
+<template>
+    <HomeLayout>
+        <section class="p-8 lg:p-0 lg:px-4 lg:py-8 lg:flex lg:justify-center bg-primary">
+            <div class="lg:w-full lg:max-w-270 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-white">
+                <h1 class="font-medium text-2xl">Login</h1>
+            </div>
+        </section>
+        <section class="p-8 lg:p-0 lg:px-4 lg:py-16 lg:flex lg:justify-center">
+            <Form class="flex flex-col gap-8 lg:w-full lg:max-w-lg" :action="route('login.store')" method="post" v-slot="{ errors }">
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium" for="email">Email</label>
+                    <input class="w-full px-6 py-2 rounded-full ring ring-inset ring-onyx-400 placeholder:text-onyx-400" name="email" id="email" type="email" placeholder="Email">
+                    <p class="text-danger-500 text-sm" v-if="errors.email">{{ errors.email }}</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label class="font-medium" for="password">Password</label>
+                    <div class="relative">
+                        <input class="w-full pl-6 pr-10 py-2 ring ring-inset ring-onyx-400 rounded-full placeholder:text-onyx-400" name="password" id="password" :type="passwordVisible ? 'text' : 'password'" placeholder="Password">
+                        <button type="button" class="absolute top-0 right-0 h-full aspect-square flex justify-center items-center" @click="passwordVisible = !passwordVisible">
+                            <svg v-if="passwordVisible" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-off-icon lucide-eye-off"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></svg>
+                            <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye-icon lucide-eye"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
+                    </div>
+                    <p class="text-danger-500 text-sm" v-if="errors.password">{{ errors.password }}</p>
+                    <Link :href="route('password.request')" class="self-end text-primary">Lupa password?</Link>
+                </div>
+                <PillButton class="justify-center">Login</PillButton>
+                <p class="text-center">
+                    Belum daftar membership?
+                    <Link :href="route('register')" class="text-primary">Daftar membership</Link>
+                </p>
+            </Form>
+        </section>
+    </HomeLayout>
+</template>
