@@ -24,6 +24,9 @@
             :root {
                 --primary-color: {{ $primaryColor }};
                 --surface-color: {{ $surfaceColor }};
+
+                --color-primary: {{ $primaryColor }};
+                --color-surface: {{ $surfaceColor }};
             }
         </style>
     </head>

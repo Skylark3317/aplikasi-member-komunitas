@@ -3,29 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class HomeController extends Controller
 {
-    public function index(): Response
+    /**
+     * Handle the incoming request.
+     */
+    public function __invoke(Request $request)
     {
-        $latestPosts = Post::with(['category', 'author'])
-            ->published()
-            ->latest('published_at')
-            ->take(8)
-            ->get()
-            ->map(fn($p) => [
-                'id'           => $p->id,
-                'title'        => $p->title,
-                'slug'         => $p->slug,
-                'excerpt'      => $p->excerpt,
-                'published_at' => $p->published_at?->format('d/m/Y'),
-                'category'     => $p->category?->name,
-            ]);
-
         return Inertia::render('Home', [
-            'latestPosts' => $latestPosts,
+            'posts' => Post::latest()
+                ->limit(8)
+                ->get()
+                ->map(fn ($post) => [
+                    ...$post->toArray(),
+                    'date' => $post->created_at->timezone(config('app.timezone'))->format('d/m/Y'),
+                ]),
         ]);
     }
 }

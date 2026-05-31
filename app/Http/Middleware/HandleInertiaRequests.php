@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\UserRole;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -52,6 +54,11 @@ class HandleInertiaRequests extends Middleware
                 ] : null,
             ],
             'settings' => $settings,
+            'appUrl' => config('app.url'),
+            'storageUrl' => rtrim(Storage::url('/'), '/'),
+            'memberProfile' => $request->user()?->role === UserRole::Member->value
+                ? $request->user()->memberProfile
+                : null,
         ];
     }
 }
