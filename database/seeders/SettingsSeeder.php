@@ -35,6 +35,10 @@ class SettingsSeeder extends Seeder
             'about_image'           => null,
             'about_title'           => 'Tentang',
             'about_description'     => 'Komunitas ini adalah ruang terbuka bagi siapa saja yang ingin belajar, berkembang, dan saling terhubung dalam lingkungan yang positif dan kolaboratif.',
+            'stat_member_aktif'     => '1919',
+            'stat_member_pasif'     => '99',
+            'stat_member_company'   => '217',
+            'stat_member_personal'  => '1801',
         ];
 
         foreach ($settings as $key => $value) {
