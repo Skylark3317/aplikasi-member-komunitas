@@ -12,33 +12,18 @@ class PostController extends Controller
 {
     public function index(Request $request): Response
     {
-        $search   = $request->input('q');
-        $catSlug  = $request->input('kategori', 'semua');
-
-        $posts = Post::with(['category', 'author'])
-            ->published()
-            ->search($search)
-            ->byCategory($catSlug)
-            ->latest('published_at')
-            ->paginate(5)
-            ->withQueryString()
-            ->through(fn($p) => [
-                'id'           => $p->id,
-                'title'        => $p->title,
-                'slug'         => $p->slug,
-                'excerpt'      => $p->excerpt,
-                'published_at' => $p->published_at?->format('d/m/Y'),
-                'category'     => $p->category?->name,
-                'category_slug'=> $p->category?->slug,
+        $posts = Post::byCategory($request->query('category'))
+            ->latest()
+            ->paginate(10)
+            ->appends($request->query())
+            ->through(fn ($post) => [
+                ...$post->toArray(),
+                'date' => $post->created_at->timezone(config('app.timezone'))->format('d/m/Y'),
             ]);
 
-        $categories = Category::all(['id', 'name', 'slug']);
-
         return Inertia::render('Blog/Index', [
-            'posts'           => $posts,
-            'categories'      => $categories,
-            'filters'         => ['q' => $search, 'kategori' => $catSlug],
-            'isSearchResult'  => (bool) $search,
+            'posts' => $posts,
+            'category' => $request->query('category', ''),
         ]);
     }
 
@@ -62,6 +47,19 @@ class PostController extends Controller
                 'author'       => $post->author?->name,
             ],
             'categories' => $categories,
+        ]);
+    }
+
+    public function search(Request $request)
+    {
+        $posts = Post::search($request->query('q'))
+            ->latest()
+            ->paginate(10)
+            ->appends($request->query());
+
+        return Inertia::render('Blog/Search', [
+            'posts' => $posts,
+            'q' => $request->query('q'),
         ]);
     }
 }
