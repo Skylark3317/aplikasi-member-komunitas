@@ -184,17 +184,15 @@ class DetailController extends Controller
 
         if ($request->filled('status')) {
             if ($request->status === 'selesai') {
-                $query->where('is_closed', true);
+                $query->whereRaw('1 = 0');
             } elseif ($request->status === 'direspond') {
-                $query->where('is_closed', false)
-                    ->whereHas('messages.sender', function($q) {
-                        $q->whereIn('role', ['staff', 'super_admin']);
-                    });
+                $query->whereHas('messages.sender', function($q) {
+                    $q->whereIn('role', ['staff', 'super_admin']);
+                });
             } elseif ($request->status === 'belum_direspond') {
-                $query->where('is_closed', false)
-                    ->whereDoesntHave('messages.sender', function($q) {
-                        $q->whereIn('role', ['staff', 'super_admin']);
-                    });
+                $query->whereDoesntHave('messages.sender', function($q) {
+                    $q->whereIn('role', ['staff', 'super_admin']);
+                });
             }
         }
 
@@ -213,10 +211,8 @@ class DetailController extends Controller
                     ->first(fn($m) => in_array($m->sender?->role, ['staff', 'super_admin']))
                     ?->sender?->name;
 
-                // Determine status based on closed state and responder presence
-                if ($c->is_closed) {
-                    $status = 'Selesai';
-                } elseif ($petugasName) {
+                // Determine status based on responder presence
+                if ($petugasName) {
                     $status = 'Direspond';
                 } else {
                     $status = 'Belum direspond';
@@ -224,7 +220,7 @@ class DetailController extends Controller
 
                 return [
                     'id'      => $c->id,
-                    'tiket'   => $c->ticket_number,
+                    'id_chat' => '#' . $c->id,
                     'penanya' => $c->submitter?->name ?? '-',
                     'petugas' => $petugasName ?? '-',
                     'status'  => $status,
@@ -234,7 +230,7 @@ class DetailController extends Controller
             })->values()->all();
 
         $columns = [
-            ['key' => 'tiket',   'label' => 'No. Tiket', 'sortable' => true],
+            ['key' => 'id_chat', 'label' => 'ID Chat',   'sortable' => true],
             ['key' => 'penanya', 'label' => 'Penanya',   'sortable' => true],
             ['key' => 'petugas', 'label' => 'Petugas',   'sortable' => true],
             ['key' => 'status',  'label' => 'Status',    'sortable' => true, 'badge' => true],

@@ -25,8 +25,8 @@
           </div>
         </div>
 
-        <!-- Filter Tabs -->
-        <div class="filter-tabs">
+        <!-- Filter Tabs (Only show when searchQuery is empty) -->
+        <div v-if="searchQuery.trim() === ''" class="filter-tabs">
           <button 
             :class="['filter-tab', activeTab === 'all' ? 'active' : '']" 
             @click="activeTab = 'all'"
@@ -42,8 +42,8 @@
           </button>
         </div>
 
-        <!-- Chat List Scrollable Area -->
-        <div class="chat-list-wrapper">
+        <!-- Standard Chat List (Only show when searchQuery is empty) -->
+        <div v-if="searchQuery.trim() === ''" class="chat-list-wrapper">
           <div v-if="filteredConversations.length === 0" class="empty-chats">
             <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -90,8 +90,101 @@
           </div>
         </div>
 
-        <!-- Pagination Controls -->
-        <div v-if="totalPages > 1" class="sidebar-pagination">
+        <!-- Search Results (Only show when searchQuery is not empty) -->
+        <div v-else class="chat-list-wrapper">
+          <div v-if="searchResults.chats.length === 0 && searchResults.messages.length === 0" class="empty-chats">
+            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <p>Tidak ada hasil untuk "{{ searchQuery }}"</p>
+          </div>
+
+          <div v-else class="search-results-list">
+            <!-- Chats Section -->
+            <div v-if="searchResults.chats.length > 0" class="search-section">
+              <div class="search-section-title">CHAT</div>
+              <div class="chat-list">
+                <div 
+                  v-for="conv in searchResults.chats" 
+                  :key="'chat-' + conv.id" 
+                  class="chat-item"
+                  @click="openChat(conv.id)"
+                >
+                  <div class="chat-avatar-container">
+                    <img 
+                      v-if="conv.submitter.avatar_url" 
+                      :src="conv.submitter.avatar_url" 
+                      alt="Avatar" 
+                      class="chat-avatar-img"
+                    />
+                    <div v-else class="chat-avatar-placeholder">
+                      {{ conv.submitter.name.charAt(0).toUpperCase() }}
+                    </div>
+                  </div>
+                  <div class="chat-item-body">
+                    <div class="chat-item-header">
+                      <span class="chat-item-name">
+                        <span v-for="(part, idx) in getHighlightedParts(conv.submitter.name, searchQuery)" :key="idx" :class="part.isMatch ? 'search-highlight' : ''">
+                          {{ part.text }}
+                        </span>
+                      </span>
+                      <span class="chat-item-time">{{ formatTime(conv.last_message?.created_at || conv.updated_at) }}</span>
+                    </div>
+                    <div class="chat-item-message-row">
+                      <p class="chat-item-preview">
+                        {{ conv.last_message?.content || 'Belum ada pesan' }}
+                      </p>
+                      <span v-if="conv.unread_count > 0" class="chat-unread-badge">
+                        {{ conv.unread_count }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Messages Section -->
+            <div v-if="searchResults.messages.length > 0" class="search-section">
+              <div class="search-section-title">PESAN</div>
+              <div class="chat-list">
+                <div 
+                  v-for="(item, index) in searchResults.messages" 
+                  :key="'msg-' + index" 
+                  class="chat-item"
+                  @click="openChat(item.conversationId, item.message.id)"
+                >
+                  <div class="chat-avatar-container">
+                    <img 
+                      v-if="item.submitter.avatar_url" 
+                      :src="item.submitter.avatar_url" 
+                      alt="Avatar" 
+                      class="chat-avatar-img"
+                    />
+                    <div v-else class="chat-avatar-placeholder">
+                      {{ item.submitter.name.charAt(0).toUpperCase() }}
+                    </div>
+                  </div>
+                  <div class="chat-item-body">
+                    <div class="chat-item-header">
+                      <span class="chat-item-name">{{ item.submitter.name }}</span>
+                      <span class="chat-item-time">{{ formatTime(item.message.created_at) }}</span>
+                    </div>
+                    <div class="chat-item-message-row">
+                      <p class="chat-item-preview">
+                        <span v-for="(part, idx) in getHighlightedParts(item.message.content, searchQuery)" :key="idx" :class="part.isMatch ? 'search-highlight' : ''">
+                          {{ part.text }}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination Controls (Only show when searchQuery is empty) -->
+        <div v-if="searchQuery.trim() === '' && totalPages > 1" class="sidebar-pagination">
           <button 
             :disabled="currentPage === 1" 
             @click="currentPage--" 
@@ -178,6 +271,71 @@ const filteredConversations = computed(() => {
   return list;
 });
 
+// Computed property for global search results
+const searchResults = computed(() => {
+  const q = searchQuery.value.trim().toLowerCase();
+  if (q === '') {
+    return {
+      chats: [],
+      messages: []
+    };
+  }
+
+  const matchingChats = [];
+  const matchingMessages = [];
+
+  props.conversations.forEach(c => {
+    // Check if name matches
+    const nameMatches = c.submitter.name.toLowerCase().includes(q);
+    if (nameMatches) {
+      matchingChats.push(c);
+    }
+
+    // Check all messages
+    c.messages.forEach(m => {
+      if (m.content.toLowerCase().includes(q)) {
+        matchingMessages.push({
+          conversationId: c.id,
+          submitter: c.submitter,
+          message: m
+        });
+      }
+    });
+  });
+
+  return {
+    chats: matchingChats,
+    messages: matchingMessages
+  };
+});
+
+// Safe highlight parser
+function getHighlightedParts(text, query) {
+  if (!text) return [];
+  if (!query) return [{ text, isMatch: false }];
+  const parts = [];
+  const lowerText = text.toLowerCase();
+  const lowerQuery = query.toLowerCase();
+  let index = 0;
+  
+  while (true) {
+    const matchIndex = lowerText.indexOf(lowerQuery, index);
+    if (matchIndex === -1) {
+      parts.push({ text: text.substring(index), isMatch: false });
+      break;
+    }
+    
+    if (matchIndex > index) {
+      parts.push({ text: text.substring(index, matchIndex), isMatch: false });
+    }
+    
+    parts.push({ text: text.substring(matchIndex, matchIndex + query.length), isMatch: true });
+    index = matchIndex + query.length;
+  }
+  
+  return parts;
+}
+
 const totalPages = computed(() => {
   return Math.ceil(filteredConversations.value.length / itemsPerPage);
 });
@@ -193,8 +351,12 @@ watch([searchQuery, activeTab], () => {
   currentPage.value = 1;
 });
 
-function openChat(id) {
-  router.visit(route('petugas.pertanyaan.show', id));
+function openChat(id, msgId = null) {
+  if (msgId) {
+    router.visit(route('petugas.pertanyaan.show', id) + `?msg=${msgId}`);
+  } else {
+    router.visit(route('petugas.pertanyaan.show', id));
+  }
 }
 
 function formatTime(dateStr) {
@@ -557,5 +719,28 @@ function formatTime(dateStr) {
   font-size: 14px;
   color: #64748b;
   line-height: 1.5;
+}
+
+/* Search results styles */
+.search-section {
+  margin-bottom: 24px;
+}
+
+.search-section-title {
+  padding: 12px 24px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 1.5px;
+  background: #f8fafc;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.search-highlight {
+  background-color: #fef08a;
+  color: #1e293b;
+  font-weight: 700;
+  border-radius: 2px;
+  padding: 0 2px;
 }
 </style>

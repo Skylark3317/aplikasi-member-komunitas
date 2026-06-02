@@ -43,6 +43,12 @@ class PertanyaanController extends Controller
                     'is_read' => $lastMessage->is_read,
                     'sender_id' => $lastMessage->sender_id,
                 ] : null,
+                'messages' => $messages->map(fn($m) => [
+                    'id' => $m->id,
+                    'content' => $m->content,
+                    'created_at' => $m->created_at->toISOString(),
+                    'sender_id' => $m->sender_id,
+                ])->values()->all(),
                 'unread_count' => $unreadCount,
                 'updated_at' => $c->updated_at->toISOString(),
             ];
@@ -100,6 +106,12 @@ class PertanyaanController extends Controller
                     'is_read' => $lastMessage->is_read,
                     'sender_id' => $lastMessage->sender_id,
                 ] : null,
+                'messages' => $messages->map(fn($m) => [
+                    'id' => $m->id,
+                    'content' => $m->content,
+                    'created_at' => $m->created_at->toISOString(),
+                    'sender_id' => $m->sender_id,
+                ])->values()->all(),
                 'unread_count' => $unreadCount,
                 'updated_at' => $c->updated_at->toISOString(),
             ];

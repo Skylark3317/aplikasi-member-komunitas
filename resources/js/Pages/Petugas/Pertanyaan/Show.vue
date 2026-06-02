@@ -25,8 +25,8 @@
           </div>
         </div>
 
-        <!-- Filter Tabs -->
-        <div class="filter-tabs">
+        <!-- Filter Tabs (Only show when searchQuery is empty) -->
+        <div v-if="searchQuery.trim() === ''" class="filter-tabs">
           <button 
             :class="['filter-tab', activeTab === 'all' ? 'active' : '']" 
             @click="activeTab = 'all'"
@@ -42,8 +42,8 @@
           </button>
         </div>
 
-        <!-- Chat List Scrollable -->
-        <div class="chat-list-wrapper">
+        <!-- Standard Chat List (Only show when searchQuery is empty) -->
+        <div v-if="searchQuery.trim() === ''" class="chat-list-wrapper">
           <div v-if="filteredConversations.length === 0" class="empty-chats">
             <p>Tidak ada percakapan ditemukan</p>
           </div>
@@ -85,15 +85,105 @@
           </div>
         </div>
 
-        <!-- Pagination Controls -->
-        <div v-if="totalPages > 1" class="sidebar-pagination">
+        <!-- Search Results (Only show when searchQuery is not empty) -->
+        <div v-else class="chat-list-wrapper">
+          <div v-if="searchResults.chats.length === 0 && searchResults.messages.length === 0" class="empty-chats">
+            <p>Tidak ada hasil untuk "{{ searchQuery }}"</p>
+          </div>
+
+          <div v-else class="search-results-list">
+            <!-- Chats Section -->
+            <div v-if="searchResults.chats.length > 0" class="search-section">
+              <div class="search-section-title">CHAT</div>
+              <div class="chat-list">
+                <div 
+                  v-for="conv in searchResults.chats" 
+                  :key="'chat-' + conv.id" 
+                  :class="['chat-item', conv.id === conversation.id ? 'active-chat-item' : '']"
+                  @click="openChat(conv.id)"
+                >
+                  <div class="chat-avatar-container">
+                    <img 
+                      v-if="conv.submitter.avatar_url" 
+                      :src="conv.submitter.avatar_url" 
+                      alt="Avatar" 
+                      class="chat-avatar-img"
+                    />
+                    <div v-else class="chat-avatar-placeholder">
+                      {{ conv.submitter.name.charAt(0).toUpperCase() }}
+                    </div>
+                  </div>
+                  <div class="chat-item-body">
+                    <div class="chat-item-header">
+                      <span class="chat-item-name">
+                        <span v-for="(part, idx) in getHighlightedParts(conv.submitter.name, searchQuery)" :key="idx" :class="part.isMatch ? 'search-highlight' : ''">
+                          {{ part.text }}
+                        </span>
+                      </span>
+                      <span class="chat-item-time">{{ formatTime(conv.last_message?.created_at || conv.updated_at) }}</span>
+                    </div>
+                    <div class="chat-item-message-row">
+                      <p class="chat-item-preview">
+                        {{ conv.last_message?.content || 'Belum ada pesan' }}
+                      </p>
+                      <span v-if="conv.unread_count > 0" class="chat-unread-badge">
+                        {{ conv.unread_count }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Messages Section -->
+            <div v-if="searchResults.messages.length > 0" class="search-section">
+              <div class="search-section-title">PESAN</div>
+              <div class="chat-list">
+                <div 
+                  v-for="(item, index) in searchResults.messages" 
+                  :key="'msg-' + index" 
+                  :class="['chat-item', item.message.id === highlightedMsgId ? 'active-chat-item' : '']"
+                  @click="openChat(item.conversationId, item.message.id)"
+                >
+                  <div class="chat-avatar-container">
+                    <img 
+                      v-if="item.submitter.avatar_url" 
+                      :src="item.submitter.avatar_url" 
+                      alt="Avatar" 
+                      class="chat-avatar-img"
+                    />
+                    <div v-else class="chat-avatar-placeholder">
+                      {{ item.submitter.name.charAt(0).toUpperCase() }}
+                    </div>
+                  </div>
+                  <div class="chat-item-body">
+                    <div class="chat-item-header">
+                      <span class="chat-item-name">{{ item.submitter.name }}</span>
+                      <span class="chat-item-time">{{ formatTime(item.message.created_at) }}</span>
+                    </div>
+                    <div class="chat-item-message-row">
+                      <p class="chat-item-preview">
+                        <span v-for="(part, idx) in getHighlightedParts(item.message.content, searchQuery)" :key="idx" :class="part.isMatch ? 'search-highlight' : ''">
+                          {{ part.text }}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination Controls (Only show when searchQuery is empty) -->
+        <div v-if="searchQuery.trim() === '' && totalPages > 1" class="sidebar-pagination">
           <button 
             :disabled="currentPage === 1" 
             @click="currentPage--" 
             class="pagination-btn"
             title="Sebelumnya"
           >
-            &laquo;
+            &lt;
           </button>
           <span class="pagination-info">
             {{ currentPage }} / {{ totalPages }}
@@ -104,7 +194,7 @@
             class="pagination-btn"
             title="Berikutnya"
           >
-            &raquo;
+            &gt;
           </button>
         </div>
       </div>
@@ -140,7 +230,14 @@
               </div>
 
               <!-- Message Row -->
-              <div :class="['message-bubble-row', msg.sender_id === currentUser.id ? 'msg-outgoing' : 'msg-incoming']">
+              <div 
+                :id="'msg-' + msg.id"
+                :class="[
+                  'message-bubble-row', 
+                  msg.sender_id === currentUser.id ? 'msg-outgoing' : 'msg-incoming',
+                  highlightedMsgId === msg.id ? 'highlighted-message' : ''
+                ]"
+              >
                 <!-- Avatar for incoming messages -->
                 <div v-if="msg.sender_id !== currentUser.id" class="bubble-avatar-container">
                   <img 
@@ -165,7 +262,14 @@
                   </div>
                   
                   <div class="bubble-text">
-                    {{ msg.content }}
+                    <template v-if="searchQuery.trim() !== ''">
+                      <span v-for="(part, idx) in getHighlightedParts(msg.content, searchQuery)" :key="idx" :class="part.isMatch ? 'search-highlight' : ''">
+                        {{ part.text }}
+                      </span>
+                    </template>
+                    <template v-else>
+                      {{ msg.content }}
+                    </template>
                   </div>
 
                   <div class="bubble-meta">
@@ -264,6 +368,71 @@ const filteredConversations = computed(() => {
   return list;
 });
 
+// Computed property for global search results
+const searchResults = computed(() => {
+  const q = searchQuery.value.trim().toLowerCase();
+  if (q === '') {
+    return {
+      chats: [],
+      messages: []
+    };
+  }
+
+  const matchingChats = [];
+  const matchingMessages = [];
+
+  props.conversations.forEach(c => {
+    // Check if name matches
+    const nameMatches = c.submitter.name.toLowerCase().includes(q);
+    if (nameMatches) {
+      matchingChats.push(c);
+    }
+
+    // Check all messages
+    c.messages.forEach(m => {
+      if (m.content.toLowerCase().includes(q)) {
+        matchingMessages.push({
+          conversationId: c.id,
+          submitter: c.submitter,
+          message: m
+        });
+      }
+    });
+  });
+
+  return {
+    chats: matchingChats,
+    messages: matchingMessages
+  };
+});
+
+// Safe highlight parser
+function getHighlightedParts(text, query) {
+  if (!text) return [];
+  if (!query) return [{ text, isMatch: false }];
+  const parts = [];
+  const lowerText = text.toLowerCase();
+  const lowerQuery = query.toLowerCase();
+  let index = 0;
+  
+  while (true) {
+    const matchIndex = lowerText.indexOf(lowerQuery, index);
+    if (matchIndex === -1) {
+      parts.push({ text: text.substring(index), isMatch: false });
+      break;
+    }
+    
+    if (matchIndex > index) {
+      parts.push({ text: text.substring(index, matchIndex), isMatch: false });
+    }
+    
+    parts.push({ text: text.substring(matchIndex, matchIndex + query.length), isMatch: true });
+    index = matchIndex + query.length;
+  }
+  
+  return parts;
+}
+
 // Pagination state
 const currentPage = ref(1);
 const itemsPerPage = 5;
@@ -283,8 +452,12 @@ watch([searchQuery, activeTab], () => {
   currentPage.value = 1;
 });
 
-function openChat(id) {
-  router.visit(route('petugas.pertanyaan.show', id));
+function openChat(id, msgId = null) {
+  if (msgId) {
+    router.visit(route('petugas.pertanyaan.show', id) + `?msg=${msgId}`);
+  } else {
+    router.visit(route('petugas.pertanyaan.show', id));
+  }
 }
 
 function submitReply() {
@@ -353,16 +526,48 @@ function formatTimeOnly(dateStr) {
   return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 }
 
-// Keep scrolled to bottom on load
+const highlightedMsgId = ref(null);
+
+function checkAndScrollToMessage() {
+  const params = new URLSearchParams(window.location.search);
+  const msgId = params.get('msg');
+  if (msgId) {
+    const targetId = parseInt(msgId, 10);
+    highlightedMsgId.value = targetId;
+    
+    nextTick(() => {
+      const element = document.getElementById(`msg-${targetId}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Remove highlight animation after 3 seconds
+        setTimeout(() => {
+          highlightedMsgId.value = null;
+        }, 3000);
+      }
+    });
+  } else {
+    scrollToBottom();
+  }
+}
+
+// Keep scrolled to bottom or scroll to highlighted message on load
 onMounted(() => {
-  scrollToBottom();
+  checkAndScrollToMessage();
   if (inputField.value) inputField.value.focus();
 });
 
-// If the conversation updates, scroll to bottom
+// If the conversation updates, scroll to bottom (unless a specific message is being highlighted)
 watch(() => props.conversation.messages, () => {
-  scrollToBottom();
+  const params = new URLSearchParams(window.location.search);
+  if (!params.get('msg')) {
+    scrollToBottom();
+  }
 }, { deep: true });
+
+watch(() => props.conversation.id, () => {
+  checkAndScrollToMessage();
+});
 </script>
 
 <style scoped>
@@ -811,19 +1016,19 @@ watch(() => props.conversation.messages, () => {
 }
 
 .msg-outgoing .bubble-text {
-  color: #000000;
+  color: #ffffff;
 }
 
 .msg-outgoing .bubble-time {
-  color: rgba(0, 0, 0, 0.8);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .msg-outgoing .tick-svg.blue-tick {
-  color: #000000;
+  color: #ffffff;
 }
 
 .msg-outgoing .tick-svg.gray-tick {
-  color: rgba(0, 0, 0, 0.6);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* Inside-bubble Sender Name (for other Admins) */
@@ -933,5 +1138,41 @@ watch(() => props.conversation.messages, () => {
 .send-icon-svg {
   width: 16px;
   height: 16px;
+}
+
+/* Search results & Highlight styles */
+.search-section {
+  margin-bottom: 24px;
+}
+
+.search-section-title {
+  padding: 12px 24px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 1.5px;
+  background: #f8fafc;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.search-highlight {
+  background-color: #fef08a;
+  color: #1e293b;
+  font-weight: 700;
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+@keyframes message-flash {
+  0% {
+    background-color: rgba(250, 204, 21, 0.4);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.highlighted-message .bubble-content-box {
+  animation: message-flash 2.5s ease-out;
 }
 </style>

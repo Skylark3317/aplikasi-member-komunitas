@@ -94,11 +94,9 @@ class StatistikController extends Controller
         // ── PERTANYAAN ───────────────────────────────────────────────────────
         $pertTotal = Conversation::count();
         
-        $selesaiFn = fn($q) => $q->where('is_closed', true);
-        $direspondFn = fn($q) => $q->where('is_closed', false)
-            ->whereHas('messages.sender', fn($sq) => $sq->whereIn('role', ['staff', 'super_admin']));
-        $belumFn = fn($q) => $q->where('is_closed', false)
-            ->whereDoesntHave('messages.sender', fn($sq) => $sq->whereIn('role', ['staff', 'super_admin']));
+        $selesaiFn = fn($q) => $q->whereRaw('1 = 0');
+        $direspondFn = fn($q) => $q->whereHas('messages.sender', fn($sq) => $sq->whereIn('role', ['staff', 'super_admin']));
+        $belumFn = fn($q) => $q->whereDoesntHave('messages.sender', fn($sq) => $sq->whereIn('role', ['staff', 'super_admin']));
 
         $pertSelesai   = $selesaiFn(Conversation::query())->count();
         $pertDirespond = $direspondFn(Conversation::query())->count();
