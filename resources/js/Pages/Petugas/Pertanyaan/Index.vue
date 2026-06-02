@@ -191,7 +191,7 @@
             class="pagination-btn"
             title="Sebelumnya"
           >
-            &laquo;
+            &lt;
           </button>
           <span class="pagination-info">
             {{ currentPage }} / {{ totalPages }}
@@ -202,7 +202,7 @@
             class="pagination-btn"
             title="Berikutnya"
           >
-            &raquo;
+            &gt;
           </button>
         </div>
       </div>

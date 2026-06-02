@@ -155,7 +155,7 @@ class PremiumController extends Controller
         $proofPath = $request->file('payment_proof')->store('payments', 'public');
         $proofUrl = '/storage/' . $proofPath;
 
-        Payment::updateOrCreate(
+        $payment = Payment::updateOrCreate(
             ['invoice_id' => $invoice->id],
             [
                 'payer_id'             => $user->id,
@@ -170,6 +170,16 @@ class PremiumController extends Controller
                 'verified_at'          => null,
             ]
         );
+
+        // Fetch all finance (keuangan) users and notify them
+        $financeUsers = \App\Models\User::where('role', 'finance')->get();
+        foreach ($financeUsers as $financeUser) {
+            try {
+                $financeUser->notify(new \App\Notifications\NewPaymentSubmittedNotification($payment));
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Gagal mengirim email pemberitahuan pembayaran baru ke keuangan: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->route('member.premium.payment_detail', ['invoice' => $invoice->id])
             ->with('success', 'Bukti pembayaran berhasil diunggah. Menunggu verifikasi.');

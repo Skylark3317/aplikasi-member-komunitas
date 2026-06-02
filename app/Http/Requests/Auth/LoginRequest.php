@@ -51,6 +51,18 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Check if user requested deletion and duration has passed
+        if ($user->delete_requested_at) {
+            $durationMinutes = (int) \App\Models\Setting::get('account_deletion_duration', 10080);
+            if ($user->delete_requested_at->addMinutes($durationMinutes)->isPast()) {
+                $user->delete();
+                RateLimiter::hit($this->throttleKey());
+                throw ValidationException::withMessages([
+                    'email' => 'Akun ini telah dihapus secara permanen.',
+                ]);
+            }
+        }
+
         if (!Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
             throw ValidationException::withMessages([

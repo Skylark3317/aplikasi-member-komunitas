@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
@@ -13,7 +14,8 @@ class SuperAdminProfilController extends Controller
 {
     public function show(): Response
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         return Inertia::render('Admin/Profil', [
             'user' => [
                 'id'         => $user->id,
@@ -29,7 +31,8 @@ class SuperAdminProfilController extends Controller
 
     public function edit(): Response
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
         return Inertia::render('Admin/EditProfil', [
             'user' => [
                 'id'        => $user->id,
@@ -43,7 +46,8 @@ class SuperAdminProfilController extends Controller
 
     public function update(Request $request)
     {
-        $user = auth()->user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
         $request->validate([
             'telephone'    => 'required|string|max:20',

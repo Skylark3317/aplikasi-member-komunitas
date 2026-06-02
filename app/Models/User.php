@@ -28,6 +28,13 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::deleting(function ($user) {
+            $user->memberProfile()->delete();
+        });
+    }
+
     public function posts()
     {
         return $this->hasMany(Post::class, 'author_id');

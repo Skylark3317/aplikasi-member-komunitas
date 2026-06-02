@@ -108,7 +108,7 @@ class KelolAkunController extends Controller
             'password'              => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        User::create([
+        $user = User::create([
             'name'      => $request->name,
             'email'     => $request->email,
             'telephone' => $request->telephone,
@@ -116,6 +116,8 @@ class KelolAkunController extends Controller
             'password'  => Hash::make($request->password),
             'is_active' => true,
         ]);
+
+        $user->markEmailAsVerified();
 
         return redirect()->route('superadmin.kelol-akun.index')
             ->with('success', 'Akun berhasil dibuat.');
@@ -133,5 +135,17 @@ class KelolAkunController extends Controller
             ? 'Akun berhasil diaktifkan.'
             : 'Akun berhasil dinonaktifkan.'
         );
+    }
+
+    public function destroy(User $user)
+    {
+        if ($user->role === 'super_admin') {
+            abort(403, 'Tidak dapat menghapus Super Admin.');
+        }
+
+        $user->delete();
+
+        return redirect()->route('superadmin.kelol-akun.index')
+            ->with('success', 'Akun berhasil dihapus.');
     }
 }

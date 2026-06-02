@@ -12,7 +12,8 @@ class PermanentlyDeleteExpiredAccounts extends Command
 
     public function handle(): void
     {
-        $threshold = now()->subDays(7);
+        $durationMinutes = (int) \App\Models\Setting::get('account_deletion_duration', 10080);
+        $threshold = now()->subMinutes($durationMinutes);
 
         $users = User::whereNotNull('delete_requested_at')
             ->where('delete_requested_at', '<=', $threshold)

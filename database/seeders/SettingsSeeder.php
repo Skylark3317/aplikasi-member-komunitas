@@ -27,6 +27,7 @@ class SettingsSeeder extends Seeder
             'membership_fee'        => '50000',
             'membership_duration'   => '12',
             'invoice_countdown'     => '24',
+            'account_deletion_duration' => '10080',
             'primary_color'         => '#007FFF',
             'surface_color'         => '#E5F2FF',
             'bg_image'              => null,

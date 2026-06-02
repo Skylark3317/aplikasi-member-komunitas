@@ -146,6 +146,11 @@
           <label class="field-label">Countdown Invoice (jam)</label>
           <input v-model="form.invoice_countdown" type="number" class="field-input field-quarter" />
         </div>
+        <div class="field-group">
+          <label class="field-label">Durasi Penghapusan Akun Member Otomatis (menit)</label>
+          <input v-model="form.account_deletion_duration" type="number" class="field-input field-quarter" />
+          <span v-if="form.errors.account_deletion_duration" class="error-msg">{{ form.errors.account_deletion_duration }}</span>
+        </div>
 
         <!-- Colors -->
         <div class="field-group">
@@ -345,6 +350,7 @@ const form = useForm({
   membership_fee:      s.membership_fee      ?? '',
   membership_duration: s.membership_duration ?? '',
   invoice_countdown:   s.invoice_countdown   ?? '',
+  account_deletion_duration: s.account_deletion_duration ?? '10080',
   primary_color:       s.primary_color       ?? 'var(--primary-color)',
   surface_color:       s.surface_color       ?? '#ffffff',
   hero_title:          s.hero_title          ?? '',

@@ -298,7 +298,7 @@
       <div v-else class="deletion-info-box">
         <div>
           <p class="deletion-box-title">Hapus Akun</p>
-          <p class="deletion-box-sub">Setelah Anda mengajukan permintaan hapus akun, Anda akan di-logout. Akun akan dihapus permanen setelah <strong>7 hari tidak login</strong>. Jika Anda login kembali sebelum 7 hari, permintaan ini akan dibatalkan otomatis.</p>
+          <p class="deletion-box-sub">Setelah Anda mengajukan permintaan hapus akun, Anda akan di-logout. Akun akan dihapus permanen setelah <strong>{{ deletionDurationText }} tidak login</strong>. Jika Anda login kembali sebelum {{ deletionDurationText }}, permintaan ini akan dibatalkan otomatis.</p>
         </div>
         <form @submit.prevent="requestDeletion">
           <button type="submit" class="btn-request-deletion">Ajukan Hapus Akun</button>
@@ -429,15 +429,35 @@ const profileCompletion = computed(() => {
 });
 
 // Delete account logic
+const deletionDurationMinutes = computed(() => {
+  return parseInt(settings.value.account_deletion_duration || '10080', 10);
+});
+
+const deletionDurationText = computed(() => {
+  const mins = deletionDurationMinutes.value;
+  if (mins >= 1440) {
+    const days = Math.round(mins / 1440);
+    return `${days} hari`;
+  } else if (mins >= 60) {
+    const hours = Math.round(mins / 60);
+    return `${hours} jam`;
+  } else {
+    return `${mins} menit`;
+  }
+});
+
 const deletionDeadline = computed(() => {
   if (!props.user.delete_requested_at) return null;
   const d = new Date(props.user.delete_requested_at);
-  d.setDate(d.getDate() + 7);
+  d.setMinutes(d.getMinutes() + deletionDurationMinutes.value);
+  if (deletionDurationMinutes.value < 1440) {
+    return d.toLocaleString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
   return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 });
 
 function requestDeletion() {
-  if (!confirm('Yakin ingin mengajukan hapus akun? Anda akan di-logout dan akun akan dihapus permanen setelah 7 hari jika tidak login kembali.')) return;
+  if (!confirm(`Yakin ingin mengajukan hapus akun? Anda akan di-logout dan akun akan dihapus permanen setelah ${deletionDurationText.value} jika tidak login kembali.`)) return;
   router.post(route('member.hapus-akun.request'));
 }
 

@@ -74,6 +74,13 @@ class PembayaranController extends Controller
             ]
         );
 
+        // Send email notification to member
+        try {
+            $payer->notify(new \App\Notifications\PaymentApprovedNotification($payer, $payment));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal mengirim email verifikasi pembayaran: ' . $e->getMessage());
+        }
+
         return redirect()->back()->with('success', 'Pembayaran berhasil diverifikasi dan member diaktifkan.');
     }
 
