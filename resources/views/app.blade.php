@@ -17,8 +17,8 @@
 
         <!-- Dynamic Colors -->
         @php
-            $primaryColor = \App\Models\Setting::get('primary_color', '#2563eb');
-            $surfaceColor = \App\Models\Setting::get('surface_color', '#ffffff');
+            $primaryColor = \App\Models\Setting::get('primary_color', '#007FFF');
+            $surfaceColor = \App\Models\Setting::get('surface_color', '#E5F2FF');
         @endphp
         <style>
             :root {

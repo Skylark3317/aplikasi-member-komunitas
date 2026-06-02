@@ -339,19 +339,19 @@ watch(() => props.conversation.messages, () => {
 }
 
 .msg-outgoing .bubble-text {
-  color: #ffffff;
+  color: #000000;
 }
 
 .msg-outgoing .bubble-time {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(0, 0, 0, 0.8);
 }
 
 .msg-outgoing .tick-svg.blue-tick {
-  color: #ffffff;
+  color: #000000;
 }
 
 .msg-outgoing .tick-svg.gray-tick {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(0, 0, 0, 0.6);
 }
 
 /* Inside-bubble Sender Name (for Admins) */
