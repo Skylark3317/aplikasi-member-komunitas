@@ -29,7 +29,7 @@ return new class extends Migration
                 ->count();
 
             $nextSeq = $existingCount + 1;
-            $memberNumber = $prefix . str_pad($nextSeq, 3, '0', STR_PAD_LEFT);
+            $memberNumber = $prefix . $nextSeq;
 
             DB::table('member_profiles')
                 ->where('id', $profile->id)
