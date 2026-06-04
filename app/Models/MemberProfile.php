@@ -36,7 +36,7 @@ class MemberProfile extends Model
             $nextSeq = 1;
         }
 
-        return $prefix . str_pad($nextSeq, 3, '0', STR_PAD_LEFT);
+        return $prefix . $nextSeq;
     }
 
     public function user()
