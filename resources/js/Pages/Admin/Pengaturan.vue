@@ -21,16 +21,32 @@
       {{ $page.props.flash.success }}
     </div>
 
-    <!-- Form -->
-    <div class="content-area">
-      <form id="settings-form" @submit.prevent="submit" enctype="multipart/form-data">
-
-        <!-- Nama Komunitas -->
-        <div class="field-group">
-          <label class="field-label">Nama Komunitas</label>
-          <input v-model="form.community_name" type="text" class="field-input" />
-          <span v-if="form.errors.community_name" class="error-msg">{{ form.errors.community_name }}</span>
+    <!-- Main Layout -->
+    <div class="settings-layout">
+      <!-- Form Column -->
+      <div class="settings-form-col content-area">
+        <!-- Tab Bar -->
+        <div class="tab-bar">
+          <button v-for="tab in tabs" :key="tab.key"
+            :class="['tab-btn', activeTab === tab.key ? 'tab-active' : '']"
+            @click="activeTab = tab.key" type="button">
+            {{ tab.label }}
+          </button>
         </div>
+        <form id="settings-form" @submit.prevent="submit" enctype="multipart/form-data">
+
+          <!-- === IDENTITAS === -->
+          <div class="form-card" v-show="activeTab === 'identitas'">
+            <h3 class="form-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              Identitas Komunitas
+            </h3>
+
+          <div class="field-group">
+            <label class="field-label">Nama Komunitas</label>
+            <input v-model="form.community_name" type="text" class="field-input" />
+            <span v-if="form.errors.community_name" class="error-msg">{{ form.errors.community_name }}</span>
+          </div>
 
         <!-- Logo Komunitas -->
         <div class="field-group">
@@ -68,14 +84,21 @@
             </button>
           </div>
           <span v-if="form.errors.logo" class="error-msg">{{ form.errors.logo }}</span>
-        </div>
+          </div>
+          </div><!-- /form-card identitas -->
 
-        <!-- Email -->
-        <div class="field-group">
-          <label class="field-label">Email</label>
-          <input v-model="form.email" type="email" class="field-input" />
-          <span v-if="form.errors.email" class="error-msg">{{ form.errors.email }}</span>
-        </div>
+          <!-- === KONTAK === -->
+          <div class="form-card" v-show="activeTab === 'kontak'">
+            <h3 class="form-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.39 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.83a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              Kontak
+            </h3>
+
+          <div class="field-group">
+            <label class="field-label">Email</label>
+            <input v-model="form.email" type="email" class="field-input" />
+            <span v-if="form.errors.email" class="error-msg">{{ form.errors.email }}</span>
+          </div>
 
         <!-- Nomor Telepon -->
         <div class="field-group">
@@ -89,13 +112,20 @@
           <label class="field-label">Alamat</label>
           <textarea v-model="form.address" class="field-textarea" rows="3" />
           <span v-if="form.errors.address" class="error-msg">{{ form.errors.address }}</span>
-        </div>
+          </div>
+          </div><!-- /form-card kontak -->
 
-        <!-- Social media -->
-        <div class="field-group">
-          <label class="field-label">Tautan Akun X</label>
-          <input v-model="form.social_x" type="text" class="field-input" />
-        </div>
+          <!-- === MEDIA SOSIAL === -->
+          <div class="form-card" v-show="activeTab === 'kontak'">
+            <h3 class="form-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              Media Sosial
+            </h3>
+          <div class="social-grid">
+          <div class="field-group">
+            <label class="field-label">Tautan Akun X</label>
+            <input v-model="form.social_x" type="text" class="field-input" />
+          </div>
         <div class="field-group">
           <label class="field-label">Tautan Akun Facebook</label>
           <input v-model="form.social_facebook" type="text" class="field-input" />
@@ -115,13 +145,20 @@
         <div class="field-group">
           <label class="field-label">Tautan Akun YouTube</label>
           <input v-model="form.social_youtube" type="text" class="field-input" />
-        </div>
+          </div>
+          </div><!-- /social-grid -->
+          </div><!-- /form-card media sosial -->
 
-        <!-- Bank info -->
-        <div class="field-group">
-          <label class="field-label">Nama Pemilik Rekening</label>
-          <input v-model="form.bank_account_name" type="text" class="field-input field-half" />
-        </div>
+          <!-- === BANK === -->
+          <div class="form-card" v-show="activeTab === 'bank'">
+            <h3 class="form-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+              Informasi Bank
+            </h3>
+          <div class="field-group">
+            <label class="field-label">Nama Pemilik Rekening</label>
+            <input v-model="form.bank_account_name" type="text" class="field-input field-half" />
+          </div>
         <div class="field-group">
           <label class="field-label">Nomor Rekening</label>
           <input v-model="form.bank_account_number" type="text" class="field-input field-half" />
@@ -129,14 +166,21 @@
         <div class="field-group">
           <label class="field-label">Nama Bank Pemilik Rekening</label>
           <input v-model="form.bank_name" type="text" class="field-input" />
-        </div>
+          </div>
+          </div><!-- /form-card bank -->
 
-        <!-- Membership -->
-        <div class="field-group">
-          <label class="field-label">Biaya Membership</label>
-          <input v-model="form.membership_fee" type="number" class="field-input field-half" />
-          <span v-if="form.errors.membership_fee" class="error-msg">{{ form.errors.membership_fee }}</span>
-        </div>
+          <!-- === KEANGGOTAAN === -->
+          <div class="form-card" v-show="activeTab === 'keanggotaan'">
+            <h3 class="form-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              Keanggotaan
+            </h3>
+          <div class="membership-grid">
+          <div class="field-group">
+            <label class="field-label">Biaya Membership</label>
+            <input v-model="form.membership_fee" type="number" class="field-input" />
+            <span v-if="form.errors.membership_fee" class="error-msg">{{ form.errors.membership_fee }}</span>
+          </div>
         <div class="field-group">
           <label class="field-label">Masa Berlaku Membership (bulan)</label>
           <input v-model="form.membership_duration" type="number" class="field-input field-quarter" />
@@ -150,16 +194,24 @@
           <label class="field-label">Durasi Penghapusan Akun Member Otomatis (menit)</label>
           <input v-model="form.account_deletion_duration" type="number" class="field-input field-quarter" />
           <span v-if="form.errors.account_deletion_duration" class="error-msg">{{ form.errors.account_deletion_duration }}</span>
-        </div>
-
-        <!-- Colors -->
-        <div class="field-group">
-          <label class="field-label">Warna Primer</label>
-          <div class="color-input-wrap">
-            <input v-model="form.primary_color" type="text" class="field-input field-color-text" />
-            <input v-model="form.primary_color" type="color" class="color-swatch" />
           </div>
-        </div>
+          </div><!-- /membership-grid -->
+          </div><!-- /form-card keanggotaan -->
+
+          <!-- === TAMPILAN === -->
+          <div class="form-card" v-show="activeTab === 'tampilan'">
+            <h3 class="form-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              Tampilan &amp; Warna
+            </h3>
+          <div class="color-row">
+          <div class="field-group">
+            <label class="field-label">Warna Primer</label>
+            <div class="color-input-wrap">
+              <input v-model="form.primary_color" type="text" class="field-input field-color-text" />
+              <input v-model="form.primary_color" type="color" class="color-swatch" />
+            </div>
+          </div>
         <div class="field-group">
           <label class="field-label">Warna Permukaan</label>
           <div class="color-input-wrap">
@@ -201,11 +253,12 @@
             </button>
           </div>
           <span v-if="form.errors.bg_image" class="error-msg">{{ form.errors.bg_image }}</span>
-        </div>
+          </div>
+          </div><!-- /color-row -->
 
-        <!-- Card Background image -->
-        <div class="field-group">
-          <label class="field-label">Gambar Latar Belakang Kartu Member</label>
+          <!-- Card Background image -->
+          <div class="field-group">
+            <label class="field-label">Gambar Latar Belakang Kartu Member</label>
           <div class="img-preview-box">
             <img v-if="cardBgPreview" :src="cardBgPreview" alt="Latar Belakang Kartu" />
           </div>
@@ -236,23 +289,29 @@
             </button>
           </div>
           <span v-if="form.errors.card_background" class="error-msg">{{ form.errors.card_background }}</span>
-        </div>
+          </div>
+          </div><!-- /form-card tampilan -->
 
-        <!-- Hero section -->
-        <div class="field-group">
-          <label class="field-label">Judul Hero Section</label>
-          <textarea v-model="form.hero_title" class="field-textarea" rows="2" />
-        </div>
-        <div class="field-group">
-          <label class="field-label">Deskripsi Hero Section</label>
-          <textarea v-model="form.hero_description" class="field-textarea" rows="4" />
-        </div>
+          <!-- === LANDING PAGE === -->
+          <div class="form-card" v-show="activeTab === 'landingpage'">
+            <h3 class="form-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+              Konten Landing Page
+            </h3>
 
-        <div class="section-divider" />
+          <p class="form-subsection">Hero Section</p>
+          <div class="field-group">
+            <label class="field-label">Judul Hero</label>
+            <textarea v-model="form.hero_title" class="field-textarea" rows="2" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Deskripsi Hero</label>
+            <textarea v-model="form.hero_description" class="field-textarea" rows="3" />
+          </div>
 
-        <!-- About section -->
-        <div class="field-group">
-          <label class="field-label">Gambar About Section</label>
+          <p class="form-subsection">About Section</p>
+          <div class="field-group">
+            <label class="field-label">Gambar About</label>
           <div class="img-preview-box">
             <img v-if="aboutPreview" :src="aboutPreview" alt="About" />
           </div>
@@ -292,33 +351,47 @@
         <div class="field-group">
           <label class="field-label">Deskripsi About Section</label>
           <textarea v-model="form.about_description" class="field-textarea" rows="5" />
-        </div>
+          </div>
 
-        <div class="section-divider" />
+          <p class="form-subsection">Statistik Member</p>
+          <div class="stats-grid">
+            <div class="field-group">
+              <label class="field-label">Member Aktif</label>
+              <input v-model="form.stat_member_aktif" type="number" min="0" class="field-input" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Member Pasif</label>
+              <input v-model="form.stat_member_pasif" type="number" min="0" class="field-input" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Member Company</label>
+              <input v-model="form.stat_member_company" type="number" min="0" class="field-input" />
+            </div>
+            <div class="field-group">
+              <label class="field-label">Member Personal</label>
+              <input v-model="form.stat_member_personal" type="number" min="0" class="field-input" />
+            </div>
+          </div>
 
-        <!-- Statistik Member -->
-        <div class="field-group">
-          <label class="field-label">Statistik Member Aktif</label>
-          <input v-model="form.stat_member_aktif" type="number" min="0" class="field-input field-quarter" />
-          <span v-if="form.errors.stat_member_aktif" class="error-msg">{{ form.errors.stat_member_aktif }}</span>
-        </div>
-        <div class="field-group">
-          <label class="field-label">Statistik Member Pasif</label>
-          <input v-model="form.stat_member_pasif" type="number" min="0" class="field-input field-quarter" />
-          <span v-if="form.errors.stat_member_pasif" class="error-msg">{{ form.errors.stat_member_pasif }}</span>
-        </div>
-        <div class="field-group">
-          <label class="field-label">Statistik Member Company</label>
-          <input v-model="form.stat_member_company" type="number" min="0" class="field-input field-quarter" />
-          <span v-if="form.errors.stat_member_company" class="error-msg">{{ form.errors.stat_member_company }}</span>
-        </div>
-        <div class="field-group">
-          <label class="field-label">Statistik Member Personal</label>
-          <input v-model="form.stat_member_personal" type="number" min="0" class="field-input field-quarter" />
-          <span v-if="form.errors.stat_member_personal" class="error-msg">{{ form.errors.stat_member_personal }}</span>
-        </div>
+          </div><!-- /form-card landing page -->
 
-      </form>
+        </form>
+      </div>
+
+      <!-- Preview Column -->
+      <div class="settings-preview-col">
+        <div class="preview-sticky">
+          <h2 class="preview-title">Live Preview Landing Page</h2>
+          <div class="preview-container">
+            <PreviewLandingPage 
+              :settings="form"
+              :logoPreview="logoPreview"
+              :bgPreview="bgPreview"
+              :aboutPreview="aboutPreview"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </AdminLayout>
 </template>
@@ -327,6 +400,7 @@
 import { ref, computed } from 'vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import PreviewLandingPage from './PreviewLandingPage.vue';
 
 const props = defineProps({ settings: Object });
 const $page = usePage();
@@ -370,6 +444,16 @@ const form = useForm({
   about_image:         null,
   delete_about_image:  false,
 });
+
+const activeTab = ref('identitas');
+const tabs = [
+  { key: 'identitas',   label: 'Identitas' },
+  { key: 'kontak',      label: 'Kontak & Sosial' },
+  { key: 'bank',        label: 'Bank' },
+  { key: 'keanggotaan', label: 'Keanggotaan' },
+  { key: 'tampilan',    label: 'Tampilan' },
+  { key: 'landingpage', label: 'Landing Page' },
+];
 
 // Image previews
 const logoPreview  = ref(s.community_logo ? `/storage/${s.community_logo}` : null);
@@ -510,9 +594,151 @@ function submit() {
   font-size: 13.5px;
 }
 
-.content-area { padding: 24px 32px; max-width: 480px; }
+/* === TAB BAR === */
+.tab-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  gap: 0;
+  margin: -16px -20px 16px;
+  padding: 0 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tab-bar::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #6b7280;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s, border-color 0.15s;
+  margin-bottom: -1px;
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--primary-color); }
+.tab-active {
+  color: var(--primary-color) !important;
+  border-bottom-color: var(--primary-color) !important;
+  font-weight: 600;
+}
 
-.field-group { margin-bottom: 18px; }
+.settings-layout {
+  display: flex;
+  height: calc(100vh - 76px);
+  overflow: hidden;
+  padding: 0;
+  gap: 0;
+}
+
+.settings-form-col {
+  width: 440px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+  padding: 16px 20px;
+  border-right: 1px solid #e5e7eb;
+  background: #fff;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.content-area { padding: 0; }
+
+/* === FORM CARDS === */
+.form-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+.form-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+.form-card-title svg { width: 15px; height: 15px; color: var(--primary-color); }
+.form-subsection {
+  font-size: 11px;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin: 14px 0 10px;
+}
+.form-subsection:first-of-type { margin-top: 0; }
+.social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.membership-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.color-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+
+.settings-preview-col {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+  padding: 16px 20px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-sticky {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.preview-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #9ca3af;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.preview-title::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34,197,94,0.25);
+}
+
+.preview-container {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px -8px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.06);
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.field-group { margin-bottom: 14px; }
 .field-label {
   display: block;
   font-size: 13.5px;
@@ -633,11 +859,7 @@ function submit() {
   background: none;
 }
 
-.section-divider {
-  height: 1px;
-  background: #e5e7eb;
-  margin: 24px 0;
-}
+.section-divider { display: none; }
 </style>
 
 
