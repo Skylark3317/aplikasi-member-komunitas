@@ -15,9 +15,9 @@ class PertanyaanController extends Controller
      */
     public function index()
     {
-        if (!auth()->user()->isPremium()) {
-            abort(403, 'Akses ditolak. Fitur ini hanya untuk member premium.');
-        }
+        // if (!auth()->user()->isPremium()) {
+        //     abort(403, 'Akses ditolak. Fitur ini hanya untuk member premium.');
+        // }
 
         $conversation = Conversation::firstOrCreate([
             'submitter_id' => auth()->id(),
@@ -31,9 +31,9 @@ class PertanyaanController extends Controller
      */
     public function show(Conversation $conversation)
     {
-        if (!auth()->user()->isPremium()) {
-            abort(403, 'Akses ditolak. Fitur ini hanya untuk member premium.');
-        }
+        // if (!auth()->user()->isPremium()) {
+        //     abort(403, 'Akses ditolak. Fitur ini hanya untuk member premium.');
+        // }
 
         if ($conversation->submitter_id !== auth()->id()) {
             abort(403, 'Akses ditolak.');

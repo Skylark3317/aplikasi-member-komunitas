@@ -2,102 +2,128 @@
   <MemberLayout>
     <Head title="Tanya Jawab - AMK" />
 
-    <div class="chat-container-layout">
-      <!-- Chat Main Room -->
-      <div class="chat-main-room">
-        <!-- Active Chat Header -->
-        <div class="chat-room-header">
-          <div class="header-avatar-container">
-            <!-- Show community support icon / avatar -->
-            <div class="header-avatar-placeholder">
-              CS
-            </div>
-          </div>
-          <div class="header-info">
-            <h2 class="header-name">Layanan Tanya Jawab Petugas</h2>
-            <span class="header-sub">Semua petugas kami siap membantu Anda</span>
-          </div>
-        </div>
-
-        <!-- Messages scrollable area -->
-        <div class="chat-messages-area" ref="scrollContainer">
-          <div class="chat-messages-inner">
-            <template v-for="(msg, index) in conversation.messages" :key="msg.id">
-              <!-- Date Separator if first message of day -->
-              <div v-if="shouldShowDateSep(msg, index)" class="date-separator-row">
-                <span class="date-separator-bubble">{{ formatDateOnly(msg.created_at) }}</span>
-              </div>
-
-              <!-- Message Row -->
-              <div :class="['message-bubble-row', msg.sender_id === currentUser.id ? 'msg-outgoing' : 'msg-incoming']">
-                <!-- Avatar for incoming messages -->
-                <div v-if="msg.sender_id !== currentUser.id" class="bubble-avatar-container">
-                  <img 
-                    v-if="msg.sender?.avatar_url" 
-                    :src="msg.sender.avatar_url" 
-                    alt="Avatar" 
-                    class="bubble-avatar-img"
-                  />
-                  <div v-else class="bubble-avatar-placeholder">
-                    {{ msg.sender?.name.charAt(0).toUpperCase() }}
-                  </div>
-                </div>
-
-                <!-- Bubble itself -->
-                <div class="bubble-content-box">
-                  <!-- Sender Name inside bubble for staff/admins -->
-                  <div 
-                    v-if="msg.sender_id !== currentUser.id" 
-                    class="bubble-sender-name"
-                  >
-                    {{ msg.sender?.name || 'Petugas' }}
-                  </div>
-                  
-                  <div class="bubble-text">
-                    {{ msg.content }}
-                  </div>
-
-                  <div class="bubble-meta">
-                    <span class="bubble-time">{{ formatTimeOnly(msg.created_at) }}</span>
-                    <!-- Status checkmark for current user's messages (member's messages) -->
-                    <span v-if="msg.sender_id === currentUser.id" class="tick-wrapper">
-                      <svg v-if="msg.is_read" class="tick-svg blue-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                      <svg v-else class="tick-svg gray-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-
-        <!-- Chat Input Footer -->
-        <div class="chat-room-footer">
-          <form @submit.prevent="submitReply" class="chat-input-form">
-            <input 
-              v-model="form.content" 
-              type="text" 
-              placeholder="Tulis pesan ke petugas..." 
-              class="chat-room-input"
-              required
-              ref="inputField"
-              :disabled="form.processing"
-            />
-            <button type="submit" class="chat-room-send-btn" :disabled="form.processing || !form.content.trim()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="send-icon-svg">
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+    <template v-if="!currentUser?.is_premium">
+      <!-- Top Bar -->
+      <div class="top-bar">
+        <h1 class="page-title">Pertanyaan</h1>
+      </div>
+      <div class="divider" />
+  
+      <!-- Content Area -->
+      <div class="content-area">
+        <!-- Non-Premium Alert (Image 1) -->
+        <div v-if="!$page.props.currentUser?.is_premium" class="non-premium-alert-container">
+          <div class="non-premium-alert">
+            <span class="alert-message">Anda perlu menjadi member untuk mengakses fitur ini.</span>
+            <button class="alert-close-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="close-icon-svg">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
-              <span>Kirim</span>
             </button>
-          </form>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
+
+    <template v-else>
+      <div class="chat-container-layout">
+        <!-- Chat Main Room -->
+        <div class="chat-main-room">
+          <!-- Active Chat Header -->
+          <div class="chat-room-header">
+            <div class="header-avatar-container">
+              <!-- Show community support icon / avatar -->
+              <div class="header-avatar-placeholder">
+                CS
+              </div>
+            </div>
+            <div class="header-info">
+              <h2 class="header-name">Layanan Tanya Jawab Petugas</h2>
+              <span class="header-sub">Semua petugas kami siap membantu Anda</span>
+            </div>
+          </div>
+
+          <!-- Messages scrollable area -->
+          <div class="chat-messages-area" ref="scrollContainer">
+            <div class="chat-messages-inner">
+              <template v-for="(msg, index) in conversation.messages" :key="msg.id">
+                <!-- Date Separator if first message of day -->
+                <div v-if="shouldShowDateSep(msg, index)" class="date-separator-row">
+                  <span class="date-separator-bubble">{{ formatDateOnly(msg.created_at) }}</span>
+                </div>
+
+                <!-- Message Row -->
+                <div :class="['message-bubble-row', msg.sender_id === currentUser.id ? 'msg-outgoing' : 'msg-incoming']">
+                  <!-- Avatar for incoming messages -->
+                  <div v-if="msg.sender_id !== currentUser.id" class="bubble-avatar-container">
+                    <img 
+                      v-if="msg.sender?.avatar_url" 
+                      :src="msg.sender.avatar_url" 
+                      alt="Avatar" 
+                      class="bubble-avatar-img"
+                    />
+                    <div v-else class="bubble-avatar-placeholder">
+                      {{ msg.sender?.name.charAt(0).toUpperCase() }}
+                    </div>
+                  </div>
+
+                  <!-- Bubble itself -->
+                  <div class="bubble-content-box">
+                    <!-- Sender Name inside bubble for staff/admins -->
+                    <div 
+                      v-if="msg.sender_id !== currentUser.id" 
+                      class="bubble-sender-name"
+                    >
+                      {{ msg.sender?.name || 'Petugas' }}
+                    </div>
+                    
+                    <div class="bubble-text">
+                      {{ msg.content }}
+                    </div>
+
+                    <div class="bubble-meta">
+                      <span class="bubble-time">{{ formatTimeOnly(msg.created_at) }}</span>
+                      <!-- Status checkmark for current user's messages (member's messages) -->
+                      <span v-if="msg.sender_id === currentUser.id" class="tick-wrapper">
+                        <svg v-if="msg.is_read" class="tick-svg blue-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <svg v-else class="tick-svg gray-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <!-- Chat Input Footer -->
+          <div class="chat-room-footer">
+            <form @submit.prevent="submitReply" class="chat-input-form">
+              <input 
+                v-model="form.content" 
+                type="text" 
+                placeholder="Tulis pesan ke petugas..." 
+                class="chat-room-input"
+                required
+                ref="inputField"
+                :disabled="form.processing"
+              />
+              <button type="submit" class="chat-room-send-btn" :disabled="form.processing || !form.content.trim()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="send-icon-svg">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+                <span>Kirim</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </template>
   </MemberLayout>
 </template>
 
@@ -178,6 +204,70 @@ watch(() => props.conversation.messages, () => {
 </script>
 
 <style scoped>
+/* ── Top bar ── */
+.top-bar {
+  display: flex;
+  align-items: center;
+  padding: 16px 32px;
+  background: #fff;
+}
+.page-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111;
+}
+
+.divider { 
+  height: 1px; 
+  background: #e5e7eb; 
+  margin: 0;
+}
+
+/* ── Content Area ── */
+.content-area {
+  padding: 24px 32px;
+  background: #fff;
+  min-height: calc(100vh - 65px);
+  box-sizing: border-box;
+}
+
+/* ── Non-Premium Alert (Image 1) ── */
+.non-premium-alert {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  border-radius: 8px;
+  padding: 12px 20px;
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+.alert-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ef4444;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.alert-close-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.close-icon-svg {
+  width: 14px;
+  height: 14px;
+}
+
 .chat-container-layout {
   display: flex;
   width: 100%;
