@@ -149,32 +149,28 @@
           </div><!-- /social-grid -->
           </div><!-- /form-card media sosial -->
 
-          <!-- === BANK === -->
-          <div class="form-card" v-show="activeTab === 'bank'">
-            <h3 class="form-card-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-              Informasi Bank
-            </h3>
-          <div class="field-group">
-            <label class="field-label">Nama Pemilik Rekening</label>
-            <input v-model="form.bank_account_name" type="text" class="field-input field-half" />
-          </div>
-        <div class="field-group">
-          <label class="field-label">Nomor Rekening</label>
-          <input v-model="form.bank_account_number" type="text" class="field-input field-half" />
-        </div>
-        <div class="field-group">
-          <label class="field-label">Nama Bank Pemilik Rekening</label>
-          <input v-model="form.bank_name" type="text" class="field-input" />
-          </div>
-          </div><!-- /form-card bank -->
-
           <!-- === KEANGGOTAAN === -->
           <div class="form-card" v-show="activeTab === 'keanggotaan'">
             <h3 class="form-card-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-              Keanggotaan
+              Pengaturan Keanggotaan &amp; Pembayaran
             </h3>
+            
+          <p class="form-subsection">Informasi Rekening Pembayaran</p>
+          <div class="field-group">
+            <label class="field-label">Nama Pemilik Rekening</label>
+            <input v-model="form.bank_account_name" type="text" class="field-input field-half" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Nomor Rekening</label>
+            <input v-model="form.bank_account_number" type="text" class="field-input field-half" />
+          </div>
+          <div class="field-group">
+            <label class="field-label">Nama Bank Pemilik Rekening</label>
+            <input v-model="form.bank_name" type="text" class="field-input" />
+          </div>
+
+          <p class="form-subsection mt-4">Biaya &amp; Aturan</p>
           <div class="membership-grid">
           <div class="field-group">
             <label class="field-label">Biaya Membership</label>
@@ -198,63 +194,12 @@
           </div><!-- /membership-grid -->
           </div><!-- /form-card keanggotaan -->
 
-          <!-- === TAMPILAN === -->
-          <div class="form-card" v-show="activeTab === 'tampilan'">
+          <!-- === KARTU MEMBER === -->
+          <div class="form-card" v-show="activeTab === 'kartumember'">
             <h3 class="form-card-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-              Tampilan &amp; Warna
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2" ry="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Kartu Member
             </h3>
-          <div class="color-row">
-          <div class="field-group">
-            <label class="field-label">Warna Primer</label>
-            <div class="color-input-wrap">
-              <input v-model="form.primary_color" type="text" class="field-input field-color-text" />
-              <input v-model="form.primary_color" type="color" class="color-swatch" />
-            </div>
-          </div>
-        <div class="field-group">
-          <label class="field-label">Warna Permukaan</label>
-          <div class="color-input-wrap">
-            <input v-model="form.surface_color" type="text" class="field-input field-color-text" />
-            <input v-model="form.surface_color" type="color" class="color-swatch" />
-          </div>
-        </div>
-
-        <!-- Background image -->
-        <div class="field-group">
-          <label class="field-label">Gambar Latar Belakang</label>
-          <div class="img-preview-box">
-            <img v-if="bgPreview" :src="bgPreview" alt="Latar Belakang" />
-          </div>
-          <p class="field-hint">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="12"/>
-              <line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            Format JPG atau PNG, ukuran maksimal 1MB
-          </p>
-          <div class="btn-row">
-            <label class="btn-upload">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
-              Unggah gambar latar belakang
-              <input type="file" accept=".jpg,.jpeg,.png" @change="onBgChange" hidden />
-            </label>
-            <button type="button" class="btn-delete" @click="deleteBg">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3 6 5 6 21 6"/>
-                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-              </svg>
-              Hapus gambar latar belakang
-            </button>
-          </div>
-          <span v-if="form.errors.bg_image" class="error-msg">{{ form.errors.bg_image }}</span>
-          </div>
-          </div><!-- /color-row -->
 
           <!-- Card Background image -->
           <div class="field-group">
@@ -290,7 +235,7 @@
           </div>
           <span v-if="form.errors.card_background" class="error-msg">{{ form.errors.card_background }}</span>
           </div>
-          </div><!-- /form-card tampilan -->
+          </div><!-- /form-card kartumember -->
 
           <!-- === LANDING PAGE === -->
           <div class="form-card" v-show="activeTab === 'landingpage'">
@@ -299,7 +244,58 @@
               Konten Landing Page
             </h3>
 
-          <p class="form-subsection">Hero Section</p>
+          <p class="form-subsection">Tampilan &amp; Warna Utama</p>
+          <div class="color-row">
+            <div class="field-group">
+              <label class="field-label">Warna Primer</label>
+              <div class="color-input-wrap">
+                <input v-model="form.primary_color" type="text" class="field-input field-color-text" />
+                <input v-model="form.primary_color" type="color" class="color-swatch" />
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Warna Permukaan</label>
+              <div class="color-input-wrap">
+                <input v-model="form.surface_color" type="text" class="field-input field-color-text" />
+                <input v-model="form.surface_color" type="color" class="color-swatch" />
+              </div>
+            </div>
+          </div>
+
+          <p class="form-subsection mt-4">Hero Section</p>
+          <div class="field-group">
+            <label class="field-label">Gambar Latar Belakang (Hero BG)</label>
+            <div class="img-preview-box">
+              <img v-if="bgPreview" :src="bgPreview" alt="Latar Belakang" />
+            </div>
+            <p class="field-hint">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              Format JPG atau PNG, ukuran maksimal 1MB
+            </p>
+            <div class="btn-row">
+              <label class="btn-upload">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                Unggah gambar latar belakang
+                <input type="file" accept=".jpg,.jpeg,.png" @change="onBgChange" hidden />
+              </label>
+              <button type="button" class="btn-delete" @click="deleteBg">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                </svg>
+                Hapus gambar latar belakang
+              </button>
+            </div>
+            <span v-if="form.errors.bg_image" class="error-msg">{{ form.errors.bg_image }}</span>
+          </div>
           <div class="field-group">
             <label class="field-label">Judul Hero</label>
             <textarea v-model="form.hero_title" class="field-textarea" rows="2" />
@@ -381,13 +377,23 @@
       <!-- Preview Column -->
       <div class="settings-preview-col">
         <div class="preview-sticky">
-          <h2 class="preview-title">Live Preview Landing Page</h2>
+          <h4 class="preview-title">Live Preview</h4>
           <div class="preview-container">
-            <PreviewLandingPage 
+            <PreviewLandingPage
+              v-if="['identitas', 'kontak', 'landingpage'].includes(activeTab)"
               :settings="form"
               :logoPreview="logoPreview"
               :bgPreview="bgPreview"
               :aboutPreview="aboutPreview"
+            />
+            <PreviewMemberCard
+              v-else-if="activeTab === 'kartumember'"
+              :form="form"
+              :cardBgUrl="cardBgPreview"
+            />
+            <PreviewMembership
+              v-else-if="activeTab === 'keanggotaan'"
+              :form="form"
             />
           </div>
         </div>
@@ -398,9 +404,11 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { Link, useForm, router, usePage } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import PreviewLandingPage from './PreviewLandingPage.vue';
+import PreviewMemberCard from './PreviewMemberCard.vue';
+import PreviewMembership from './PreviewMembership.vue';
 
 const props = defineProps({ settings: Object });
 const $page = usePage();
@@ -449,9 +457,8 @@ const activeTab = ref('identitas');
 const tabs = [
   { key: 'identitas',   label: 'Identitas' },
   { key: 'kontak',      label: 'Kontak & Sosial' },
-  { key: 'bank',        label: 'Bank' },
   { key: 'keanggotaan', label: 'Keanggotaan' },
-  { key: 'tampilan',    label: 'Tampilan' },
+  { key: 'kartumember', label: 'Kartu Member' },
   { key: 'landingpage', label: 'Landing Page' },
 ];
 
@@ -704,6 +711,7 @@ function submit() {
   flex-direction: column;
   flex: 1;
   min-height: 0;
+  justify-content: center;
 }
 
 .preview-title {

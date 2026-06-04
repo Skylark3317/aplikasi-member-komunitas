@@ -4,27 +4,29 @@
     <!-- ===== HEADER ===== -->
     <header class="lp-header">
       <!-- Top bar: email + phone -->
-      <div class="lp-header-top">
-        <div class="lp-logo-wrap">
-          <img :src="logoUrl" alt="Logo" class="lp-logo-img">
-        </div>
-        <div class="lp-contact-bar">
-          <span class="lp-contact-item">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
-            {{ settings.email || '-' }}
-          </span>
-          <span class="lp-contact-item">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg>
-            {{ settings.phone || '-' }}
-          </span>
-          <span class="lp-contact-item">
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z"/></svg>
-            YouTube
-          </span>
-          <span class="lp-contact-item">
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/></svg>
-            Instagram
-          </span>
+      <div class="lp-header-top-wrap">
+        <div class="lp-container lp-header-top">
+          <div class="lp-logo-wrap">
+            <img :src="logoUrl" alt="Logo" class="lp-logo-img">
+          </div>
+          <div class="lp-contact-bar">
+            <span class="lp-contact-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+              {{ settings.email || '-' }}
+            </span>
+            <span class="lp-contact-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg>
+              {{ settings.phone || '-' }}
+            </span>
+            <span class="lp-contact-item">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z"/></svg>
+              YouTube
+            </span>
+            <span class="lp-contact-item">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/></svg>
+              Instagram
+            </span>
+          </div>
         </div>
       </div>
       <!-- Nav bar -->
@@ -40,7 +42,7 @@
     <section class="lp-hero">
       <img class="lp-hero-bg" :src="bgUrl" alt="bg">
       <div class="lp-hero-overlay" />
-      <div class="lp-hero-content">
+      <div class="lp-container lp-hero-content">
         <h1 class="lp-hero-title">{{ settings.hero_title || 'Bangun Koneksi dan Tumbuh Bersama' }}</h1>
         <p class="lp-hero-desc">{{ settings.hero_description || 'Terhubung dengan individu dari berbagai latar belakang, berbagi ide, dan membangun kolaborasi dalam komunitas inklusif untuk berkembang bersama serta menciptakan dampak nyata.' }}</p>
         <div class="lp-hero-btn">Gabung Membership →</div>
@@ -49,13 +51,15 @@
 
     <!-- ===== ABOUT ===== -->
     <section class="lp-about">
-      <img class="lp-about-img" :src="aboutUrl" alt="About">
-      <div class="lp-about-text">
-        <div class="lp-section-label">
-          <span class="lp-label-line" />
-          <h2 class="lp-about-title">{{ settings.about_title || 'Tentang' }}</h2>
+      <div class="lp-container lp-about-inner">
+        <img class="lp-about-img" :src="aboutUrl" alt="About">
+        <div class="lp-about-text">
+          <div class="lp-section-label">
+            <span class="lp-label-line" />
+            <h2 class="lp-about-title">{{ settings.about_title || 'Tentang' }}</h2>
+          </div>
+          <p class="lp-about-desc">{{ settings.about_description || 'Komunitas ini adalah ruang terbuka bagi siapa saja yang ingin belajar, berkembang, dan saling terhubung dalam lingkungan yang positif dan kolaboratif. Kami menghadirkan berbagai kesempatan untuk bertukar wawasan, membangun relasi, serta berpartisipasi dalam kegiatan yang mendorong pertumbuhan pribadi maupun profesional. Dengan semangat kebersamaan, kami percaya bahwa setiap individu memiliki potensi untuk memberikan kontribusi dan menciptakan dampak yang berarti.' }}</p>
         </div>
-        <p class="lp-about-desc">{{ settings.about_description || 'Komunitas ini adalah ruang terbuka bagi siapa saja yang ingin belajar, berkembang, dan saling terhubung dalam lingkungan yang positif dan kolaboratif. Kami menghadirkan berbagai kesempatan untuk bertukar wawasan, membangun relasi, serta berpartisipasi dalam kegiatan yang mendorong pertumbuhan pribadi maupun profesional. Dengan semangat kebersamaan, kami percaya bahwa setiap individu memiliki potensi untuk memberikan kontribusi dan menciptakan dampak yang berarti.' }}</p>
       </div>
     </section>
 
@@ -63,7 +67,7 @@
     <section class="lp-stats">
       <img class="lp-stats-bg" :src="bgUrl" alt="bg">
       <div class="lp-stats-overlay" />
-      <div class="lp-stats-content">
+      <div class="lp-container lp-stats-content">
         <h2 class="lp-stats-title">Komunitas Kami dalam Angka</h2>
         <p class="lp-stats-subtitle">Jadilah bagian dari komunitas yang terus berkembang dan berkolaborasi untuk mencapai dampak nyata.</p>
         <div class="lp-stats-grid">
@@ -102,30 +106,33 @@
 
     <!-- ===== BLOG ===== -->
     <section class="lp-blog">
-      <div class="lp-blog-label">
-        <span class="lp-label-line" />
-        <h2 class="lp-blog-heading">Postingan Terbaru</h2>
-      </div>
-      <div class="lp-blog-grid">
-        <div v-for="n in 4" :key="n" class="lp-blog-card">
-          <div class="lp-blog-card-inner">
-            <span class="lp-blog-date">04 Jun 2026</span>
-            <h3 class="lp-blog-card-title">Judul Artikel Blog {{ n }}</h3>
-            <p class="lp-blog-card-desc">Deskripsi singkat tentang artikel yang menarik dan informatif untuk para anggota komunitas ini.</p>
-          </div>
-          <div class="lp-blog-card-footer">
-            <hr class="lp-blog-hr">
-            <span class="lp-blog-read">Lanjutkan membaca →</span>
+      <div class="lp-container">
+        <div class="lp-blog-label">
+          <span class="lp-label-line" />
+          <h2 class="lp-blog-heading">Postingan Terbaru</h2>
+        </div>
+        <div class="lp-blog-grid">
+          <div v-for="n in 8" :key="n" class="lp-blog-card">
+            <div class="lp-blog-card-inner">
+              <span class="lp-blog-date">04/06/2026</span>
+              <h3 class="lp-blog-card-title">Judul Artikel Blog {{ n }} yang Menarik</h3>
+              <p class="lp-blog-card-desc">Deskripsi singkat tentang artikel yang informatif untuk para anggota komunitas ini agar selalu terhubung.</p>
+            </div>
+            <div class="lp-blog-card-footer">
+              <hr class="lp-blog-hr">
+              <span class="lp-blog-read">Lanjutkan membaca →</span>
+            </div>
           </div>
         </div>
+        <div class="lp-blog-more-wrap">
+          <div class="lp-blog-more">Lihat semua →</div>
+        </div>
       </div>
-      <div class="lp-blog-more">Lihat semua →</div>
     </section>
 
     <!-- ===== FOOTER ===== -->
     <footer class="lp-footer">
-      <div class="lp-footer-top-bar" />
-      <div class="lp-footer-body">
+      <div class="lp-container lp-footer-body">
         <div class="lp-footer-brand">
           <div class="lp-footer-logo-box">
             <img :src="logoUrl" alt="Logo" class="lp-footer-logo-img">
@@ -167,7 +174,9 @@
         </div>
       </div>
       <div class="lp-footer-bottom">
-        <span>&copy; 2026 {{ settings.community_name || 'AMK' }}</span>
+        <div class="lp-container">
+          <span>&copy; 2026 {{ settings.community_name || 'AMK' }}</span>
+        </div>
       </div>
     </footer>
 
@@ -218,19 +227,30 @@ const cssVars = computed(() => ({
 .lp-root::-webkit-scrollbar { width: 3px; }
 .lp-root::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
 
+/* === SHARED CONTAINER === */
+.lp-container {
+  width: 100%;
+  max-width: 680px; /* Constrains all content to the same width */
+  margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
 /* === HEADER === */
 .lp-header { position: sticky; top: 0; z-index: 20; background: #fff; }
+.lp-header-top-wrap {
+  border-bottom: 1px solid #e5e7eb;
+}
 .lp-header-top {
   display: flex;
   align-items: stretch;
   height: 36px;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 24px; 
 }
 .lp-logo-wrap {
   display: flex;
   align-items: center;
-  padding: 0 14px;
-  border-right: 1px solid #e5e7eb;
+  padding-right: 14px;
 }
 .lp-logo-img { height: 22px; width: auto; object-fit: contain; display: block; }
 .lp-contact-bar {
@@ -296,15 +316,14 @@ const cssVars = computed(() => ({
 .lp-hero-content {
   position: relative;
   z-index: 2;
-  padding: 0 28px;
   width: 100%;
-  max-width: 480px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  align-items: flex-start; /* Ensures content is left aligned within container */
 }
-.lp-hero-title { font-size: 15px; font-weight: 600; color: #fff; line-height: 1.35; margin: 0; }
-.lp-hero-desc { font-size: 10px; color: rgba(255,255,255,0.9); line-height: 1.6; margin: 0; }
+.lp-hero-title { font-size: 15px; font-weight: 600; color: #fff; line-height: 1.35; margin: 0; max-width: 480px; }
+.lp-hero-desc { font-size: 10px; color: rgba(255,255,255,0.9); line-height: 1.6; margin: 0; max-width: 480px; }
 .lp-hero-btn {
   display: inline-flex;
   align-items: center;
@@ -321,14 +340,16 @@ const cssVars = computed(() => ({
 
 /* === ABOUT === */
 .lp-about {
+  background: #fff;
+  padding: 32px 0;
+}
+.lp-about-inner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 20px;
-  padding: 24px 28px;
-  background: #fff;
+  justify-content: flex-start;
+  gap: 32px;
 }
-.lp-about > * { max-width: 50%; }
+.lp-about-inner > * { max-width: 50%; }
 .lp-about-img {
   width: 110px;
   height: 110px;
@@ -346,7 +367,7 @@ const cssVars = computed(() => ({
 /* === STATS === */
 .lp-stats {
   position: relative;
-  padding: 24px 28px;
+  padding: 32px 0;
   display: flex;
   justify-content: center;
   overflow: hidden;
@@ -409,13 +430,18 @@ const cssVars = computed(() => ({
 
 /* === FOOTER === */
 .lp-footer { background: #121212; color: #fff; }
-.lp-footer-top-bar { height: 4px; background: var(--lp-primary); }
 .lp-footer-body {
   display: flex;
   gap: 0;
-  padding: 16px 20px;
 }
-.lp-footer-brand { flex: 1.2; padding-right: 16px; display: flex; flex-direction: column; gap: 8px; }
+.lp-footer-brand { 
+  flex: 1.2; 
+  padding: 16px 16px 16px 0; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 8px; 
+  border-top: 4px solid var(--lp-primary); 
+}
 .lp-footer-logo-box {
   width: 36px; height: 36px;
   background: #fff;
@@ -431,8 +457,8 @@ const cssVars = computed(() => ({
   border-radius: 2px;
   display: inline-block;
 }
-.lp-footer-menu { flex: 0.8; padding: 0 12px; }
-.lp-footer-contact { flex: 1.2; padding-left: 12px; }
+.lp-footer-menu { flex: 0.8; padding: 16px 12px; }
+.lp-footer-contact { flex: 1.2; padding: 16px 0 16px 12px; }
 .lp-footer-heading { font-size: 11px; font-weight: 600; margin: 0 0 8px; }
 .lp-footer-links { display: flex; flex-direction: column; gap: 5px; font-size: 10px; color: #999; }
 .lp-footer-contact-list { display: flex; flex-direction: column; gap: 5px; }
@@ -442,48 +468,54 @@ const cssVars = computed(() => ({
 }
 .lp-icon-shrink { flex-shrink: 0; margin-top: 1px; }
 .lp-footer-bottom {
-  padding: 8px 20px;
+  padding: 8px 0;
   background: #0a0a0a;
-  text-align: center;
+  text-align: left;
   font-size: 9px;
   color: #666;
 }
 
 /* === BLOG === */
-.lp-blog { background: #F2F2F2; padding: 18px 20px; }
-.lp-blog-label { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
-.lp-blog-heading { font-size: 13px; font-weight: 600; margin: 0; }
-.lp-blog-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+.lp-blog { background: #f3f4f6; padding: 32px 0; }
+.lp-blog-label { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.lp-blog-heading { font-size: 14px; font-weight: 700; color: #111827; margin: 0; }
+.lp-blog-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
 .lp-blog-card {
   background: #fff;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 10px;
-  gap: 6px;
+  padding: 14px;
+  gap: 12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
-.lp-blog-card-inner { display: flex; flex-direction: column; gap: 4px; }
+.lp-blog-card-inner { display: flex; flex-direction: column; gap: 8px; }
 .lp-blog-date {
   background: var(--lp-primary);
   color: #fff;
-  font-size: 8.5px;
-  padding: 1px 5px;
+  font-size: 8px;
+  font-weight: 600;
+  padding: 3px 6px;
   display: inline-block;
   width: fit-content;
+  border-radius: 2px;
 }
-.lp-blog-card-title { font-size: 10px; font-weight: 600; margin: 0; line-height: 1.3; }
-.lp-blog-card-desc { font-size: 9px; color: #666; margin: 0; line-height: 1.4; }
-.lp-blog-card-footer { display: flex; flex-direction: column; gap: 4px; }
+.lp-blog-card-title { font-size: 10px; font-weight: 700; color: #111827; margin: 0; line-height: 1.4; }
+.lp-blog-card-desc { font-size: 9px; color: #6b7280; margin: 0; line-height: 1.5; }
+.lp-blog-card-footer { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
 .lp-blog-hr { border: none; border-top: 1px solid #e5e7eb; margin: 0; }
-.lp-blog-read { font-size: 9px; font-weight: 500; color: #111; display: flex; align-items: center; gap: 2px; }
+.lp-blog-read { font-size: 9px; font-weight: 700; color: #374151; display: flex; align-items: center; gap: 2px; }
+.lp-blog-more-wrap { display: flex; justify-content: flex-start; }
 .lp-blog-more {
   display: inline-flex;
-  border: 1.5px solid var(--lp-primary);
+  align-items: center;
+  border: 1px solid var(--lp-primary);
   color: var(--lp-primary);
-  padding: 3px 12px;
+  background: transparent;
+  padding: 4px 14px;
   border-radius: 20px;
   font-size: 9.5px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
 }
 </style>
