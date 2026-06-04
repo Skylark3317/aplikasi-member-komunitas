@@ -78,7 +78,7 @@ class KelolAkunController extends Controller
                 : null;
 
             $data['member_profile'] = [
-                'member_number'  => 'M' . str_pad($user->id, 5, '0', STR_PAD_LEFT),
+                'member_number'  => $memberProfile->member_number,
                 'institution'    => $memberProfile->institution,
                 'department'     => $memberProfile->department,
                 'address'        => $memberProfile->address,

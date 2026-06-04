@@ -64,16 +64,24 @@ class PremiumController extends Controller
         $address = $request->address ?: 'Online';
 
         // Create or update MemberProfile
-        MemberProfile::updateOrCreate(
-            ['member_id' => $user->id],
-            [
+        $profile = MemberProfile::where('member_id', $user->id)->first();
+        if (!$profile) {
+            MemberProfile::create([
+                'member_id'     => $user->id,
+                'institution'   => $institution,
+                'department'    => $department,
+                'address'       => $address,
+                'status'        => 'nonactive',
+                'expire_date'   => now(), // temporary
+                'member_number' => MemberProfile::generateMemberNumber(),
+            ]);
+        } else {
+            $profile->update([
                 'institution' => $institution,
                 'department'  => $department,
                 'address'     => $address,
-                'status'      => 'nonactive',
-                'expire_date' => now(), // temporary
-            ]
-        );
+            ]);
+        }
 
         // Generate Invoice
         $fee = (float) Setting::get('membership_fee', 50000);

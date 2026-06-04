@@ -45,6 +45,7 @@ class RegisteredUserController extends Controller
 
         \App\Models\MemberProfile::create([
             'member_id'      => $user->id,
+            'member_number'  => \App\Models\MemberProfile::generateMemberNumber(),
             'expire_date'    => now(),
             'gender'         => $request->gender,
             'blood_type'     => $request->blood_type,

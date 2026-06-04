@@ -36,7 +36,7 @@ class ProfilController extends Controller
                 : null;
 
             $profileData['member_profile'] = [
-                'member_number'  => 'M' . str_pad($user->id, 5, '0', STR_PAD_LEFT),
+                'member_number'  => $memberProfile->member_number,
                 'gender'         => $memberProfile->gender,
                 'blood_type'     => $memberProfile->blood_type,
                 'last_education' => $memberProfile->last_education,
@@ -129,8 +129,9 @@ class ProfilController extends Controller
             $user->memberProfile->update($profileFields);
         } else {
             $user->memberProfile()->create(array_merge($profileFields, [
-                'status'      => 'nonactive',
-                'expire_date' => now(),
+                'status'        => 'nonactive',
+                'expire_date'   => now(),
+                'member_number' => \App\Models\MemberProfile::generateMemberNumber(),
             ]));
         }
 
