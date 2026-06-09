@@ -13,3 +13,6 @@ Schedule::command('accounts:purge-expired')->daily();
 
 // Send weekly content summary to active premium members (e.g., every Monday at 09:00)
 Schedule::command('email:weekly-summary')->weeklyOn(1, '09:00');
+
+// Send notification to premium members whose membership expires in 3 days (daily at 08:00)
+Schedule::command('email:membership-expiring')->dailyAt('08:00');

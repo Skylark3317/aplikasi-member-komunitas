@@ -78,6 +78,10 @@ class DetailController extends Controller
                 'institusi'  => $u->memberProfile?->institution ?? '-',
                 'departemen' => $u->memberProfile?->department ?? '-',
                 'alamat'     => $u->memberProfile?->address ?? '-',
+                'kepakaran'  => is_array($u->memberProfile?->expertise) ? implode(', ', $u->memberProfile->expertise) : '-',
+                'bukti_kepakaran' => is_array($u->memberProfile?->expertise_proof) 
+                    ? array_map(fn($p) => \Illuminate\Support\Facades\Storage::url($p), $u->memberProfile->expertise_proof) 
+                    : null,
                 'premium'    => in_array($u->id, $premiumIds) ? 'Premium' : 'Regular',
                 'aktif'      => $u->is_active ? 'Aktif' : 'Nonaktif',
                 'kelengkapan'=> $u->profileCompletionPercent() . '%',
@@ -100,6 +104,8 @@ class DetailController extends Controller
             ['key' => 'aktif',      'label' => 'Status',      'sortable' => true, 'badge' => true],
             ['key' => '_sort_bergabung', 'label' => 'Bergabung', 'sortable' => true, 'display' => 'bergabung'],
             ['key' => 'expire_date', 'label' => 'Masa Aktif Premium', 'sortable' => false],
+            ['key' => 'kepakaran',  'label' => 'Kepakaran',  'sortable' => true],
+            ['key' => 'bukti_kepakaran', 'label' => 'Bukti Kepakaran', 'sortable' => false, 'link' => true, 'linkLabel' => 'Lihat Bukti'],
             ['key' => 'alamat',     'label' => 'Alamat',     'sortable' => true],
         ];
 

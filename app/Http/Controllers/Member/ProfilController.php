@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
+use App\Models\MemberProfile;
 
 class ProfilController extends Controller
 {
@@ -36,16 +37,20 @@ class ProfilController extends Controller
                 : null;
 
             $profileData['member_profile'] = [
-                'member_number'  => $memberProfile->member_number,
-                'gender'         => $memberProfile->gender,
-                'blood_type'     => $memberProfile->blood_type,
-                'last_education' => $memberProfile->last_education,
-                'institution'    => $memberProfile->institution,
-                'department'     => $memberProfile->department,
-                'address'        => $memberProfile->address,
-                'status'         => $memberProfile->status,
-                'expire_date'    => $expireDate?->translatedFormat('j F Y'),
-                'days_remaining' => $expireDate ? max(0, now()->diffInDays($expireDate, false)) : 0,
+                'member_number'   => $memberProfile->member_number,
+                'gender'          => $memberProfile->gender,
+                'blood_type'      => $memberProfile->blood_type,
+                'last_education'  => $memberProfile->last_education,
+                'institution'     => $memberProfile->institution,
+                'department'      => $memberProfile->department,
+                'address'         => $memberProfile->address,
+                'status'          => $memberProfile->status,
+                'expire_date'     => $expireDate?->translatedFormat('j F Y'),
+                'days_remaining'  => $expireDate ? max(0, now()->diffInDays($expireDate, false)) : 0,
+                'expertise'       => $memberProfile->expertise ?? [],
+                'expertise_proof' => is_array($memberProfile->expertise_proof) 
+                    ? array_map(fn($p) => Storage::url($p), $memberProfile->expertise_proof) 
+                    : ($memberProfile->expertise_proof ? [Storage::url($memberProfile->expertise_proof)] : []),
             ];
         } else {
             $profileData['member_profile'] = null;
@@ -67,17 +72,31 @@ class ProfilController extends Controller
             'telephone'      => $user->telephone,
             'avatar_url'     => $user->avatar_url,
             'member_profile' => $user->memberProfile ? [
-                'gender'         => $user->memberProfile->gender,
-                'blood_type'     => $user->memberProfile->blood_type,
-                'last_education' => $user->memberProfile->last_education,
-                'institution'    => $user->memberProfile->institution,
-                'department'     => $user->memberProfile->department,
-                'address'        => $user->memberProfile->address,
+                'gender'          => $user->memberProfile->gender,
+                'blood_type'      => $user->memberProfile->blood_type,
+                'last_education'  => $user->memberProfile->last_education,
+                'institution'     => $user->memberProfile->institution,
+                'department'      => $user->memberProfile->department,
+                'address'         => $user->memberProfile->address,
+                'expertise'       => is_array($user->memberProfile->expertise) ? $user->memberProfile->expertise : ($user->memberProfile->expertise ? [$user->memberProfile->expertise] : []),
+                'expertise_proof' => is_array($user->memberProfile->expertise_proof) 
+                    ? array_map(fn($p) => Storage::url($p), $user->memberProfile->expertise_proof) 
+                    : ($user->memberProfile->expertise_proof ? [Storage::url($user->memberProfile->expertise_proof)] : []),
             ] : null,
         ];
 
+        // Pluck all expertises, decode/flatten them, and get unique values
+        $expertises = MemberProfile::whereNotNull('expertise')
+            ->pluck('expertise')
+            ->flatten()
+            ->unique()
+            ->filter()
+            ->values()
+            ->toArray();
+
         return Inertia::render('Member/Profil/Edit', [
-            'user' => $profileData,
+            'user'       => $profileData,
+            'expertises' => $expertises,
         ]);
     }
 
@@ -87,15 +106,21 @@ class ProfilController extends Controller
         $user = $request->user()->load('memberProfile');
 
         $rules = [
-            'name'           => ['required', 'string', 'max:255'],
-            'telephone'      => ['nullable', 'string', 'max:20'],
-            'gender'         => ['nullable', 'string', 'max:255'],
-            'blood_type'     => ['nullable', 'string', 'max:255'],
-            'last_education' => ['nullable', 'string', 'max:255'],
-            'institution'    => ['nullable', 'string', 'max:255'],
-            'department'     => ['nullable', 'string', 'max:255'],
-            'address'        => ['nullable', 'string'],
-            'avatar'         => ['nullable', 'image', 'max:1024'],
+            'name'             => ['required', 'string', 'max:255'],
+            'telephone'        => ['nullable', 'string', 'max:20'],
+            'gender'           => ['nullable', 'string', 'max:255'],
+            'blood_type'       => ['nullable', 'string', 'max:255'],
+            'last_education'   => ['nullable', 'string', 'max:255'],
+            'institution'      => ['nullable', 'string', 'max:255'],
+            'department'       => ['nullable', 'string', 'max:255'],
+            'address'          => ['nullable', 'string'],
+            'avatar'           => ['nullable', 'image', 'max:1024'],
+            'expertise'        => ['nullable', 'array', 'max:3'],
+            'expertise.*'      => ['nullable', 'string', 'max:255'],
+            'expertise_proofs' => ['nullable', 'array', 'max:10'],
+            'expertise_proofs.*'=> ['file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+            'existing_proofs'  => ['nullable', 'array'],
+            'existing_proofs.*'=> ['nullable', 'string'],
         ];
 
         if ($request->filled('old_password') || $request->filled('password')) {
@@ -123,7 +148,36 @@ class ProfilController extends Controller
             'institution'    => $validated['institution'] ?? null,
             'department'     => $validated['department'] ?? null,
             'address'        => $validated['address'] ?: '-',
+            'expertise'      => array_values(array_filter($validated['expertise'] ?? [])),
         ];
+
+        // Handle expertise_proofs
+        $newProofs = [];
+        if ($request->hasFile('expertise_proofs')) {
+            foreach ($request->file('expertise_proofs') as $proof) {
+                $ext   = $proof->getClientOriginalExtension();
+                $path  = $proof->storeAs('kepakaran', 'proof_user_' . $user->id . '_' . uniqid() . '.' . $ext, 'public');
+                $newProofs[] = $path;
+            }
+        }
+
+        $existingProofsInput = $validated['existing_proofs'] ?? [];
+        $existingProofsKeep = [];
+        $oldProofs = $user->memberProfile && is_array($user->memberProfile->expertise_proof) 
+            ? $user->memberProfile->expertise_proof 
+            : [];
+
+        foreach ($oldProofs as $old) {
+            $oldUrl = Storage::url($old);
+            if (in_array($oldUrl, $existingProofsInput)) {
+                $existingProofsKeep[] = $old;
+            } else {
+                Storage::disk('public')->delete($old);
+            }
+        }
+
+        $finalProofs = array_merge($existingProofsKeep, $newProofs);
+        $profileFields['expertise_proof'] = $finalProofs;
 
         if ($user->memberProfile) {
             $user->memberProfile->update($profileFields);

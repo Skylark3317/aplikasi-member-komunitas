@@ -666,7 +666,9 @@ function submit() {
   background: #fff;
   border: 1px solid #e5e7eb;
   padding: 18px 20px;
-  margin-bottom: 16px;
+  margin: 16px;
+  margin-top:32px;
+  border-radius: 10px;
 }
 .form-card-title {
   display: flex;
@@ -797,8 +799,8 @@ function submit() {
 
 /* Logo preview */
 .logo-preview {
-  width: 64px;
-  height: 64px;
+  width: 92px;
+  height: 92px;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   display: flex;

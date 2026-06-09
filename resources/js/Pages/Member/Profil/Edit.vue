@@ -201,6 +201,56 @@
             ></textarea>
             <span v-if="form.errors.address" class="error-msg">{{ form.errors.address }}</span>
           </div>
+
+          <!-- Kepakaran -->
+          <div class="form-group">
+            <label>Kepakaran (Maksimal 3)</label>
+            <div v-for="(exp, index) in form.expertise" :key="index" style="display:flex; gap:8px; margin-bottom:8px; flex-wrap: wrap;">
+              <input 
+                type="text" 
+                :value="form.expertise[index]" 
+                @input="e => { form.expertise[index] = e.target.value }"
+                placeholder="Masukkan keahlian atau kepakaran..."
+                autocomplete="off"
+                list="expertises-list"
+                :class="{ 'has-error': form.errors[`expertise.${index}`] }"
+                style="flex: 1; min-width: 0;"
+              />
+              <button type="button" @click="removeExpertise(index)" class="btn-remove-exp">✕</button>
+              <div v-if="form.errors[`expertise.${index}`]" class="error-msg" style="width: 100%;">{{ form.errors[`expertise.${index}`] }}</div>
+            </div>
+            <button type="button" v-if="form.expertise.length < 3" @click="addExpertise" class="btn-add-exp">+ Tambah Kepakaran</button>
+            <datalist id="expertises-list">
+              <option v-for="exp in expertises" :key="exp" :value="exp"></option>
+            </datalist>
+            <span v-if="form.errors.expertise" class="error-msg">{{ form.errors.expertise }}</span>
+          </div>
+
+          <!-- Bukti Kepakaran -->
+          <div class="form-group">
+            <label>Bukti Kepakaran (Maksimal 10 File)</label>
+            <input 
+              type="file" 
+              multiple
+              @change="handleExpertiseProofs"
+              accept=".pdf,image/png,image/jpeg,image/jpg"
+            />
+            <span v-if="form.errors.expertise_proofs" class="error-msg">{{ form.errors.expertise_proofs }}</span>
+            <p class="field-hint" style="font-size:11.5px; color:#9ca3af; margin:4px 0 8px;">Format PDF, JPG, PNG maksimal 2MB per file.</p>
+            
+            <div class="proof-preview-container" v-if="allProofs.length > 0">
+              <div v-for="(proof, index) in allProofs" :key="index" class="proof-preview-box">
+                <img v-if="proof.isImage" :src="proof.url" class="proof-thumb" @click.prevent="viewProofLarge(proof.url)"/>
+                <div v-else class="proof-doc" @click.prevent="viewProofLarge(proof.url)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  <span>PDF</span>
+                </div>
+                <button type="button" class="btn-remove-proof" @click.prevent="removeProof(index)">×</button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Ubah Password Section -->
@@ -295,12 +345,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import MemberLayout from '@/Layouts/MemberLayout.vue';
 
 const props = defineProps({
   user: Object,
+  expertises: Array,
 });
 
 const fileInput = ref(null);
@@ -320,6 +371,9 @@ const form = useForm({
   institution: !props.user.member_profile?.institution || props.user.member_profile.institution === '-' ? '' : props.user.member_profile.institution,
   department: !props.user.member_profile?.department || props.user.member_profile.department === '-' ? '' : props.user.member_profile.department,
   address: !props.user.member_profile?.address || props.user.member_profile.address === '-' ? '' : props.user.member_profile.address,
+  expertise: Array.isArray(props.user.member_profile?.expertise) ? props.user.member_profile.expertise : [],
+  expertise_proofs: [],
+  existing_proofs: Array.isArray(props.user.member_profile?.expertise_proof) ? props.user.member_profile.expertise_proof : [],
   avatar: null,
   delete_avatar: false,
   old_password: '',
@@ -354,9 +408,90 @@ function deleteAvatarPhoto() {
   }
 }
 
+// Expertise handling
+function addExpertise() {
+  if (form.expertise.length < 3) {
+    form.expertise.push('');
+  }
+}
+
+function removeExpertise(index) {
+  form.expertise.splice(index, 1);
+}
+
+// Expertise proofs handling
+const newProofPreviews = ref([]);
+
+const allProofs = computed(() => {
+  const existing = form.existing_proofs.map(url => ({
+    url,
+    isImage: !!url.match(/\.(jpeg|jpg|gif|png|webp)$/i),
+    isNew: false
+  }));
+  const newOnes = newProofPreviews.value.map(p => ({
+    url: p.url,
+    isImage: !!p.file.name.match(/\.(jpeg|jpg|gif|png|webp)$/i),
+    isNew: true,
+    file: p.file
+  }));
+  return [...existing, ...newOnes];
+});
+
+function handleExpertiseProofs(event) {
+  const files = Array.from(event.target.files);
+  const totalLimit = 10;
+  
+  for (const file of files) {
+    if (file.size > 2 * 1024 * 1024) {
+      alert(`Ukuran file ${file.name} maksimal adalah 2MB.`);
+      continue;
+    }
+    if (form.existing_proofs.length + form.expertise_proofs.length < totalLimit) {
+      form.expertise_proofs.push(file);
+      newProofPreviews.value.push({
+        file,
+        url: URL.createObjectURL(file)
+      });
+    } else {
+      alert('Maksimal 10 file bukti kepakaran.');
+      break;
+    }
+  }
+  // Reset input so same file can be selected again
+  event.target.value = '';
+}
+
+function removeProof(index) {
+  const proof = allProofs.value[index];
+  if (proof.isNew) {
+    const idx = form.expertise_proofs.findIndex(f => f === proof.file);
+    if (idx !== -1) {
+      form.expertise_proofs.splice(idx, 1);
+      newProofPreviews.value.splice(idx, 1);
+    }
+  } else {
+    const idx = form.existing_proofs.findIndex(u => u === proof.url);
+    if (idx !== -1) {
+      form.existing_proofs.splice(idx, 1);
+    }
+  }
+}
+
+function viewProofLarge(url) {
+  window.open(url, '_blank');
+}
+
 function submit() {
-  form.post(route('member.profil.update'), {
+  form.transform((data) => {
+    return {
+      ...data,
+      expertise: [...data.expertise],
+      expertise_proofs: [...data.expertise_proofs],
+      existing_proofs: [...data.existing_proofs],
+    };
+  }).post(route('member.profil.update'), {
     forceFormData: true,
+    preserveScroll: true,
     onSuccess: () => {
       form.reset('old_password', 'password', 'password_confirmation');
       avatarPreviewUrl.value = null;
@@ -472,16 +607,29 @@ function submit() {
 }
 
 .form-section {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+  margin-bottom: 24px;
+  min-width: 0;
 }
 
 .section-title {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   color: #111827;
-  margin: 0;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  min-width: 0;
 }
 
 /* Foto Profil Block */
@@ -649,6 +797,117 @@ function submit() {
   font-size: 12px;
   color: #ef4444;
   font-weight: 600;
+}
+
+/* Kepakaran specific */
+.btn-remove-exp {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 8px;
+  transition: opacity 0.2s;
+}
+.btn-remove-exp:hover {
+  opacity: 0.7;
+}
+
+.btn-add-exp {
+  background: none;
+  border: 1px dashed #d1d5db;
+  color: #4b5563;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s;
+}
+.btn-add-exp:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #111827;
+}
+
+.proof-preview-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  margin-top: 12px;
+  padding-bottom: 8px;
+}
+
+.proof-preview-box {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.proof-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.proof-thumb:hover {
+  opacity: 0.8;
+}
+
+.proof-doc {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-radius: 8px;
+}
+.proof-doc:hover {
+  background: #fef2f2;
+}
+.proof-doc svg {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+}
+.proof-doc span {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.btn-remove-proof {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 0;
+}
+.btn-remove-proof:hover {
+  background: #dc2626;
 }
 
 /* Password Wrappers */

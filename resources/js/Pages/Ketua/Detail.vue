@@ -146,6 +146,21 @@
                       {{ displayVal(row, col) }}
                     </span>
                   </template>
+                  <template v-else-if="col.link && Array.isArray(row[col.key])">
+                    <div class="proof-preview-container-sm">
+                      <div v-for="(url, idx) in row[col.key]" :key="idx" class="proof-preview-box-sm">
+                        <img v-if="isImage(url)" :src="url" class="proof-thumb" @click.prevent="viewLarge(url)" title="Lihat"/>
+                        <div v-else class="proof-doc" @click.prevent="viewLarge(url)" title="Lihat PDF">
+                          <span>PDF</span>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                  <template v-else-if="col.link && row[col.key]">
+                    <a :href="row[col.key]" target="_blank" style="color: #007bff; text-decoration: none; font-weight: 600;">
+                      {{ col.linkLabel || 'Lihat' }}
+                    </a>
+                  </template>
                   <template v-else>
                     <span class="td-text" :title="displayVal(row, col)">{{ displayVal(row, col) }}</span>
                   </template>
@@ -341,6 +356,15 @@ function badgeClass(colKey, val) {
     return 'badge-red';
   }
   return BADGE_COLORS[val] ?? 'badge-gray';
+}
+
+function isImage(url) {
+  if (!url) return false;
+  return !!url.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+}
+
+function viewLarge(url) {
+  window.open(url, '_blank');
 }
 </script>
 
@@ -585,4 +609,50 @@ thead {
 .pg-btn:disabled { opacity: .4; cursor: not-allowed; }
 .pg-btn.pg-active { background: var(--primary-color); color: #fff; border-color: var(--primary-color); font-weight: 700; }
 .pg-info { font-size: 12px; color: #9ca3af; margin-left: 8px; }
+
+/* Proof preview small styles for table */
+.proof-preview-container-sm {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  max-width: 150px;
+  padding-bottom: 2px;
+}
+
+.proof-preview-box-sm {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.proof-preview-box-sm .proof-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.2s;
+}
+.proof-preview-box-sm .proof-thumb:hover {
+  opacity: 0.8;
+}
+
+.proof-preview-box-sm .proof-doc {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+  font-size: 9px;
+  font-weight: bold;
+  background: #fff;
+  transition: background 0.2s;
+}
+.proof-preview-box-sm .proof-doc:hover {
+  background: #fef2f2;
+}
 </style>

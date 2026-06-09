@@ -273,36 +273,71 @@
           </button>
         </div>
       </div>
-    </div>
-
-    <!-- Zona Bahaya: Hapus Akun -->
-    <div class="danger-zone-section">
-      <h3 class="danger-title">⚠️ Zona Bahaya</h3>
-
-      <!-- Pending deletion notice -->
-      <div v-if="user.delete_requested_at" class="deletion-pending-box">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="warn-icon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <div>
-          <p class="deletion-pending-title">Penghapusan akun sedang menunggu</p>
-          <p class="deletion-pending-sub">
-            Akun Anda akan dihapus permanen pada <strong>{{ deletionDeadline }}</strong>.
-            Jika Anda login sebelum tanggal tersebut, penghapusan akan dibatalkan otomatis.
-          </p>
+      
+      <!-- Bottom Split Row -->
+      <div class="bottom-split-row">
+        <!-- Kepakaran Section -->
+        <div class="kepakaran-section">
+          <h3 class="section-title">Kepakaran</h3>
+          <div class="info-pribadi-list">
+            <div class="info-row">
+              <span class="info-label">Bidang Kepakaran</span>
+              <span class="info-value" style="font-weight: 600; line-height: 1.6;">
+                <template v-if="user.member_profile?.expertise && user.member_profile.expertise.length">
+                  <div v-for="(exp, index) in user.member_profile.expertise" :key="index">• {{ exp }}</div>
+                </template>
+                <span v-else>-</span>
+              </span>
+            </div>
+            <div class="info-row" v-if="user.member_profile?.expertise_proof && user.member_profile.expertise_proof.length">
+              <span class="info-label" style="margin-bottom: 8px;">Bukti Kepakaran</span>
+              <span class="info-value">
+                <div class="proof-preview-container">
+                  <div v-for="(url, idx) in user.member_profile.expertise_proof" :key="idx" class="proof-preview-box">
+                    <img v-if="isImage(url)" :src="url" class="proof-thumb" @click.prevent="viewLarge(url)" title="Klik untuk memperbesar"/>
+                    <div v-else class="proof-doc" @click.prevent="viewLarge(url)" title="Klik untuk membuka dokumen">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                      </svg>
+                      <span>PDF</span>
+                    </div>
+                  </div>
+                </div>
+              </span>
+            </div>
+          </div>
         </div>
-        <form @submit.prevent="cancelDeletion">
-          <button type="submit" class="btn-cancel-deletion">Batalkan Hapus Akun</button>
-        </form>
-      </div>
 
-      <!-- Request deletion -->
-      <div v-else class="deletion-info-box">
-        <div>
-          <p class="deletion-box-title">Hapus Akun</p>
-          <p class="deletion-box-sub">Setelah Anda mengajukan permintaan hapus akun, Anda akan di-logout. Akun akan dihapus permanen setelah <strong>{{ deletionDurationText }} tidak login</strong>. Jika Anda login kembali sebelum {{ deletionDurationText }}, permintaan ini akan dibatalkan otomatis.</p>
+        <!-- Zona Bahaya: Hapus Akun -->
+        <div class="danger-zone-section">
+          <h3 class="danger-title">⚠️ Zona Bahaya</h3>
+
+          <!-- Pending deletion notice -->
+          <div v-if="user.delete_requested_at" class="deletion-pending-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="warn-icon"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div>
+              <p class="deletion-pending-title">Menunggu Penghapusan</p>
+              <p class="deletion-pending-sub">
+                Akun dihapus permanen pada <strong>{{ deletionDeadline }}</strong>.<br/>
+                Login membatalkan proses otomatis.
+              </p>
+            </div>
+            <form @submit.prevent="cancelDeletion">
+              <button type="submit" class="btn-cancel-deletion">Batal Hapus</button>
+            </form>
+          </div>
+
+          <!-- Request deletion -->
+          <div v-else class="deletion-info-box">
+            <div>
+              <p class="deletion-box-title">Hapus Akun</p>
+              <p class="deletion-box-sub">Setelah pengajuan, Anda akan di-logout. Akun dihapus permanen setelah <strong>{{ deletionDurationText }}</strong> jika tidak login kembali.</p>
+            </div>
+            <form @submit.prevent="requestDeletion">
+              <button type="submit" class="btn-request-deletion">Hapus Akun</button>
+            </form>
+          </div>
         </div>
-        <form @submit.prevent="requestDeletion">
-          <button type="submit" class="btn-request-deletion">Ajukan Hapus Akun</button>
-        </form>
       </div>
     </div>
 
@@ -379,6 +414,15 @@ const settings = computed(() => page.props.settings || {});
 
 const showCardModal = ref(false);
 
+function isImage(url) {
+  if (!url) return false;
+  return !!url.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+}
+
+function viewLarge(url) {
+  window.open(url, '_blank');
+}
+
 // Profile Completion Logic
 const profileCompletion = computed(() => {
   const fields = [
@@ -421,6 +465,16 @@ const profileCompletion = computed(() => {
       key: 'address',
       label: 'Alamat Rumah',
       filled: !!props.user.member_profile?.address && props.user.member_profile.address !== '-',
+    },
+    {
+      key: 'expertise',
+      label: 'Kepakaran',
+      filled: !!props.user.member_profile?.expertise && props.user.member_profile.expertise.length > 0,
+    },
+    {
+      key: 'expertise_proof',
+      label: 'Bukti Kepakaran',
+      filled: !!props.user.member_profile?.expertise_proof && props.user.member_profile.expertise_proof.length > 0,
     },
   ];
   const filled = fields.filter(f => f.filled).length;
@@ -995,6 +1049,7 @@ function downloadCardAsImage() {
 .info-value {
   color: #111827;
   font-weight: 600;
+  min-width: 0;
 }
 
 /* Badges */
@@ -1422,8 +1477,106 @@ function downloadCardAsImage() {
   text-decoration: underline;
 }
 
+/* ── Bottom Split Row & Kepakaran ── */
+.bottom-split-row {
+  display: flex;
+  gap: 24px;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .bottom-split-row {
+    flex-direction: column;
+  }
+}
+
+.kepakaran-section {
+  flex: 1.2;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 28px 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+}
+
+.btn-view-proof {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #007bff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  background: #eff6ff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.btn-view-proof:hover {
+  background: #dbeafe;
+}
+.btn-icon-sm {
+  width: 14px;
+  height: 14px;
+}
+
+.proof-preview-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  margin-top: 8px;
+  padding-bottom: 8px;
+  max-width: 100%;
+}
+
+.proof-preview-box {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.proof-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.proof-thumb:hover {
+  opacity: 0.8;
+}
+
+.proof-doc {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.proof-doc:hover {
+  background: #fef2f2;
+}
+.proof-doc svg {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+}
+.proof-doc span {
+  font-size: 11px;
+  font-weight: 700;
+}
+
 /* ── Danger Zone ── */
 .danger-zone-section {
+  flex: 1;
   background: #fff;
   border: 1.5px solid #fca5a5;
   border-radius: 12px;
@@ -1439,10 +1592,9 @@ function downloadCardAsImage() {
 
 .deletion-info-box {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
-  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .deletion-box-title {
@@ -1457,7 +1609,6 @@ function downloadCardAsImage() {
   color: #6b7280;
   line-height: 1.6;
   margin: 0;
-  max-width: 520px;
 }
 
 .deletion-pending-box {

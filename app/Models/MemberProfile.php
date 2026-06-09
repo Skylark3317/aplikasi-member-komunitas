@@ -8,7 +8,12 @@ class MemberProfile extends Model
 {
     protected $fillable = [
         'member_id', 'member_number', 'expire_date', 'institution', 'department', 'address', 'status',
-        'gender', 'blood_type', 'last_education'
+        'gender', 'blood_type', 'last_education', 'expertise', 'expertise_proof'
+    ];
+
+    protected $casts = [
+        'expertise' => 'array',
+        'expertise_proof' => 'array',
     ];
 
     protected static function booted(): void

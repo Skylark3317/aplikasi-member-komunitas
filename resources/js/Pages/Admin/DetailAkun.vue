@@ -18,7 +18,7 @@
       <!-- Header -->
       <div class="user-header">
         <div class="avatar">
-          <img v-if="user.avatar" :src="user.avatar" alt="Avatar" />
+          <img v-if="user.avatar_url" :src="user.avatar_url" alt="Avatar" />
           <span v-else class="avatar-initials">{{ initials }}</span>
         </div>
         <div class="user-meta">
@@ -168,6 +168,31 @@
             <div class="info-key">Alamat Rumah</div>
             <div class="info-val">{{ user.member_profile.address ?? '-' }}</div>
           </div>
+          <div class="info-row">
+            <div class="info-key">Kepakaran</div>
+            <div class="info-val" style="font-weight: 600; line-height: 1.6;">
+              <template v-if="user.member_profile.expertise && user.member_profile.expertise.length">
+                <div v-for="(exp, index) in user.member_profile.expertise" :key="index">• {{ exp }}</div>
+              </template>
+              <span v-else>-</span>
+            </div>
+          </div>
+          <div class="info-row" v-if="user.member_profile.expertise_proof && user.member_profile.expertise_proof.length">
+            <div class="info-key">Bukti Kepakaran</div>
+            <div class="info-val">
+              <div class="proof-preview-container">
+                <div v-for="(url, idx) in user.member_profile.expertise_proof" :key="idx" class="proof-preview-box">
+                  <img v-if="isImage(url)" :src="url" class="proof-thumb" @click.prevent="viewLarge(url)" title="Klik untuk memperbesar"/>
+                  <div v-else class="proof-doc" @click.prevent="viewLarge(url)" title="Klik untuk membuka dokumen">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    <span>PDF</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </template>
 
         <!-- Non-member fields -->
@@ -267,6 +292,15 @@ function toggleStatus() {
 function deleteAccount() {
   if (!confirm('Yakin ingin menghapus akun ini secara permanen?')) return;
   router.delete(route('superadmin.kelol-akun.destroy', props.user.id));
+}
+
+function isImage(url) {
+  if (!url) return false;
+  return !!url.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+}
+
+function viewLarge(url) {
+  window.open(url, '_blank');
 }
 </script>
 
@@ -369,7 +403,7 @@ function deleteAccount() {
 }
 .info-row:last-child { border-bottom: none; }
 .info-key { width: 200px; font-size: 13.5px; color: #6b7280; flex-shrink: 0; }
-.info-val { font-size: 13.5px; color: #111; }
+.info-val { font-size: 13.5px; color: #111; min-width: 0; }
 
 /* Badge */
 .badge {
@@ -410,7 +444,58 @@ function deleteAccount() {
 
 .btn-nonaktif { background: #ef4444; color: #fff; }
 .btn-aktif    { background: #22c55e; color: #fff; }
+
+/* Proof preview styles */
+.proof-preview-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  padding-bottom: 8px;
+  max-width: 100%;
+}
+
+.proof-preview-box {
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.proof-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.proof-thumb:hover {
+  opacity: 0.8;
+}
+
+.proof-doc {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.proof-doc:hover {
+  background: #fef2f2;
+}
+.proof-doc svg {
+  width: 22px;
+  height: 22px;
+  margin-bottom: 4px;
+}
+.proof-doc span {
+  font-size: 10px;
+  font-weight: 700;
+}
 </style>
-
-
-

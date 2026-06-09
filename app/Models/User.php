@@ -157,6 +157,8 @@ class User extends Authenticatable implements MustVerifyEmail
             'department' => !empty($profile?->department) && $profile->department !== '-',
             'telephone' => !empty($this->telephone) && $this->telephone !== '-',
             'address' => !empty($profile?->address) && $profile->address !== '-',
+            'expertise' => !empty($profile?->expertise) && count((array)$profile->expertise) > 0,
+            'expertise_proof' => !empty($profile?->expertise_proof) && count((array)$profile->expertise_proof) > 0,
         ];
         
         $filledCount = count(array_filter($fields));
