@@ -335,7 +335,7 @@ const BADGE_COLORS = {
 function badgeClass(colKey, val) {
   if (colKey === '_sort_kelengkapan') {
     const num = parseInt(val) || 0;
-    if (num === 100) return 'badge-green';
+    if (num === 100) return 'badge-gold';
     if (num >= 60) return 'badge-blue';
     if (num >= 40) return 'badge-orange';
     return 'badge-red';
@@ -566,6 +566,7 @@ thead {
 .badge-purple { background: #ede9fe; color: #7c3aed; }
 .badge-pink   { background: #fdf2f8; color: #be185d; }
 .badge-amber  { background: #fef3c7; color: #b45309; }
+.badge-gold   { background: #fef08a; color: #a16207; }
 
 /* Pagination */
 .pagination {

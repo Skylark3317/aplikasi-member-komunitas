@@ -489,9 +489,13 @@ function formatTime(dateStr) {
 .tab-badge {
   background: var(--primary-color, #2563eb);
   color: #fff;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 2px 6px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 10px;
 }
 

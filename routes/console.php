@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 // Permanently delete member accounts that have been pending deletion for 7+ days
 Schedule::command('accounts:purge-expired')->daily();
+
+// Send weekly content summary to active premium members (e.g., every Monday at 09:00)
+Schedule::command('email:weekly-summary')->weeklyOn(1, '09:00');

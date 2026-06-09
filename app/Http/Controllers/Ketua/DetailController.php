@@ -95,12 +95,12 @@ class DetailController extends Controller
             ['key' => 'telepon',    'label' => 'Telepon',    'sortable' => false],
             ['key' => 'institusi',  'label' => 'Institusi',  'sortable' => true],
             ['key' => 'departemen', 'label' => 'Departemen', 'sortable' => true],
-            ['key' => 'alamat',     'label' => 'Alamat',     'sortable' => true],
             ['key' => '_sort_kelengkapan', 'label' => 'Kelengkapan', 'sortable' => true, 'display' => 'kelengkapan', 'badge' => true],
             ['key' => 'premium',    'label' => 'Membership', 'sortable' => true, 'badge' => true],
             ['key' => 'aktif',      'label' => 'Status',      'sortable' => true, 'badge' => true],
             ['key' => '_sort_bergabung', 'label' => 'Bergabung', 'sortable' => true, 'display' => 'bergabung'],
             ['key' => 'expire_date', 'label' => 'Masa Aktif Premium', 'sortable' => false],
+            ['key' => 'alamat',     'label' => 'Alamat',     'sortable' => true],
         ];
 
         return [$rows, $columns, 'Detail Member'];

@@ -59,6 +59,14 @@ class HandleInertiaRequests extends Middleware
             'memberProfile' => $request->user()?->role === UserRole::Member->value
                 ? $request->user()->memberProfile
                 : null,
+            'unreadQuestionsCount' => $request->user()?->role === UserRole::Staff->value
+                ? \App\Models\Message::where('is_read', false)
+                    ->whereHas('sender', function($q) {
+                        $q->where('role', UserRole::Member->value);
+                    })
+                    ->distinct('conversation_id')
+                    ->count('conversation_id')
+                : 0,
         ];
     }
 }

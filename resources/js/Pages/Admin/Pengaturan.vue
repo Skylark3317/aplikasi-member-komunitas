@@ -665,7 +665,6 @@ function submit() {
 .form-card {
   background: #fff;
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
   padding: 18px 20px;
   margin-bottom: 16px;
 }
@@ -855,16 +854,38 @@ function submit() {
 .btn-upload svg, .btn-delete svg { width: 16px; height: 16px; }
 
 /* Color input */
-.color-input-wrap { display: flex; align-items: center; gap: 10px; }
-.field-color-text { max-width: 180px; }
+.color-input-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width:100%;
+}
+.field-color-text {
+  width: 100%;
+  padding-right: 40px;
+}
 .color-swatch {
-  width: 36px;
-  height: 36px;
+  position: absolute;
+  right: 6px;
+  width: 26px;
+  height: 26px;
   border: 1px solid #d1d5db;
   border-radius: 50%;
   cursor: pointer;
-  padding: 2px;
+  padding: 0;
   background: none;
+  overflow: hidden;
+}
+.color-swatch::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.color-swatch::-webkit-color-swatch {
+  border: none;
+  border-radius: 50%;
+}
+.color-swatch::-moz-color-swatch {
+  border: none;
+  border-radius: 50%;
 }
 
 .section-divider { display: none; }

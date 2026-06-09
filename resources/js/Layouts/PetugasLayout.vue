@@ -40,10 +40,17 @@
           :href="route('petugas.pertanyaan.index')"
           :class="['nav-item', isActive('petugas.pertanyaan') ? 'active' : '']"
         >
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-          </svg>
-          <span>Pertanyaan</span>
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>Pertanyaan</span>
+            </div>
+            <span v-if="$page.props.unreadQuestionsCount > 0" class="unread-badge">
+              {{ $page.props.unreadQuestionsCount }}
+            </span>
+          </div>
         </Link>
       </nav>
 
@@ -192,6 +199,20 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
   width: 18px;
   height: 18px;
   flex-shrink: 0;
+}
+
+.unread-badge {
+  background-color: #ef4444;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 10px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
 }
 
 /* ── User section ── */

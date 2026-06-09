@@ -96,6 +96,19 @@ class PremiumController extends Controller
             'is_accepted' => false,
         ]);
 
+        // Send Invoice Created Notification
+        $settings = [
+            'bank_name'           => Setting::get('bank_name', 'Bank BRI'),
+            'bank_account_number' => Setting::get('bank_account_number', '000000001111'),
+            'bank_account_name'   => Setting::get('bank_account_name', 'AMK'),
+        ];
+        
+        try {
+            $user->notify(new \App\Notifications\InvoiceCreatedNotification($invoice, $user, $settings));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal mengirim email tagihan invoice: ' . $e->getMessage());
+        }
+
         return redirect()->route('member.premium.payment_detail', ['invoice' => $invoice->id])
             ->with('success', 'Pendaftaran berhasil. Silakan lakukan pembayaran.');
     }
