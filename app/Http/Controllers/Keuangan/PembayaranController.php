@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Keuangan;
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class PembayaranController extends Controller
@@ -54,7 +55,7 @@ class PembayaranController extends Controller
     {
         $payment->update([
             'status' => 'diverifikasi',
-            'verifier_id' => auth()->id(),
+            'verifier_id' => Auth::id(),
             'verified_at' => now(),
         ]);
 
@@ -93,7 +94,7 @@ class PembayaranController extends Controller
         $payment->update([
             'status' => 'ditolak',
             'reject_reason' => $request->reject_reason,
-            'verifier_id' => auth()->id(),
+            'verifier_id' => Auth::id(),
             'verified_at' => now(),
         ]);
 
