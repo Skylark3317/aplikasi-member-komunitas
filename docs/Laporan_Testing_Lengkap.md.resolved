@@ -1,0 +1,219 @@
+# 📑 Laporan Pengujian Lengkap — Aplikasi Member Komunitas (AMK)
+> Berdasarkan kode aktual project: `routes/web.php`, halaman Vue, dan controller.
+
+---
+
+## BAGIAN 1 — TESTING PLAN
+
+### A. Tujuan
+Memvalidasi seluruh fungsionalitas sistem AMK sesuai dengan implementasi nyata di kode, memastikan RBAC berjalan, dan error handling bekerja dengan baik.
+
+### B. Metode
+- **Automated Testing** menggunakan **PHPUnit** (via `php artisan test`)
+- **Negative Testing** (input salah, bypass URL, validasi error)
+- File uji tersimpan di `tests/Feature/`
+- **Checklist Status:** `[ ]` Belum diuji · `[✅]` Pass · `[❌]` Fail
+
+### C. Cara Menjalankan
+```bash
+# Jalankan semua test
+php artisan test --testdox
+
+# Jalankan satu file test saja
+php artisan test tests/Feature/AuthTest.php
+```
+
+### C. Kredensial Akun Uji
+| Role | Email | Password |
+|---|---|---|
+| Super Admin | superadmin@amk.com | password |
+| Ketua | ketua@amk.com | password |
+| Petugas | staff@amk.com | password |
+| Bendahara | bendahara@amk.com | password |
+| Member | budi@amk.com | password |
+
+---
+
+## BAGIAN 2 — DAFTAR TEST CASE
+
+---
+
+### 🔐 MODUL AUTH-01 — Login & Autentikasi
+
+| ID | Skenario | PHPUnit Method (`tests/Feature/AuthTest.php`) | Ekspektasi Hasil | Status |
+|---|---|---|---|---|
+| AUTH-01 | Login email + password valid (Member) | `test_AUTH01_member_dapat_login_dengan_kredensial_valid()` | `assertAuthenticated()` · redirect berhasil | [ ] |
+| AUTH-02 | Login password **salah** | `test_AUTH02_login_ditolak_jika_password_salah()` | `assertGuest()` | [ ] |
+| AUTH-03 | Login email **belum terdaftar** | `test_AUTH03_login_ditolak_jika_email_tidak_terdaftar()` | `assertGuest()` | [ ] |
+| AUTH-04 | Login field **kosong** | `test_AUTH04_login_gagal_jika_field_kosong()` | `assertSessionHasErrors(['email'])` | [ ] |
+| AUTH-05 | Super Admin akses dashboard admin | `test_AUTH05_super_admin_login_dan_dapat_akses_dashboard_admin()` | `assertStatus(200)` pada `/superadmin/kelol-akun` | [ ] |
+| AUTH-06 | Ketua akses halaman statistik | `test_AUTH06_ketua_dapat_akses_halaman_statistik()` | `assertStatus(200)` pada `/ketua/statistik` | [ ] |
+| AUTH-07 | Petugas akses halaman konten | `test_AUTH07_petugas_dapat_akses_halaman_konten()` | `assertStatus(200)` pada `/petugas/konten` | [ ] |
+| AUTH-08 | Bendahara akses halaman pembayaran | `test_AUTH08_bendahara_dapat_akses_halaman_pembayaran()` | `assertStatus(200)` pada `/keuangan/pembayaran` | [ ] |
+| AUTH-09 | Logout berhasil | `test_AUTH09_pengguna_dapat_logout()` | `assertGuest()` · `assertRedirect('/')` | [ ] |
+
+---
+
+### 📝 MODUL REG-01 — Registrasi Member Baru
+
+| ID | Skenario | PHPUnit Method (`tests/Feature/Auth/RegistrationTest.php`) | Ekspektasi Hasil | Status |
+|---|---|---|---|---|
+| REG-01 | Registrasi data lengkap & valid | `test_registration_screen_can_be_rendered()` + POST `/register` dengan data valid | `assertAuthenticated()` · akun tersimpan di DB | [ ] |
+| REG-02 | Registrasi email **sudah dipakai** | POST `/register` dengan email yang sudah ada di DB | `assertSessionHasErrors(['email'])` | [ ] |
+| REG-03 | Password & konfirmasi **tidak sama** | POST `/register` dengan `password != password_confirmation` | `assertSessionHasErrors(['password'])` | [ ] |
+| REG-04 | Field wajib **dikosongkan** | POST `/register` dengan body kosong `[]` | `assertSessionHasErrors(['name', 'email', 'password'])` | [ ] |
+| REG-05 | Format email **tidak valid** | POST `/register` dengan `email = 'bukanemailvalid.com'` | `assertSessionHasErrors(['email'])` | [ ] |
+
+---
+
+### 🌐 MODUL PUB-01 — Halaman Publik (Guest)
+
+| ID | Skenario | PHPUnit Method (`tests/Feature/PublicPageTest.php`) | Ekspektasi Hasil | Status |
+|---|---|---|---|---|
+| PUB-01 | Akses Landing Page (`/`) | `test_PUB01_landing_page_dapat_diakses_tanpa_login()` · `$this->get('/')` | `assertStatus(200)` | [ ] |
+| PUB-02 | Lihat daftar Blog Publik | `test_PUB02_halaman_daftar_blog_dapat_diakses_tanpa_login()` · `$this->get('/blog')` | `assertStatus(200)` | [ ] |
+| PUB-03 | Cari artikel Blog (search) | `test_PUB03_pencarian_blog_publik_berfungsi()` · `$this->get('/blog/search?q=komunitas')` | `assertStatus(200)` | [ ] |
+| PUB-04 | Buka detail artikel Blog via slug | `test_PUB04_detail_artikel_blog_dapat_dibuka()` · `$this->get('/blog/{slug}')` | `assertStatus(200)` | [ ] |
+| PUB-05 | Artikel draft tidak tampil publik | `test_PUB05_artikel_draft_tidak_tampil_di_publik()` · GET slug artikel `published_at = null` | `assertStatus(404)` atau `302` | [ ] |
+
+---
+
+### 👤 MODUL MBR — Member
+
+| ID | Skenario | PHPUnit Method (`tests/Feature/MemberTest.php`) | Ekspektasi Hasil | Status |
+|---|---|---|---|---|
+| MBR-01 | Lihat halaman profil | `test_MBR01_member_dapat_melihat_halaman_profil()` · GET `/member/profil` | `assertStatus(200)` | [ ] |
+| MBR-02 | Buka form edit profil | `test_MBR02_member_dapat_membuka_halaman_edit_profil()` · GET `/member/profil/edit` | `assertStatus(200)` | [ ] |
+| MBR-03 | Update profil berhasil | `test_MBR03_member_dapat_mengupdate_profil()` · POST `/member/profil` data valid | `assertRedirect()` · `assertDatabaseHas('users', ['name'=>...])` | [ ] |
+| MBR-04 | Upload avatar format valid | `test_MBR04_member_dapat_upload_avatar_gambar_valid()` · POST `/member/profil` dengan `UploadedFile::fake()->image()` | `assertRedirect()` · file tersimpan di storage | [ ] |
+| MBR-05 | Tambah keahlian | `test_MBR03_member_dapat_mengupdate_profil()` · sertakan array `expertise` dalam POST | `assertDatabaseHas('member_profiles', [...])` | [ ] |
+| MBR-06 | Upload bukti keahlian | POST `/member/profil` dengan field `expertise_proof` berisi file gambar | File tersimpan · `assertRedirect()` | [ ] |
+| MBR-07 | Unduh Kartu Anggota | GET `/member/profil` · cek komponen kartu anggota ter-render | `assertStatus(200)` · Kartu tampil dalam response | [ ] |
+| MBR-08 | QR Code nomor anggota | Cek `member_number` pada `MemberProfile::generateMemberNumber()` · format `DDMMYYYY+seq` | Format sesuai pola · unik per hari | [ ] |
+| MBR-09 | Unduh CV Keanggotaan | GET endpoint CV profil member | `assertStatus(200)` · response berisi data profil | [ ] |
+| MBR-10 | Halaman Premium tampil | `test_MBR10_member_dapat_melihat_halaman_premium()` · GET `/member/premium` | `assertStatus(200)` | [ ] |
+| MBR-11 | Buat invoice premium | `test_MBR11_member_dapat_membuat_invoice_premium()` · POST `/member/premium/gabung` | `assertRedirect()` · `assertDatabaseHas('invoices', ['user_id'=>...])` | [ ] |
+| MBR-12 | Tidak duplikat invoice | POST `/member/premium/gabung` saat invoice sudah ada | Diarahkan ke invoice lama · count invoices tetap 1 | [ ] |
+| MBR-13 | Batalkan invoice | `test_MBR13_member_dapat_membatalkan_invoice_pending()` · DELETE `/member/premium/pembayaran/{id}` | `assertRedirect()` · `assertDatabaseMissing('invoices', ['id'=>...])` | [ ] |
+| MBR-14 | Lihat detail invoice | `test_MBR14_member_dapat_melihat_detail_invoice()` · GET `/member/premium/pembayaran/{id}` | `assertStatus(200)` | [ ] |
+| MBR-15 | Upload bukti bayar valid | `test_MBR15_member_dapat_upload_bukti_bayar_gambar_valid()` · POST `/member/premium/bayar` dengan `UploadedFile::fake()->image()` | `assertRedirect()` · `assertDatabaseHas('payments', ['invoice_id'=>...])` | [ ] |
+| MBR-16 | Upload bukti bayar format salah | POST `/member/premium/bayar` dengan file `.pdf` / `.docx` | `assertSessionHasErrors(['payment_proof'])` | [ ] |
+| MBR-17 | Status pembayaran diverifikasi | Cek `payment->status == 'diverifikasi'` setelah FIN-05 dijalankan | DB memiliki `payments.status = diverifikasi` | [ ] |
+| MBR-18 | Lihat alasan penolakan | Cek `payment->reject_reason` setelah FIN-06 dijalankan | `assertDatabaseHas('payments', ['status'=>'ditolak', 'reject_reason'=>...])` | [ ] |
+| MBR-19 | Akses halaman konten | `test_MBR19_member_dapat_mengakses_halaman_konten()` · GET `/member/konten` | `assertStatus(200)` | [ ] |
+| MBR-20 | Konten tersedia jika Premium aktif | Sama seperti MBR-19 dengan user yang `MemberProfile->status = active` | `assertStatus(200)` · konten tampil | [ ] |
+| MBR-21 | Buka halaman konsultasi | `test_MBR21_member_dapat_membuka_halaman_konsultasi()` · GET `/member/pertanyaan` | `assertStatus(200)` | [ ] |
+| MBR-22 | Kirim pesan chat | `test_MBR22_member_dapat_mengirim_pesan_chat()` · POST `/member/pertanyaan/{id}/balas` dengan `content` berisi teks | `assertRedirect()` · `assertDatabaseHas('messages', ['content'=>...])` | [ ] |
+| MBR-23 | Kirim pesan kosong | `test_MBR23_member_tidak_bisa_kirim_pesan_kosong()` · POST `/member/pertanyaan/{id}/balas` dengan `content = ''` | `assertSessionHasErrors(['content'])` | [ ] |
+| MBR-24 | Request hapus akun | `test_MBR24_member_dapat_mengajukan_hapus_akun()` · POST `/member/hapus-akun` | `assertRedirect()` · `delete_requested_at` terisi di DB | [ ] |
+| MBR-25 | Batalkan request hapus | `test_MBR25_member_dapat_membatalkan_request_hapus_akun()` · DELETE `/member/hapus-akun` | `assertRedirect()` · `delete_requested_at = null` di DB | [ ] |
+
+---
+
+### 👨‍🏫 MODUL STF — Petugas (Staff)
+
+| ID | Skenario | PHPUnit Method (`tests/Feature/PetugasTest.php`) | Ekspektasi Hasil | Status |
+|---|---|---|---|---|
+| STF-01 | Lihat daftar chat masuk | `test_STF01_petugas_dapat_melihat_daftar_chat_member()` · GET `/petugas/pertanyaan` | `assertStatus(200)` | [ ] |
+| STF-02 | Buka & balas chat member | `test_STF02_petugas_dapat_membuka_detail_chat()` + `test_STF02b_petugas_dapat_membalas_chat_member()` | `assertRedirect()` · `assertDatabaseHas('messages', ['sender_id'=>...])` | [ ] |
+| STF-03 | Lihat daftar konten | `test_STF03_petugas_dapat_melihat_daftar_konten()` · GET `/petugas/konten` | `assertStatus(200)` | [ ] |
+| STF-04 | Tambah konten Video | `test_STF05_petugas_dapat_menambah_konten_video()` · POST `/petugas/konten` tipe `video` + `UploadedFile` | `assertRedirect()` · `assertDatabaseHas('contents', ['type'=>'video'])` | [ ] |
+| STF-05 | Tambah konten Ebook | `test_STF06_petugas_dapat_menambah_konten_ebook()` · POST `/petugas/konten` tipe `ebook` | `assertRedirect()` · `assertDatabaseHas('contents', ['type'=>'ebook'])` | [ ] |
+| STF-06 | Tambah konten tanpa judul | `test_STF07_tambah_konten_tanpa_judul_gagal_validasi()` · POST `/petugas/konten` dengan `title = ''` | `assertSessionHasErrors(['title'])` | [ ] |
+| STF-07 | Edit konten yang ada | `test_STF08_petugas_dapat_membuka_form_edit_konten()` · GET `/petugas/konten/{id}/edit` | `assertStatus(200)` | [ ] |
+| STF-08 | Hapus konten | `test_STF09_petugas_dapat_menghapus_konten()` · DELETE `/petugas/konten/{id}` | `assertRedirect()` · `assertDatabaseMissing('contents', ['id'=>...])` | [ ] |
+| STF-09 | Lihat daftar blog | `test_STF10_petugas_dapat_melihat_daftar_blog()` · GET `/petugas/blog` | `assertStatus(200)` | [ ] |
+| STF-10 | Buat artikel blog baru | `test_STF12_petugas_dapat_membuat_artikel_blog_baru()` · POST `/petugas/blog` dengan judul + konten | `assertRedirect()` · `assertDatabaseHas('posts', ['title'=>...])` | [ ] |
+| STF-11 | Buat blog tanpa judul | `test_STF13_buat_blog_tanpa_judul_gagal_validasi()` · POST `/petugas/blog` dengan `title = ''` | `assertSessionHasErrors(['title'])` | [ ] |
+| STF-12 | Edit artikel blog | GET `/petugas/blog/{id}/edit` · PATCH `/petugas/blog/{id}` dengan data baru | `assertStatus(200)` · `assertRedirect()` | [ ] |
+| STF-13 | Hapus artikel blog | `test_STF14_petugas_dapat_menghapus_artikel_blog()` · DELETE `/petugas/blog/{id}` | `assertRedirect()` · `assertDatabaseMissing('posts', ['id'=>...])` | [ ] |
+| STF-14 | Edit profil petugas | `test_STF15_petugas_dapat_mengupdate_profil_pribadi()` · PATCH `/petugas/profil` | `assertRedirect()` · `assertDatabaseHas('users', ['name'=>...])` | [ ] |
+
+---
+
+### 💳 MODUL FIN — Keuangan (Bendahara)
+
+| ID | Skenario | PHPUnit Method (`tests/Feature/KeuanganTest.php`) | Ekspektasi Hasil | Status |
+|---|---|---|---|---|
+| FIN-01 | Lihat daftar pembayaran | `test_FIN01_bendahara_dapat_melihat_daftar_pembayaran()` · GET `/keuangan/pembayaran` | `assertStatus(200)` | [ ] |
+| FIN-02 | Filter berdasarkan status | `test_FIN02_bendahara_dapat_memfilter_pembayaran_berdasar_status()` · GET `/keuangan/pembayaran?status=menunggu` | `assertStatus(200)` | [ ] |
+| FIN-03 | Cari pembayaran | `test_FIN03_bendahara_dapat_mencari_pembayaran()` · GET `/keuangan/pembayaran?search=budi` | `assertStatus(200)` | [ ] |
+| FIN-04 | Buka detail pembayaran | `test_FIN04_bendahara_dapat_melihat_detail_pembayaran()` · GET `/keuangan/pembayaran/{id}` | `assertStatus(200)` | [ ] |
+| FIN-05 | Verifikasi pembayaran valid | `test_FIN05_bendahara_dapat_memverifikasi_pembayaran()` · POST `/keuangan/pembayaran/{id}/verify` | `assertDatabaseHas('payments', ['status'=>'diverifikasi'])` · `assertDatabaseHas('member_profiles', ['status'=>'active'])` | [ ] |
+| FIN-06 | Tolak pembayaran + alasan | `test_FIN06_bendahara_dapat_menolak_pembayaran_dengan_alasan()` · POST `/keuangan/pembayaran/{id}/reject` + `reject_reason` | `assertDatabaseHas('payments', ['status'=>'ditolak', 'reject_reason'=>...])` | [ ] |
+| FIN-07 | Tolak tanpa alasan (Negative) | `test_FIN07_penolakan_gagal_jika_alasan_kosong()` · POST `/keuangan/pembayaran/{id}/reject` dengan `reject_reason = ''` | `assertSessionHasErrors(['reject_reason'])` · status DB tidak berubah | [ ] |
+| FIN-08 | Update profil bendahara | `test_FIN08_bendahara_dapat_mengupdate_profil_pribadi()` · PATCH `/keuangan/profil` | `assertRedirect()` · `assertDatabaseHas('users', ['name'=>...])` | [ ] |
+
+---
+
+### 📊 MODUL KTA — Ketua
+
+| ID | Skenario | PHPUnit Method (`tests/Feature/KetuaTest.php`) | Ekspektasi Hasil | Status |
+|---|---|---|---|---|
+| KTA-01 | Lihat dashboard statistik | `test_KTA01_ketua_dapat_melihat_halaman_statistik()` · GET `/ketua/statistik` | `assertStatus(200)` | [ ] |
+| KTA-02 | Grafik tampil (backend data) | Cek data props dari `StatistikController` berisi array data untuk Chart.js | Controller mengembalikan key data grafik yang benar | [ ] |
+| KTA-03 | Detail laporan member | `test_KTA03_ketua_dapat_melihat_detail_laporan_member()` · GET `/ketua/statistik/detail/member` | `assertStatus(200)` | [ ] |
+| KTA-04 | Detail laporan keuangan | `test_KTA02_ketua_dapat_melihat_detail_laporan_keuangan()` · GET `/ketua/statistik/detail/keuangan` | `assertStatus(200)` | [ ] |
+| KTA-05 | Export data ke file | `test_KTA04_ketua_dapat_mengeksport_laporan_keuangan()` · GET `/ketua/statistik/detail/keuangan/export` | `assertStatus(200)` atau `302` | [ ] |
+| KTA-06 | Update profil ketua | `test_KTA06_ketua_dapat_mengupdate_profil_pribadi()` · PATCH `/ketua/profil` | `assertRedirect()` · `assertDatabaseHas('users', ['name'=>...])` | [ ] |
+
+---
+
+### ⚙️ MODUL ADM — Super Admin
+
+| ID | Skenario | PHPUnit Method (`tests/Feature/SuperAdminTest.php`) | Ekspektasi Hasil | Status |
+|---|---|---|---|---|
+| ADM-01 | Lihat daftar semua akun | `test_ADM01_superadmin_dapat_melihat_daftar_akun()` · GET `/superadmin/kelol-akun` | `assertStatus(200)` | [ ] |
+| ADM-02 | Lihat detail akun pengguna | `test_ADM02_superadmin_dapat_melihat_detail_akun()` · GET `/superadmin/kelol-akun/{id}` | `assertStatus(200)` | [ ] |
+| ADM-03 | Form buat akun baru | `test_ADM03_superadmin_dapat_membuka_form_buat_akun()` · GET `/superadmin/kelol-akun/buat` | `assertStatus(200)` | [ ] |
+| ADM-04 | Buat akun pengurus baru | `test_ADM04_superadmin_dapat_membuat_akun_pengurus_baru()` · POST `/superadmin/kelol-akun` data valid | `assertRedirect()` · `assertDatabaseHas('users', ['email'=>...])` | [ ] |
+| ADM-05 | Buat akun email duplikat | `test_ADM05_buat_akun_dengan_email_duplikat_gagal()` · POST dengan email yang sudah ada | `assertSessionHasErrors(['email'])` | [ ] |
+| ADM-06 | Buat akun field kosong | `test_ADM06_buat_akun_dengan_field_kosong_gagal_validasi()` · POST `[]` | `assertSessionHasErrors(['name','email','role','password'])` | [ ] |
+| ADM-07 | Nonaktifkan akun | `test_ADM07_superadmin_dapat_menonaktifkan_akun()` · PATCH `/superadmin/kelol-akun/{id}/toggle-status` | `assertDatabaseHas('users', ['is_active'=>false])` | [ ] |
+| ADM-08 | Akun nonaktif tidak bisa login | `test_ADM08_akun_nonaktif_tidak_dapat_login()` · POST `/login` dengan user `is_active=false` | `assertGuest()` | [ ] |
+| ADM-09 | Aktifkan kembali akun | `test_ADM09_superadmin_dapat_mengaktifkan_kembali_akun()` · PATCH toggle pada user nonaktif | `assertDatabaseHas('users', ['is_active'=>true])` | [ ] |
+| ADM-10 | Hapus akun pengguna | `test_ADM10_superadmin_dapat_menghapus_akun()` · DELETE `/superadmin/kelol-akun/{id}` | `assertRedirect()` · `assertDatabaseMissing('users', ['id'=>...])` | [ ] |
+| ADM-11 | Buka halaman Pengaturan | `test_ADM11_superadmin_dapat_membuka_halaman_pengaturan()` · GET `/superadmin/pengaturan` | `assertStatus(200)` | [ ] |
+| ADM-12 | Pengaturan — ubah nama komunitas | `test_ADM12_superadmin_dapat_mengubah_nama_komunitas()` · POST `/superadmin/pengaturan` `community_name` | `assertDatabaseHas('settings', ['key'=>'community_name','value'=>...])` | [ ] |
+| ADM-13 | Pengaturan — upload logo valid | `test_ADM13_superadmin_dapat_upload_logo_komunitas()` · POST dengan `UploadedFile::fake()->image()->size(50)` | `assertRedirect()` | [ ] |
+| ADM-14 | Pengaturan — upload logo > 1MB | `test_ADM14_upload_logo_terlalu_besar_gagal_validasi()` · POST logo `.size(2048)` | `assertSessionHasErrors(['logo'])` | [ ] |
+| ADM-15 | Pengaturan — kontak & sosial | `test_ADM15_superadmin_dapat_mengubah_kontak_dan_sosial()` · POST email, phone, address, social links | `assertDatabaseHas('settings', ['key'=>'email','value'=>...])` | [ ] |
+| ADM-16 | Pengaturan — keanggotaan & rekening | `test_ADM16_superadmin_dapat_mengubah_biaya_dan_rekening()` · POST fee, duration, bank info | `assertDatabaseHas('settings', ['key'=>'membership_fee'])` | [ ] |
+| ADM-17 | Pengaturan — bg kartu member valid | `test_ADM17_superadmin_dapat_upload_background_kartu_member()` · POST `card_background` image | `assertRedirect()` | [ ] |
+| ADM-18 | Pengaturan — bg kartu > 1MB | `test_ADM18_upload_background_kartu_terlalu_besar_gagal()` · POST `card_background` `.size(2048)` | `assertSessionHasErrors(['card_background'])` | [ ] |
+| ADM-19 | Pengaturan — warna utama | `test_ADM19_superadmin_dapat_mengubah_warna_utama()` · POST `primary_color`, `surface_color` | `assertDatabaseHas('settings', ['key'=>'primary_color','value'=>'#4f46e5'])` | [ ] |
+| ADM-20 | Pengaturan — Hero Section | `test_ADM20_superadmin_dapat_mengubah_hero_section()` · POST `hero_title`, `hero_description`, `bg_image` | `assertDatabaseHas('settings', ['key'=>'hero_title'])` | [ ] |
+| ADM-21 | Pengaturan — About Section | `test_ADM21_superadmin_dapat_mengubah_about_section()` · POST `about_title`, `about_description`, `about_image` | `assertDatabaseHas('settings', ['key'=>'about_title'])` | [ ] |
+| ADM-22 | Pengaturan — statistik landing | `test_ADM22_superadmin_dapat_mengubah_statistik_member_landing()` · POST stat fields | `assertDatabaseHas('settings', ['key'=>'stat_member_aktif','value'=>'120'])` | [ ] |
+| ADM-23 | Update profil Super Admin | `test_ADM23_superadmin_dapat_mengupdate_profil_pribadi()` · PATCH `/superadmin/profil` | `assertRedirect()` · `assertDatabaseHas('users', ['name'=>...])` | [ ] |
+
+---
+
+### 🛡️ MODUL RBAC — Keamanan Akses Lintas Role
+
+| ID | Skenario | PHPUnit Method (`tests/Feature/RbacTest.php`) | Ekspektasi Hasil | Status |
+|---|---|---|---|---|
+| RBAC-01 | Member akses URL Admin | `test_RBAC01_member_tidak_bisa_akses_halaman_admin()` · GET `/superadmin/kelol-akun` as Member | `assertStatus(403)` | [ ] |
+| RBAC-02 | Member akses URL Bendahara | `test_RBAC02_member_tidak_bisa_akses_halaman_keuangan()` · GET `/keuangan/pembayaran` as Member | `assertStatus(403)` | [ ] |
+| RBAC-03 | Member akses URL Petugas | `test_RBAC03_member_tidak_bisa_akses_halaman_petugas()` · GET `/petugas/konten` as Member | `assertStatus(403)` | [ ] |
+| RBAC-04 | Member akses URL Ketua | `test_RBAC04_member_tidak_bisa_akses_halaman_ketua()` · GET `/ketua/statistik` as Member | `assertStatus(403)` | [ ] |
+| RBAC-05 | Petugas akses URL Bendahara | `test_RBAC05_petugas_tidak_bisa_akses_halaman_keuangan()` · GET `/keuangan/pembayaran` as Staff | `assertStatus(403)` | [ ] |
+| RBAC-06 | Petugas akses URL Admin | `test_RBAC06_petugas_tidak_bisa_akses_halaman_admin()` · GET `/superadmin/kelol-akun` as Staff | `assertStatus(403)` | [ ] |
+| RBAC-07 | Guest akses URL Member | `test_RBAC07_guest_tidak_bisa_akses_halaman_member()` · GET `/member/profil` tanpa login | `assertRedirect('/login')` | [ ] |
+| RBAC-08 | Guest akses URL Admin | `test_RBAC08_guest_tidak_bisa_akses_halaman_admin()` · GET `/superadmin/kelol-akun` tanpa login | `assertRedirect('/login')` | [ ] |
+
+---
+
+### 📱 MODUL UI — UI/UX & Responsivitas
+
+| ID | Skenario | Catatan Pengujian | Ekspektasi Hasil | Status |
+|---|---|---|---|---|
+| UI-01 | Tampilan Mobile Landing Page | ⚠️ Tidak dapat diuji via PHPUnit · Gunakan browser DevTools (375px) atau `php artisan dusk` | Layout responsif, tidak ada elemen terpotong | [ ] |
+| UI-02 | Tampilan Mobile Dashboard Member | ⚠️ Tidak dapat diuji via PHPUnit · Gunakan browser DevTools (375px) | Sidebar hamburger menu aktif | [ ] |
+| UI-03 | Flash success message muncul | Cek `assertSessionHas('success')` setelah PATCH profil | Session memiliki flash key `success` | [ ] |
+| UI-04 | Countdown Invoice real-time | ⚠️ Frontend-only (Vue.js) · Tidak dapat diuji via PHPUnit | Countdown berkurang setiap detik (cek via browser) | [ ] |
+| UI-05 | Live Preview Pengaturan | ⚠️ Frontend-only (Vue.js `v-model` reactive) · Tidak dapat diuji via PHPUnit | Preview berubah real-time (cek via browser admin) | [ ] |
+
+---
+
+*Total: 87 Test Method PHPUnit tersebar di 7 file `tests/Feature/` — jalankan semua dengan `php artisan test --testdox`.*
