@@ -16,7 +16,7 @@ const memberStats = computed(() => page.props.memberStats);
 <template>
     <HomeLayout>
         <main class="relative p-8 lg:h-136 lg:p-0 lg:px-4 lg:flex lg:justify-center lg:items-center">
-            <img class="absolute top-0 left-0 w-full h-full object-cover saturate-0 -z-2" :src="settings.background_image ? `${storageUrl}/${settings.background_image}` : `${appUrl}/images/background.jpg`" alt="Background">
+            <img class="absolute top-0 left-0 w-full h-full object-cover saturate-0 -z-2" :src="settings.bg_image ? `${storageUrl}/${settings.bg_image}` : `${appUrl}/images/background.jpg`" alt="Background">
             <div class="absolute top-0 left-0 w-full h-full -z-1 bg-primary opacity-80" />
             <div class="lg:w-full lg:max-w-270">
                 <div class="flex flex-col gap-8 items-start lg:max-w-150">
@@ -47,7 +47,7 @@ const memberStats = computed(() => page.props.memberStats);
             </div>
         </section>
         <section class="relative p-8 lg:p-0 lg:px-4 lg:py-16 lg:flex lg:justify-center">
-            <img class="absolute top-0 left-0 w-full h-full object-cover saturate-0 -z-2" :src="settings.background_image ? `${storageUrl}/${settings.background_image}` : `${appUrl}/images/background.jpg`" alt="Background">
+            <img class="absolute top-0 left-0 w-full h-full object-cover saturate-0 -z-2" :src="settings.bg_image ? `${storageUrl}/${settings.bg_image}` : `${appUrl}/images/background.jpg`" alt="Background">
             <div class="absolute top-0 left-0 w-full h-full -z-1 bg-primary opacity-80" />
             <div class="lg:w-full lg:max-w-270 flex flex-col items-start lg:items-center gap-8">
                 <div class="flex flex-col gap-8 items-start lg:max-w-150">
