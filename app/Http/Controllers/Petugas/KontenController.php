@@ -28,9 +28,15 @@ class KontenController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'type' => 'required|in:video,ebook',
-            'file_url' => 'required|string',
+            'file_url' => 'nullable|string',
+            'file' => 'nullable|file',
             'thumbnail' => 'nullable|image|max:1024'
         ]);
+
+        $fileUrl = $request->file_url;
+        if ($request->hasFile('file')) {
+            $fileUrl = $request->file('file')->store('uploads', 'public');
+        }
 
         $thumbnailUrl = '';
         if ($request->hasFile('thumbnail')) {
@@ -41,7 +47,7 @@ class KontenController extends Controller
             'uploader_id' => auth()->id(),
             'title' => $request->title,
             'type' => $request->type,
-            'file_url' => $request->file_url,
+            'file_url' => $fileUrl,
             'thumbnail_url' => $thumbnailUrl,
         ]);
 

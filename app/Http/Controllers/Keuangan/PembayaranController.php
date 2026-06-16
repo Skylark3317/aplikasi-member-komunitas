@@ -72,6 +72,7 @@ class PembayaranController extends Controller
             [
                 'status' => 'active',
                 'expire_date' => now()->addMonths($durationMonths),
+                'address' => '-',
             ]
         );
 

@@ -29,6 +29,7 @@ class ProfilController extends Controller
         $user = $request->user();
 
         $rules = [
+            'name'      => ['nullable', 'string', 'max:255'],
             'telephone' => ['nullable', 'string', 'max:20'],
         ];
 
@@ -39,6 +40,9 @@ class ProfilController extends Controller
 
         $validated = $request->validate($rules);
 
+        if (isset($validated['name'])) {
+            $user->name = $validated['name'];
+        }
         $user->telephone = $validated['telephone'] ?? $user->telephone;
 
         if (isset($validated['password'])) {

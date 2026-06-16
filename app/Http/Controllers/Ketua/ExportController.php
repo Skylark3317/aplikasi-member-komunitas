@@ -23,6 +23,7 @@ class ExportController extends DetailController
             'konten'     => $this->kontenData($request),
             'blog'       => $this->blogData($request),
             'pertanyaan' => $this->pertanyaanData($request),
+            'keuangan'   => $this->paymentData($request),
             'payment'    => $this->paymentData($request),
             default      => abort(404),
         };

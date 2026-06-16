@@ -50,12 +50,16 @@ class SuperAdminProfilController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'telephone'    => 'required|string|max:20',
+            'name'         => 'nullable|string|max:255',
+            'telephone'    => 'nullable|string|max:20',
             'old_password' => 'nullable|string',
             'password'     => ['nullable', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user->telephone = $request->telephone;
+        if ($request->filled('name')) {
+            $user->name = $request->name;
+        }
+        $user->telephone = $request->telephone ?? $user->telephone;
 
         if ($request->filled('password')) {
             if (!Hash::check($request->old_password, $user->password)) {

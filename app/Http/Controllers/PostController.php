@@ -29,17 +29,13 @@ class PostController extends Controller
 
     public function show(string $slug)
     {
-        $foundPost = Post::with(['category', 'author'])->where('slug', $slug)->first();
-
-        $post = $foundPost
-            ? [
-                ...$foundPost->toArray(),
-                'date' => $foundPost->created_at->timezone(config('app.timezone'))->format('d/m/Y H:i'),
-            ]
-            : null;
+        $post = Post::with(['category', 'author'])->published()->where('slug', $slug)->firstOrFail();
 
         return Inertia::render('Blog/Show', [
-            'post' => $post,
+            'post' => [
+                ...$post->toArray(),
+                'date' => $post->created_at->timezone(config('app.timezone'))->format('d/m/Y H:i'),
+            ],
         ]);
     }
 

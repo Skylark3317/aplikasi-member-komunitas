@@ -17,7 +17,7 @@ return new class extends Migration
             $table->dateTime('expire_date');
             $table->string('institution')->nullable();
             $table->string('department')->nullable();
-            $table->text('address');
+            $table->text('address')->nullable();
             $table->enum('status', ['active', 'nonactive']);
             $table->timestamps();
         });

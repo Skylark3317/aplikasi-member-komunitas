@@ -132,7 +132,7 @@ class ProfilController extends Controller
 
         // Save user fields — allow telephone to be cleared (defaults to '-' in DB to satisfy NOT NULL)
         $user->name      = $validated['name'];
-        $user->telephone = $validated['telephone'] ?: '-';
+        $user->telephone = $validated['telephone'] ?? '-';
 
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
@@ -147,7 +147,7 @@ class ProfilController extends Controller
             'last_education' => $validated['last_education'] ?? null,
             'institution'    => $validated['institution'] ?? null,
             'department'     => $validated['department'] ?? null,
-            'address'        => $validated['address'] ?: '-',
+            'address'        => $validated['address'] ?? '-',
             'expertise'      => array_values(array_filter($validated['expertise'] ?? [])),
         ];
 

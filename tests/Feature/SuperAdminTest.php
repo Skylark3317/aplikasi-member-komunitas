@@ -79,9 +79,10 @@ class SuperAdminTest extends TestCase
         $response = $this->actingAs($admin)->post('/superadmin/kelol-akun', [
             'name'                  => 'Petugas Baru Test',
             'email'                 => 'petugasbaru@test.com',
+            'telephone'             => '08123456789',
             'role'                  => 'staff',
-            'password'              => 'password123',
-            'password_confirmation' => 'password123',
+            'password'              => 'Password123!',
+            'password_confirmation' => 'Password123!',
         ]);
 
         $response->assertRedirect();
@@ -102,9 +103,10 @@ class SuperAdminTest extends TestCase
         $response = $this->actingAs($admin)->post('/superadmin/kelol-akun', [
             'name'                  => 'Siapapun',
             'email'                 => 'duplikat@test.com',
+            'telephone'             => '08123456789',
             'role'                  => 'staff',
-            'password'              => 'password123',
-            'password_confirmation' => 'password123',
+            'password'              => 'Password123!',
+            'password_confirmation' => 'Password123!',
         ]);
 
         $response->assertSessionHasErrors(['email']);

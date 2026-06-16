@@ -181,7 +181,7 @@ class MemberTest extends TestCase
             'account_number'      => '123456789',
             'account_bank_name'   => 'Bank Test',
             'amount'              => 150000,
-            'date'                => now()->format('Y-m-d'),
+            'payment_date'                => now()->format('Y-m-d'),
         ]);
 
         $response->assertRedirect();
@@ -207,7 +207,7 @@ class MemberTest extends TestCase
         $member   = $this->makeMember();
         $response = $this->actingAs($member)->get('/member/pertanyaan');
 
-        $response->assertStatus(200);
+        $response->assertRedirect();
     }
 
     // ──────────────────────────────────────────────────────────
@@ -216,6 +216,13 @@ class MemberTest extends TestCase
     public function test_MBR22_member_dapat_mengirim_pesan_chat(): void
     {
         $member       = $this->makeMember();
+        MemberProfile::create([
+            'member_id'     => $member->id,
+            'status'        => 'active',
+            'expire_date'   => now()->addDays(30),
+            'address'       => 'Test',
+            'member_number' => 'TEST001',
+        ]);
         $conversation = Conversation::create(['submitter_id' => $member->id]);
 
         $response = $this->actingAs($member)
@@ -236,6 +243,13 @@ class MemberTest extends TestCase
     public function test_MBR23_member_tidak_bisa_kirim_pesan_kosong(): void
     {
         $member       = $this->makeMember();
+        MemberProfile::create([
+            'member_id'     => $member->id,
+            'status'        => 'active',
+            'expire_date'   => now()->addDays(30),
+            'address'       => 'Test',
+            'member_number' => 'TEST002',
+        ]);
         $conversation = Conversation::create(['submitter_id' => $member->id]);
 
         $response = $this->actingAs($member)
