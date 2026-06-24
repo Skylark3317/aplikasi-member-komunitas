@@ -20,28 +20,26 @@
             <span class="amount">0</span>
             <span class="period">/ selamanya</span>
           </div>
-          <p class="plan-desc">Akses dasar ke forum diskusi komunitas.</p>
-          <div class="divider-card" />
           <ul class="plan-features">
             <li>
               <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              <span>Akses Halaman Tanya Jawab</span>
+              <span>Akses blog</span>
             </li>
             <li class="disabled-feature">
               <svg class="cross-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
-              <span>Video Pembelajaran Eksklusif</span>
+              <span>Akses konten premium</span>
             </li>
             <li class="disabled-feature">
               <svg class="cross-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
-              <span>E-Book & Modul Edukasi Lengkap</span>
+              <span>Ajukan pertanyaan</span>
             </li>
           </ul>
           <button class="btn-plan btn-plan-disabled" disabled>Rencana Aktif</button>
@@ -56,26 +54,24 @@
             <span class="amount">{{ formatCurrency(settings.membership_fee || 50000) }}</span>
             <span class="period">/ tahun</span>
           </div>
-          <p class="plan-desc">Akses penuh tanpa batas ke semua layanan & konten pembelajaran berkualitas tinggi.</p>
-          <div class="divider-card" />
           <ul class="plan-features">
             <li>
               <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              <span>Akses Halaman Tanya Jawab Petugas Ahli</span>
+              <span>Akses blog</span>
             </li>
             <li>
               <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              <span>Nonton Puluhan Video Pembelajaran Eksklusif</span>
+              <span>Akses konten premium</span>
             </li>
             <li>
               <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              <span>Download E-Book & Modul Praktik Terstruktur</span>
+              <span>Ajukan pertanyaan</span>
             </li>
           </ul>
           <button @click="choosePremium" class="btn-plan btn-plan-active" :disabled="processing">
