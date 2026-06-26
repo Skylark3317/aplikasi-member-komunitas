@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Member;
 
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
+use App\Models\MembershipPlan;
 use App\Models\Payment;
 use App\Models\MemberProfile;
 use App\Models\Setting;
@@ -30,11 +31,31 @@ class PremiumController extends Controller
             'bank_name'           => Setting::get('bank_name', 'Bank BRI'),
             'bank_account_number' => Setting::get('bank_account_number', '000000001111'),
             'bank_account_name'   => Setting::get('bank_account_name', 'AMK'),
-            'membership_fee'      => Setting::get('membership_fee', 50000),
+            'available_benefits'  => Setting::get('available_benefits') ? json_decode(Setting::get('available_benefits'), true) : [],
         ];
 
+        // Ambil paket premium aktif yang dikelola super admin
+        $availableBenefits = $settings['available_benefits'];
+        $plans = MembershipPlan::active()->ordered()->get()->map(function (MembershipPlan $plan) use ($availableBenefits) {
+            $features = $plan->features ?? [];
+            if (!empty($availableBenefits)) {
+                $features = array_values(array_intersect($features, $availableBenefits));
+            }
+            return [
+                'id'             => $plan->id,
+                'name'           => $plan->name,
+                'description'    => $plan->description,
+                'price'          => (float) $plan->price,
+                'is_lifetime'    => $plan->is_lifetime,
+                'features'       => $features,
+                'is_recommended' => $plan->is_recommended,
+                'duration_label' => $plan->durationLabel(),
+            ];
+        });
+
         return Inertia::render('Member/Premium/Index', [
-            'settings' => $settings,
+            'settings'  => $settings,
+            'plans'     => $plans,
             'isPremium' => $user->is_premium,
         ]);
     }
@@ -54,6 +75,7 @@ class PremiumController extends Controller
         }
 
         $request->validate([
+            'plan_id'     => 'nullable|exists:membership_plans,id',
             'institution' => 'nullable|string|max:255',
             'department'  => 'nullable|string|max:255',
             'address'     => 'nullable|string',
@@ -62,6 +84,19 @@ class PremiumController extends Controller
         $institution = $request->institution ?: 'AMK';
         $department = $request->department ?: 'Premium Member';
         $address = $request->address ?: 'Online';
+
+        // Tentukan paket yang dipilih. Bila tidak dikirim (mis. aksi default),
+        // gunakan paket aktif pertama agar alur tetap berjalan.
+        $plan = null;
+        if ($request->filled('plan_id')) {
+            $plan = MembershipPlan::active()->where('id', $request->plan_id)->first();
+        }
+        if (!$plan) {
+            $plan = MembershipPlan::active()->ordered()->first();
+        }
+        if (!$plan) {
+            return back()->with('error', 'Belum ada paket premium yang tersedia saat ini.');
+        }
 
         // Create or update MemberProfile
         $profile = MemberProfile::where('member_id', $user->id)->first();
@@ -83,13 +118,14 @@ class PremiumController extends Controller
             ]);
         }
 
-        // Generate Invoice
-        $fee = (float) Setting::get('membership_fee', 50000);
+        // Generate Invoice dari paket yang dipilih
+        $fee = (float) $plan->price;
         $invoiceNumber = 'INV' . str_pad(rand(1, 99999), 5, '0', STR_PAD_LEFT);
         $countdown = (int) Setting::get('invoice_countdown', 24); // default 24 jam
 
         $invoice = Invoice::create([
             'user_id'     => $user->id,
+            'plan_id'     => $plan->id,
             'number'      => $invoiceNumber,
             'amount'      => $fee,
             'due_date'    => now()->addHours($countdown),

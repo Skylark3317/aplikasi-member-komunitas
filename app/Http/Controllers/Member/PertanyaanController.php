@@ -11,14 +11,25 @@ use Inertia\Inertia;
 class PertanyaanController extends Controller
 {
     /**
+     * Mengecek apakah user aktif memiliki benefit "Tanya Jawab dengan Admin".
+     */
+    private function canAccessChat(): bool
+    {
+        $user    = auth()->user();
+        $profile = $user->memberProfile()->with('plan')->first();
+
+        if (!$profile || $profile->status !== 'active' || now()->gte($profile->expire_date)) {
+            return false;
+        }
+
+        return $profile->hasBenefit('Tanya Jawab dengan Admin');
+    }
+
+    /**
      * Menampilkan daftar pertanyaan milik member (langsung redirect ke room chat).
      */
     public function index()
     {
-        // if (!auth()->user()->isPremium()) {
-        //     abort(403, 'Akses ditolak. Fitur ini hanya untuk member premium.');
-        // }
-
         $conversation = Conversation::firstOrCreate([
             'submitter_id' => auth()->id(),
         ]);
@@ -31,24 +42,25 @@ class PertanyaanController extends Controller
      */
     public function show(Conversation $conversation)
     {
-        // if (!auth()->user()->isPremium()) {
-        //     abort(403, 'Akses ditolak. Fitur ini hanya untuk member premium.');
-        // }
-
         if ($conversation->submitter_id !== auth()->id()) {
             abort(403, 'Akses ditolak.');
         }
 
-        // Mark incoming messages as read
-        Message::where('conversation_id', $conversation->id)
-            ->where('sender_id', '!=', auth()->id())
-            ->where('is_read', false)
-            ->update(['is_read' => true]);
+        $canAccessChat = $this->canAccessChat();
+
+        if ($canAccessChat) {
+            // Mark incoming messages as read only if user has access
+            Message::where('conversation_id', $conversation->id)
+                ->where('sender_id', '!=', auth()->id())
+                ->where('is_read', false)
+                ->update(['is_read' => true]);
+        }
 
         $conversation->load(['submitter', 'messages.sender']);
 
         return Inertia::render('Member/Pertanyaan/Show', [
-            'conversation' => $conversation
+            'conversation'  => $conversation,
+            'canAccessChat' => $canAccessChat,
         ]);
     }
 
@@ -57,8 +69,8 @@ class PertanyaanController extends Controller
      */
     public function reply(Request $request, Conversation $conversation)
     {
-        if (!auth()->user()->isPremium()) {
-            abort(403, 'Akses ditolak. Fitur ini hanya untuk member premium.');
+        if (!$this->canAccessChat()) {
+            abort(403, 'Akses ditolak. Fitur Tanya Jawab dengan Admin hanya tersedia untuk paket yang menyertakan benefit ini.');
         }
 
         if ($conversation->submitter_id !== auth()->id()) {

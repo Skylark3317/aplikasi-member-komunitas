@@ -2,30 +2,34 @@
   <MemberLayout>
     <Head title="Tanya Jawab - AMK" />
 
-    <template v-if="!currentUser?.is_premium">
-      <!-- Top Bar -->
+    <!-- Locked: no benefit access -->
+    <template v-if="!canAccessChat">
       <div class="top-bar">
-        <h1 class="page-title">Pertanyaan</h1>
+        <h1 class="page-title">Tanya Jawab Petugas</h1>
       </div>
       <div class="divider" />
-  
-      <!-- Content Area -->
       <div class="content-area">
-        <!-- Non-Premium Alert (Image 1) -->
-        <div v-if="!$page.props.currentUser?.is_premium" class="non-premium-alert-container">
-          <div class="non-premium-alert">
-            <span class="alert-message">Anda perlu menjadi member untuk mengakses fitur ini.</span>
-            <button class="alert-close-btn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="close-icon-svg">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
+        <div class="locked-state">
+          <div class="locked-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="11" width="18" height="11" rx="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
           </div>
+          <h2 class="locked-title">Fitur Terkunci</h2>
+          <p class="locked-desc">
+            Fitur <strong>Tanya Jawab dengan Admin</strong> hanya tersedia bagi member yang berlangganan paket dengan benefit ini.
+            Silakan upgrade paket Anda untuk mendapatkan akses.
+          </p>
+          <Link :href="route('member.premium.index')" class="btn-upgrade">
+            Lihat Paket Premium
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
+          </Link>
         </div>
       </div>
     </template>
 
+    <!-- Chat interface: has benefit access -->
     <template v-else>
       <div class="chat-container-layout">
         <!-- Chat Main Room -->
@@ -129,11 +133,12 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick, watch } from 'vue';
-import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import MemberLayout from '@/Layouts/MemberLayout.vue';
 
 const props = defineProps({
-  conversation: Object,
+  conversation:  Object,
+  canAccessChat: { type: Boolean, default: false },
 });
 
 const page = usePage();
@@ -231,42 +236,45 @@ watch(() => props.conversation.messages, () => {
   box-sizing: border-box;
 }
 
-/* ── Non-Premium Alert (Image 1) ── */
-.non-premium-alert {
+/* ── Locked state ── */
+.locked-state {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  background: #fef2f2;
-  border: 1px solid #fee2e2;
-  border-radius: 8px;
-  padding: 12px 20px;
-  color: #ef4444;
-  font-size: 13px;
-  font-weight: 500;
-  margin-bottom: 24px;
+  text-align: center;
+  padding: 80px 40px;
+  background: #f9fafb;
+  border-radius: 16px;
+  border: 1px dashed #d1d5db;
+  max-width: 520px;
+  margin: 32px auto;
 }
-
-.alert-close-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #ef4444;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: background 0.15s;
+.locked-icon {
+  width: 72px; height: 72px;
+  background: #fef9c3;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
 }
-
-.alert-close-btn:hover {
-  background: rgba(239, 68, 68, 0.1);
+.locked-icon svg { width: 32px; height: 32px; color: #ca8a04; }
+.locked-title {
+  font-size: 20px; font-weight: 700; color: #111;
+  margin: 0 0 10px;
 }
-
-.close-icon-svg {
-  width: 14px;
-  height: 14px;
+.locked-desc {
+  font-size: 14px; color: #6b7280; line-height: 1.6;
+  margin: 0 0 24px; max-width: 380px;
 }
+.btn-upgrade {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--primary-color, #007bff);
+  color: #fff; font-size: 14px; font-weight: 600;
+  padding: 12px 24px; border-radius: 10px;
+  text-decoration: none;
+  transition: filter 0.2s;
+}
+.btn-upgrade svg { width: 16px; height: 16px; }
+.btn-upgrade:hover { filter: brightness(0.9); }
 
 .chat-container-layout {
   display: flex;

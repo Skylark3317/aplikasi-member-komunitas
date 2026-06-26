@@ -23,80 +23,130 @@
         </div>
       </div>
 
-      <!-- Premium Content Interface (Image 2 & 3) -->
+      <!-- Premium Content Interface -->
       <div v-else class="premium-interface">
-        <!-- Tabs -->
+        <!-- Always-visible tabs -->
         <div class="tabs-container">
-          <button 
-            :class="['tab-btn', activeTab === 'video' ? 'active' : '']"
+          <button
+            :class="['tab-btn', activeTab === 'video' ? 'active' : '', !canAccessVideo ? 'tab-locked' : '']"
             @click="activeTab = 'video'"
           >
-            Video
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Video Premium
+            <span v-if="!canAccessVideo" class="tab-lock-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
           </button>
-          <button 
-            :class="['tab-btn', activeTab === 'ebook' ? 'active' : '']"
+          <button
+            :class="['tab-btn', activeTab === 'ebook' ? 'active' : '', !canAccessEbook ? 'tab-locked' : '']"
             @click="activeTab = 'ebook'"
           >
-            Ebook
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            Ebook Berkualitas
+            <span v-if="!canAccessEbook" class="tab-lock-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </span>
           </button>
         </div>
 
-        <!-- Grid -->
-        <div v-if="paginatedContents.length === 0" class="empty-state">
-          Belum ada konten untuk tipe ini.
-        </div>
-        
-        <div v-else :class="['content-grid', activeTab === 'video' ? 'video-grid' : 'ebook-grid']">
-          <div v-for="item in paginatedContents" :key="item.id" class="content-card" @click="openViewer(item)">
-            <!-- Thumbnail -->
-            <div :class="['card-thumbnail', activeTab === 'video' ? 'video-thumb' : 'ebook-thumb']">
-              <img v-if="item.thumbnail_url" :src="`/storage/${item.thumbnail_url}`" alt="Thumbnail" />
-              <div v-else class="placeholder-thumb"></div>
+        <!-- Tab: Video -->
+        <div v-if="activeTab === 'video'">
+          <!-- Locked notice for video -->
+          <div v-if="!canAccessVideo" class="tab-locked-notice">
+            <div class="locked-icon-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             </div>
-            
-            <!-- Info -->
-            <div class="card-info">
-              <h3 class="card-title">{{ item.title }}</h3>
-              <div class="card-meta">
-                {{ formatDate(item.created_at) }}
+            <h3 class="locked-notice-title">Akses Video Terkunci</h3>
+            <p class="locked-notice-desc">Paket Anda saat ini tidak menyertakan benefit <strong>Akses Video Premium</strong>. Upgrade ke paket yang mencakup benefit ini untuk menonton video eksklusif kami.</p>
+            <Link :href="route('member.premium.index')" class="btn-upgrade-sm">
+              Lihat Paket Premium
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
+            </Link>
+          </div>
+
+          <!-- Video content grid -->
+          <template v-else>
+            <div v-if="paginatedContents.length === 0" class="empty-state">Belum ada konten video.</div>
+            <div v-else class="content-grid video-grid">
+              <div v-for="item in paginatedContents" :key="item.id" class="content-card" @click="openViewer(item)">
+                <div class="card-thumbnail video-thumb">
+                  <img v-if="item.thumbnail_url" :src="`/storage/${item.thumbnail_url}`" alt="Thumbnail" />
+                  <div v-else class="placeholder-thumb"></div>
+                </div>
+                <div class="card-info">
+                  <h3 class="card-title">{{ item.title }}</h3>
+                  <div class="card-meta">{{ formatDate(item.created_at) }}</div>
+                </div>
               </div>
             </div>
-          </div>
+            <div class="pagination" v-if="totalPages > 1">
+              <button class="page-nav-btn" :disabled="currentPage === 1" @click="currentPage--">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Sebelumnya
+              </button>
+              <div class="page-numbers">
+                <button v-for="page in totalPages" :key="page"
+                  :class="['page-num-btn', currentPage === page ? 'active' : '']"
+                  @click="currentPage = page">{{ page }}</button>
+              </div>
+              <button class="page-nav-btn" :disabled="currentPage === totalPages" @click="currentPage++">
+                Berikutnya
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+            </div>
+          </template>
         </div>
-        
-        <!-- Pagination -->
-        <div class="pagination" v-if="totalPages > 1">
-          <button 
-            class="page-nav-btn"
-            :disabled="currentPage === 1"
-            @click="currentPage--"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
-            Sebelumnya
-          </button>
-          
-          <div class="page-numbers">
-            <button 
-              v-for="page in totalPages" 
-              :key="page"
-              :class="['page-num-btn', currentPage === page ? 'active' : '']"
-              @click="currentPage = page"
-            >
-              {{ page }}
-            </button>
+
+        <!-- Tab: Ebook -->
+        <div v-if="activeTab === 'ebook'">
+          <!-- Locked notice for ebook -->
+          <div v-if="!canAccessEbook" class="tab-locked-notice">
+            <div class="locked-icon-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <h3 class="locked-notice-title">Akses Ebook Terkunci</h3>
+            <p class="locked-notice-desc">Paket Anda saat ini tidak menyertakan benefit <strong>Akses Ebook Berkualitas</strong>. Upgrade ke paket yang mencakup benefit ini untuk mengakses koleksi ebook kami.</p>
+            <Link :href="route('member.premium.index')" class="btn-upgrade-sm">
+              Lihat Paket Premium
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
+            </Link>
           </div>
 
-          <button 
-            class="page-nav-btn"
-            :disabled="currentPage === totalPages"
-            @click="currentPage++"
-          >
-            Berikutnya
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          </button>
+          <!-- Ebook content grid -->
+          <template v-else>
+            <div v-if="paginatedContents.length === 0" class="empty-state">Belum ada konten ebook.</div>
+            <div v-else class="content-grid ebook-grid">
+              <div v-for="item in paginatedContents" :key="item.id" class="content-card" @click="openViewer(item)">
+                <div class="card-thumbnail ebook-thumb">
+                  <img v-if="item.thumbnail_url" :src="`/storage/${item.thumbnail_url}`" alt="Thumbnail" />
+                  <div v-else class="placeholder-thumb"></div>
+                </div>
+                <div class="card-info">
+                  <h3 class="card-title">{{ item.title }}</h3>
+                  <div class="card-meta">{{ formatDate(item.created_at) }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="pagination" v-if="totalPages > 1">
+              <button class="page-nav-btn" :disabled="currentPage === 1" @click="currentPage--">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Sebelumnya
+              </button>
+              <div class="page-numbers">
+                <button v-for="page in totalPages" :key="page"
+                  :class="['page-num-btn', currentPage === page ? 'active' : '']"
+                  @click="currentPage = page">{{ page }}</button>
+              </div>
+              <button class="page-nav-btn" :disabled="currentPage === totalPages" @click="currentPage++">
+                Berikutnya
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+            </div>
+          </template>
         </div>
-      </div>
-    </div>
+
+      </div><!-- end premium-interface -->
+    </div><!-- end content-area -->
   </MemberLayout>
 </template>
 
@@ -106,13 +156,14 @@ import { Head, Link } from '@inertiajs/vue3';
 import MemberLayout from '@/Layouts/MemberLayout.vue';
 
 const props = defineProps({
-  contents: {
-    type: Array,
-    default: () => [],
-  },
+  contents:       { type: Array,   default: () => [] },
+  canAccessEbook: { type: Boolean, default: false },
+  canAccessVideo: { type: Boolean, default: false },
+  activeBenefits: { type: Array,   default: () => [] },
 });
 
 const showAlert = ref(true);
+// Always default to 'video' tab
 const activeTab = ref('video');
 const currentPage = ref(1);
 
@@ -229,20 +280,96 @@ function formatDate(dateStr) {
 }
 
 .tab-btn {
-  padding: 6px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
   border-radius: 20px;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 13.5px;
+  font-weight: 600;
   cursor: pointer;
-  border: none;
-  background: #eff6ff;
-  color: var(--primary-color, #007bff);
+  border: 1.5px solid transparent;
+  background: #f3f4f6;
+  color: #6b7280;
+  transition: all 0.2s;
 }
-
+.tab-btn svg { width: 14px; height: 14px; }
 .tab-btn.active {
   background: var(--primary-color, #007bff);
   color: #fff;
+  border-color: var(--primary-color, #007bff);
+  box-shadow: 0 4px 12px rgba(0,123,255,0.2);
 }
+.tab-btn:hover:not(.active) {
+  background: #e5e7eb;
+  color: #374151;
+}
+.tab-btn.tab-locked {
+  opacity: 0.75;
+}
+.tab-lock-icon {
+  display: inline-flex; align-items: center;
+  margin-left: 2px;
+}
+.tab-lock-icon svg { width: 12px; height: 12px; }
+
+/* Per-tab locked notice */
+.tab-locked-notice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 60px 40px;
+  background: #f9fafb;
+  border-radius: 16px;
+  border: 1px dashed #d1d5db;
+  max-width: 500px;
+  margin: 8px auto 0;
+}
+.locked-icon-sm {
+  width: 60px; height: 60px;
+  background: #fef9c3;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+}
+.locked-icon-sm svg { width: 26px; height: 26px; color: #ca8a04; }
+.locked-notice-title {
+  font-size: 17px; font-weight: 700; color: #111;
+  margin: 0 0 8px;
+}
+.locked-notice-desc {
+  font-size: 13.5px; color: #6b7280; line-height: 1.6;
+  margin: 0 0 20px; max-width: 360px;
+}
+.btn-upgrade-sm {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--primary-color, #007bff);
+  color: #fff; font-size: 13.5px; font-weight: 600;
+  padding: 10px 20px; border-radius: 8px;
+  text-decoration: none; transition: filter 0.2s;
+}
+.btn-upgrade-sm svg { width: 14px; height: 14px; }
+.btn-upgrade-sm:hover { filter: brightness(0.9); }
+
+/* Locked state (fallback full-page) */
+.locked-all {
+  text-align: center;
+  padding: 80px 40px;
+  background: #f9fafb;
+  border-radius: 16px;
+  border: 1px dashed #d1d5db;
+}
+.locked-icon {
+  width: 72px; height: 72px;
+  background: #fee2e2;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.locked-icon svg { width: 32px; height: 32px; color: #ef4444; }
+.locked-all h3 { font-size: 18px; font-weight: 700; color: #111; margin: 0 0 10px; }
+.locked-all p { font-size: 13.5px; color: #6b7280; max-width: 400px; line-height: 1.6; margin: 0; }
 
 .empty-state {
   padding: 48px;

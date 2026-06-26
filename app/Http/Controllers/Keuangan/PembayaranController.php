@@ -65,14 +65,24 @@ class PembayaranController extends Controller
 
         // Auto-activate or extend MemberProfile
         $payer = $payment->payer;
-        $durationMonths = (int) \App\Models\Setting::get('membership_duration', 12);
-        
+        $plan  = $payment->invoice->plan;
+
+        if ($plan) {
+            // Paket terkait invoice → pakai durasi paket (bisa lifetime)
+            $expiry = $plan->computeExpiry();
+        } else {
+            // Invoice lama tanpa paket → fallback ke setting global
+            $durationMonths = (int) \App\Models\Setting::get('membership_duration', 12);
+            $expiry = now()->addMonths($durationMonths);
+        }
+
         \App\Models\MemberProfile::updateOrCreate(
             ['member_id' => $payer->id],
             [
-                'status' => 'active',
-                'expire_date' => now()->addMonths($durationMonths),
-                'address' => '-',
+                'status'      => 'active',
+                'expire_date' => $expiry ?? now()->addYears(100), // lifetime
+                'plan_id'     => $plan?->id,
+                'address'     => '-',
             ]
         );
 

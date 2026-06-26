@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class MemberProfile extends Model
 {
     protected $fillable = [
-        'member_id', 'member_number', 'expire_date', 'institution', 'department', 'address', 'status',
+        'member_id', 'plan_id', 'member_number', 'expire_date', 'institution', 'department', 'address', 'status',
         'gender', 'blood_type', 'last_education', 'expertise', 'expertise_proof'
     ];
 
@@ -47,5 +47,22 @@ class MemberProfile extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'member_id');
+    }
+
+    public function plan()
+    {
+        return $this->belongsTo(MembershipPlan::class, 'plan_id');
+    }
+
+    /**
+     * Check whether the member's active plan includes a given benefit string.
+     */
+    public function hasBenefit(string $benefit): bool
+    {
+        if (!$this->plan) {
+            return false;
+        }
+        $features = $this->plan->features ?? [];
+        return in_array($benefit, $features, true);
     }
 }

@@ -17,6 +17,9 @@ class DatabaseSeeder extends Seeder
         // ── Settings ─────────────────────────────────────────────
         $this->call(SettingsSeeder::class);
 
+        // ── Membership Plans ─────────────────────────────────────
+        $this->call(MembershipPlanSeeder::class);
+
         // ── Super Admin ──────────────────────────────────────────
         User::updateOrCreate(
             ['email' => 'superadmin@amk.com'],

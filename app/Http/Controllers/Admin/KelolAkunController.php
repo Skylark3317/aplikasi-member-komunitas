@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\User;
 use App\Models\MemberProfile;
 use Illuminate\Http\Request;
@@ -119,6 +120,14 @@ class KelolAkunController extends Controller
 
         $user->markEmailAsVerified();
 
+        ActivityLog::record(
+            'Buat Akun',
+            'User',
+            $user->id,
+            $user->name,
+            ['email' => $user->email, 'role' => $user->role]
+        );
+
         return redirect()->route('superadmin.kelol-akun.index')
             ->with('success', 'Akun berhasil dibuat.');
     }
@@ -130,6 +139,14 @@ class KelolAkunController extends Controller
         }
 
         $user->update(['is_active' => !$user->is_active]);
+
+        ActivityLog::record(
+            $user->is_active ? 'Aktifkan Akun' : 'Nonaktifkan Akun',
+            'User',
+            $user->id,
+            $user->name,
+            ['email' => $user->email, 'role' => $user->role, 'is_active' => $user->is_active]
+        );
 
         return back()->with('success', $user->is_active
             ? 'Akun berhasil diaktifkan.'
@@ -143,7 +160,20 @@ class KelolAkunController extends Controller
             abort(403, 'Tidak dapat menghapus Super Admin.');
         }
 
+        $name  = $user->name;
+        $email = $user->email;
+        $role  = $user->role;
+        $id    = $user->id;
+
         $user->delete();
+
+        ActivityLog::record(
+            'Hapus Akun',
+            'User',
+            $id,
+            $name,
+            ['email' => $email, 'role' => $role]
+        );
 
         return redirect()->route('superadmin.kelol-akun.index')
             ->with('success', 'Akun berhasil dihapus.');

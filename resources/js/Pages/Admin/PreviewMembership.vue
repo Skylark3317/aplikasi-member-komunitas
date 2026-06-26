@@ -15,7 +15,7 @@
         </div>
         <div class="detail-row">
           <span class="detail-label">Jumlah</span>
-          <span class="detail-value text-bold">Rp{{ formatNumber(form.membership_fee || 50000) }},00</span>
+          <span class="detail-value text-bold">Sesuai paket yang dipilih</span>
         </div>
         <div class="detail-row">
           <span class="detail-label">Atas Nama Rekening Tujuan</span>

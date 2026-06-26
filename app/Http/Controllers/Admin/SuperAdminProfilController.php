@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -56,19 +57,37 @@ class SuperAdminProfilController extends Controller
             'password'     => ['nullable', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        if ($request->filled('name')) {
+        $changes = [];
+
+        if ($request->filled('name') && $user->name !== $request->name) {
+            $changes['name'] = ['old' => $user->name, 'new' => $request->name];
             $user->name = $request->name;
         }
-        $user->telephone = $request->telephone ?? $user->telephone;
+
+        if ($request->filled('telephone') && $user->telephone !== $request->telephone) {
+            $changes['telephone'] = ['old' => $user->telephone, 'new' => $request->telephone];
+            $user->telephone = $request->telephone;
+        }
 
         if ($request->filled('password')) {
             if (!Hash::check($request->old_password, $user->password)) {
                 return back()->withErrors(['old_password' => 'Password lama tidak sesuai.']);
             }
             $user->password = Hash::make($request->password);
+            $changes['password'] = 'Diperbarui';
         }
 
         $user->save();
+
+        if (!empty($changes)) {
+            ActivityLog::record(
+                'Ubah Profil',
+                'User',
+                $user->id,
+                $user->name,
+                $changes
+            );
+        }
 
         return redirect()->route('superadmin.profil')
             ->with('success', 'Profil berhasil diperbarui.');

@@ -40,6 +40,7 @@ class SettingsSeeder extends Seeder
             'stat_member_pasif'     => '99',
             'stat_member_company'   => '217',
             'stat_member_personal'  => '1801',
+            'available_benefits'    => json_encode(['Akses Ebook Berkualitas', 'Akses Video Premium', 'Tanya Jawab dengan Admin', 'Sertifikat Digital']),
         ];
 
         foreach ($settings as $key => $value) {

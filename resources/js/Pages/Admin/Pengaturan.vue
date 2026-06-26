@@ -170,17 +170,16 @@
             <input v-model="form.bank_name" type="text" class="field-input" />
           </div>
 
-          <p class="form-subsection mt-4">Biaya &amp; Aturan</p>
+          <p class="form-subsection mt-4">Aturan Keanggotaan</p>
+          <p class="relocate-hint">
+            Jenis paket premium (harga &amp; masa aktif) kini dikelola di halaman
+            <Link :href="route('superadmin.paket-premium.index')" class="relocate-link">Paket Premium</Link>.
+          </p>
           <div class="membership-grid">
-          <div class="field-group">
-            <label class="field-label">Biaya Membership</label>
-            <input v-model="form.membership_fee" type="number" class="field-input" />
-            <span v-if="form.errors.membership_fee" class="error-msg">{{ form.errors.membership_fee }}</span>
-          </div>
         <div class="field-group">
-          <label class="field-label">Masa Berlaku Membership (bulan)</label>
-          <input v-model="form.membership_duration" type="number" class="field-input field-quarter" />
-          <span v-if="form.errors.membership_duration" class="error-msg">{{ form.errors.membership_duration }}</span>
+          <label class="field-label">Peringatan Expired (hari sebelumnya)</label>
+          <input v-model="form.membership_alert_days" type="number" class="field-input field-quarter" />
+          <span v-if="form.errors.membership_alert_days" class="error-msg">{{ form.errors.membership_alert_days }}</span>
         </div>
         <div class="field-group">
           <label class="field-label">Countdown Invoice (jam)</label>
@@ -190,9 +189,28 @@
           <label class="field-label">Durasi Penghapusan Akun Member Otomatis (menit)</label>
           <input v-model="form.account_deletion_duration" type="number" class="field-input field-quarter" />
           <span v-if="form.errors.account_deletion_duration" class="error-msg">{{ form.errors.account_deletion_duration }}</span>
+        </div>
+        </div><!-- /membership-grid -->
+
+        <p class="form-subsection mt-4">Pilihan Benefit Paket Premium</p>
+        <p class="field-hint">Daftar ini akan muncul sebagai opsi (checkbox) saat membuat/mengedit paket premium.</p>
+        <div class="field-group">
+          <div v-for="(benefit, index) in form.available_benefits" :key="index" class="feature-row" style="margin-bottom: 8px; display: flex; gap: 8px;">
+            <input v-model="form.available_benefits[index]" type="text" class="field-input" placeholder="mis. Akses Prioritas" />
+            <button type="button" class="btn-delete" style="padding: 6px; flex-shrink: 0;" @click="removeBenefit(index)" v-if="form.available_benefits.length > 1">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
           </div>
-          </div><!-- /membership-grid -->
-          </div><!-- /form-card keanggotaan -->
+          <button type="button" @click="addBenefit" style="display: inline-flex; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-size: 12.5px; font-weight: 500; color: var(--primary-color); padding: 4px 0; font-family: inherit; margin-top: 4px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Tambah Pilihan Benefit
+          </button>
+        </div>
+      </div><!-- /form-card keanggotaan -->
 
           <!-- === KARTU MEMBER === -->
           <div class="form-card" v-show="activeTab === 'kartumember'">
@@ -404,7 +422,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { Link, useForm, router, usePage } from '@inertiajs/vue3';
+import { Head, Link, useForm, router, usePage } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import PreviewLandingPage from './PreviewLandingPage.vue';
 import PreviewMemberCard from './PreviewMemberCard.vue';
@@ -429,8 +447,7 @@ const form = useForm({
   bank_account_name:   s.bank_account_name   ?? '',
   bank_account_number: s.bank_account_number ?? '',
   bank_name:           s.bank_name           ?? '',
-  membership_fee:      s.membership_fee      ?? '',
-  membership_duration: s.membership_duration ?? '',
+  membership_alert_days: s.membership_alert_days ?? '7',
   invoice_countdown:   s.invoice_countdown   ?? '',
   account_deletion_duration: s.account_deletion_duration ?? '10080',
   primary_color:       s.primary_color       ?? 'var(--primary-color)',
@@ -443,6 +460,7 @@ const form = useForm({
   stat_member_pasif:   s.stat_member_pasif   ?? '',
   stat_member_company: s.stat_member_company ?? '',
   stat_member_personal: s.stat_member_personal ?? '',
+  available_benefits:  (s.available_benefits && s.available_benefits.length) ? s.available_benefits : [''],
   logo:                null,
   delete_logo:         false,
   bg_image:            null,
@@ -552,7 +570,27 @@ function deleteAbout() {
 function submit() {
   form.post(route('superadmin.pengaturan.update'), {
     forceFormData: true,
+    onSuccess: () => {
+      const s = $page.props.settings;
+      logoPreview.value = s.community_logo ? `/storage/${s.community_logo}` : null;
+      bgPreview.value = s.bg_image ? `/storage/${s.bg_image}` : null;
+      cardBgPreview.value = s.card_background ? `/storage/${s.card_background}` : null;
+      aboutPreview.value = s.about_image ? `/storage/${s.about_image}` : null;
+      
+      form.logo = null;
+      form.bg_image = null;
+      form.card_background = null;
+      form.about_image = null;
+    }
   });
+}
+
+function addBenefit() {
+  form.available_benefits.push('');
+}
+
+function removeBenefit(index) {
+  form.available_benefits.splice(index, 1);
 }
 </script>
 

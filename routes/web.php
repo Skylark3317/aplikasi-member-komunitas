@@ -5,6 +5,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\Admin\StatistikController;
 use App\Http\Controllers\Admin\KelolAkunController;
 use App\Http\Controllers\Admin\PengaturanController;
+use App\Http\Controllers\Admin\RiwayatAktivitasController;
 use App\Http\Controllers\Admin\SuperAdminProfilController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -59,6 +60,18 @@ Route::middleware(['auth', 'verified', 'role:super_admin'])
         Route::get('/profil', [SuperAdminProfilController::class, 'show'])->name('profil');
         Route::get('/profil/edit', [SuperAdminProfilController::class, 'edit'])->name('profil.edit');
         Route::patch('/profil', [SuperAdminProfilController::class, 'update'])->name('profil.update');
+
+        // Riwayat Aktivitas
+        Route::get('/riwayat-aktivitas', [RiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
+        Route::post('/riwayat-aktivitas/{log}/revert', [RiwayatAktivitasController::class, 'revert'])->name('riwayat-aktivitas.revert');
+
+        // Paket Premium
+        Route::get('/paket-premium', [\App\Http\Controllers\Admin\PaketPremiumController::class, 'index'])->name('paket-premium.index');
+        Route::post('/paket-premium', [\App\Http\Controllers\Admin\PaketPremiumController::class, 'store'])->name('paket-premium.store');
+        Route::patch('/paket-premium/{plan}', [\App\Http\Controllers\Admin\PaketPremiumController::class, 'update'])->name('paket-premium.update');
+        Route::delete('/paket-premium/{plan}', [\App\Http\Controllers\Admin\PaketPremiumController::class, 'destroy'])->name('paket-premium.destroy');
+        Route::patch('/paket-premium/{plan}/toggle-status', [\App\Http\Controllers\Admin\PaketPremiumController::class, 'toggleStatus'])->name('paket-premium.toggle-status');
+        Route::patch('/paket-premium/{plan}/toggle-recommended', [\App\Http\Controllers\Admin\PaketPremiumController::class, 'toggleRecommended'])->name('paket-premium.toggle-recommended');
     });
 
 // ─── Petugas Routes ────────────────────────────────────────

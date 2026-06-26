@@ -99,6 +99,13 @@
 
     <!-- Main Content -->
     <main class="admin-main">
+      <div v-if="showExpiringAlert" class="membership-alert">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div class="alert-content">
+          <strong>Perhatian:</strong> Masa aktif Member Premium Anda akan berakhir dalam <strong>{{ daysRemaining }} hari</strong> ({{ formattedExpireDate }}). Segera perpanjang agar akses tidak terputus.
+        </div>
+        <Link :href="route('member.premium.index')" class="alert-action">Perpanjang Sekarang</Link>
+      </div>
       <slot />
     </main>
   </div>
@@ -113,6 +120,27 @@ const showPopup = ref(false);
 const userBtn = ref(null);
 
 const settings = computed(() => $page.props.settings || {});
+const memberProfile = computed(() => $page.props.memberProfile);
+
+const daysRemaining = computed(() => {
+  if (!memberProfile.value || !memberProfile.value.expire_date) return null;
+  const expireDate = new Date(memberProfile.value.expire_date);
+  const now = new Date();
+  const diffTime = expireDate - now;
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+});
+
+const formattedExpireDate = computed(() => {
+  if (!memberProfile.value || !memberProfile.value.expire_date) return '';
+  const d = new Date(memberProfile.value.expire_date);
+  return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+});
+
+const showExpiringAlert = computed(() => {
+  if (!$page.props.auth.user.is_premium) return false;
+  const alertDays = parseInt(settings.value.membership_alert_days || '7');
+  return daysRemaining.value !== null && daysRemaining.value > 0 && daysRemaining.value <= alertDays;
+});
 
 function togglePopup() {
   showPopup.value = !showPopup.value;
@@ -361,5 +389,34 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
   margin-left: 220px;
   flex: 1;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
+
+/* ── Alert ── */
+.membership-alert {
+  background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+  border-bottom: 1px solid #fde68a;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #92400e;
+  font-size: 13.5px;
+}
+.membership-alert svg { width: 20px; height: 20px; color: #f59e0b; flex-shrink: 0; }
+.alert-content { flex: 1; }
+.alert-action {
+  background: #f59e0b;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12.5px;
+  text-decoration: none;
+  transition: filter 0.2s;
+  white-space: nowrap;
+}
+.alert-action:hover { filter: brightness(0.9); }
 </style>
