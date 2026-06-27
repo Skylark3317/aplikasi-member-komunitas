@@ -310,7 +310,7 @@
 
         <!-- Zona Bahaya: Hapus Akun -->
         <div class="danger-zone-section">
-          <h3 class="danger-title">⚠️ Zona Bahaya</h3>
+          <h3 class="danger-title"><i class="bi bi-exclamation-triangle"></i> Zona Bahaya</h3>
 
           <!-- Pending deletion notice -->
           <div v-if="user.delete_requested_at" class="deletion-pending-box">
