@@ -10,21 +10,8 @@
 
     <!-- Content Area -->
     <div class="content-area">
-      <!-- Non-Premium Alert (Image 1) -->
-      <div v-if="!$page.props.auth.user.is_premium" class="non-premium-alert-container">
-        <div v-if="showAlert" class="non-premium-alert">
-          <span class="alert-message">Anda perlu menjadi member untuk mengakses fitur ini.</span>
-          <button class="alert-close-btn" @click="showAlert = false">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="close-icon-svg">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
-      </div>
-
       <!-- Premium Content Interface -->
-      <div v-else class="premium-interface">
+      <div class="premium-interface">
         <!-- Always-visible tabs -->
         <div class="tabs-container">
           <button
@@ -162,7 +149,6 @@ const props = defineProps({
   activeBenefits: { type: Array,   default: () => [] },
 });
 
-const showAlert = ref(true);
 // Always default to 'video' tab
 const activeTab = ref('video');
 const currentPage = ref(1);
@@ -233,43 +219,6 @@ function formatDate(dateStr) {
   background: #fff;
   min-height: calc(100vh - 65px);
   box-sizing: border-box;
-}
-
-/* ── Non-Premium Alert (Image 1) ── */
-.non-premium-alert {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #fef2f2;
-  border: 1px solid #fee2e2;
-  border-radius: 8px;
-  padding: 12px 20px;
-  color: #ef4444;
-  font-size: 13px;
-  font-weight: 500;
-  margin-bottom: 24px;
-}
-
-.alert-close-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #ef4444;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: background 0.15s;
-}
-
-.alert-close-btn:hover {
-  background: rgba(239, 68, 68, 0.1);
-}
-
-.close-icon-svg {
-  width: 14px;
-  height: 14px;
 }
 
 /* ── Premium Interface (Image 2 & 3) ── */

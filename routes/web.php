@@ -100,6 +100,9 @@ Route::middleware(['auth', 'verified', 'role:staff'])
         Route::get('/pertanyaan/{conversation}', [\App\Http\Controllers\Petugas\PertanyaanController::class, 'show'])->name('pertanyaan.show');
         Route::post('/pertanyaan/{conversation}/balas', [\App\Http\Controllers\Petugas\PertanyaanController::class, 'reply'])->name('pertanyaan.reply');
 
+        // Member
+        Route::get('/member', [\App\Http\Controllers\Petugas\MemberController::class, 'index'])->name('member.index');
+
         // Profil
         Route::get('/profil', [\App\Http\Controllers\Petugas\ProfilController::class, 'show'])->name('profil');
         Route::get('/profil/edit', [\App\Http\Controllers\Petugas\ProfilController::class, 'edit'])->name('profil.edit');
