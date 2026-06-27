@@ -85,10 +85,44 @@ class ProfilController extends Controller
             ] : null,
         ];
 
-        // Pluck all expertises, decode/flatten them, and get unique values
+        $defaultExpertises = [
+    // --- Teknologi & IT ---
+    'Web Development', 'Mobile Development', 'UI/UX Design', 
+    'Data Science', 'Machine Learning', 'Digital Marketing', 
+    'Project Management', 'Cyber Security', 'Cloud Computing', 
+    'DevOps', 'Graphic Design', 'SEO Optimization', 'Software Engineering',
+    'IT Support', 'Network Administration', 'Database Administration',
+
+    // --- Bisnis, Keuangan & Manajemen ---
+    'Business Strategy', 'Financial Analysis', 'Human Resource Management', 
+    'Accounting', 'Supply Chain Management', 'Risk Management', 
+    'Sales & Business Development', 'Customer Relationship Management',
+
+    // --- Industri Kreatif, Media & Seni ---
+    'Content Writing', 'Copywriting', 'Video Editing', 
+    'Photography', 'Animation & 3D Modeling', 'Interior Design', 
+    'Fashion Design', 'Music Production', 'Journalism',
+
+    // --- Kesehatan & Medis ---
+    'General Medicine', 'Nursing', 'Nutrition & Dietetics', 
+    'Physiotherapy', 'Psychology & Counseling', 'Pharmacology',
+
+    // --- Hukum & Edukasi ---
+    'Corporate Law', 'Intellectual Property Law', 'Public Speaking', 
+    'Academic Research', 'Curriculum Development', 'Translation & Interpretation',
+
+    // --- Teknik & Sains (Non-IT) ---
+    'Mechanical Engineering', 'Civil Engineering', 'Electrical Engineering', 
+    'Biotechnology', 'Environmental Science', 'Architecture',
+
+    // --- Kuliner & Hospitality ---
+    'Culinary Arts', 'Pastry & Baking', 'Hospitality Management', 'Event Planning'
+];
+        // Pluck all expertises, decode/flatten them, merge with defaults, and get unique values
         $expertises = MemberProfile::whereNotNull('expertise')
             ->pluck('expertise')
             ->flatten()
+            ->merge($defaultExpertises)
             ->unique()
             ->filter()
             ->values()
@@ -185,7 +219,7 @@ class ProfilController extends Controller
             $user->memberProfile()->create(array_merge($profileFields, [
                 'status'        => 'nonactive',
                 'expire_date'   => now(),
-                'member_number' => \App\Models\MemberProfile::generateMemberNumber(),
+                'member_number' => MemberProfile::generateMemberNumber(),
             ]));
         }
 

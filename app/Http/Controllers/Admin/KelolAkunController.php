@@ -36,13 +36,14 @@ class KelolAkunController extends Controller
             $query->where('is_active', $request->status === 'aktif');
         }
 
-        $users = $query->orderBy('name')->get()->map(function ($user) {
+        $users = $query->orderBy('name')->get()->map(function (User $user) {
             return [
-                'id'        => $user->id,
-                'name'      => $user->name,
-                'email'     => $user->email,
-                'role'      => $user->role,
-                'is_active' => $user->is_active,
+                'id'         => $user->id,
+                'name'       => $user->name,
+                'email'      => $user->email,
+                'role'       => $user->role,
+                'is_active'  => $user->is_active,
+                'is_premium' => $user->isPremium(),
             ];
         });
 

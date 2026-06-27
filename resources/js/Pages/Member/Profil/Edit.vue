@@ -205,24 +205,38 @@
           <!-- Kepakaran -->
           <div class="form-group">
             <label>Kepakaran (Maksimal 3)</label>
-            <div v-for="(exp, index) in form.expertise" :key="index" style="display:flex; gap:8px; margin-bottom:8px; flex-wrap: wrap;">
-              <input 
-                type="text" 
-                :value="form.expertise[index]" 
-                @input="e => { form.expertise[index] = e.target.value }"
-                placeholder="Masukkan keahlian atau kepakaran..."
-                autocomplete="off"
-                list="expertises-list"
-                :class="{ 'has-error': form.errors[`expertise.${index}`] }"
-                style="flex: 1; min-width: 0;"
-              />
+            <div v-for="(exp, index) in form.expertise" :key="index" style="display:flex; gap:8px; margin-bottom:8px; flex-wrap: wrap; position: relative;">
+              <div style="flex: 1; min-width: 0; position: relative;">
+                <input 
+                  type="text" 
+                  :value="form.expertise[index]"
+                  @input="e => handleExpertiseSearch(index, e.target.value)"
+                  @focus="activeDropdown = index"
+                  @blur="hideDropdown"
+                  placeholder="Cari atau pilih keahlian..."
+                  autocomplete="off"
+                  :class="{ 'has-error': form.errors[`expertise.${index}`] }"
+                  style="width: 100%;"
+                />
+                <!-- Dropdown -->
+                <div v-if="activeDropdown === index" class="custom-dropdown">
+                  <div 
+                    v-for="option in getFilteredExpertises(index)" 
+                    :key="option" 
+                    @mousedown.prevent="selectExpertise(index, option)"
+                    class="dropdown-item"
+                  >
+                    {{ option }}
+                  </div>
+                  <div v-if="getFilteredExpertises(index).length === 0" class="dropdown-item empty">
+                    Opsi tidak ditemukan
+                  </div>
+                </div>
+              </div>
               <button type="button" @click="removeExpertise(index)" class="btn-remove-exp">✕</button>
               <div v-if="form.errors[`expertise.${index}`]" class="error-msg" style="width: 100%;">{{ form.errors[`expertise.${index}`] }}</div>
             </div>
             <button type="button" v-if="form.expertise.length < 3" @click="addExpertise" class="btn-add-exp">+ Tambah Kepakaran</button>
-            <datalist id="expertises-list">
-              <option v-for="exp in expertises" :key="exp" :value="exp"></option>
-            </datalist>
             <span v-if="form.errors.expertise" class="error-msg">{{ form.errors.expertise }}</span>
           </div>
 
@@ -360,6 +374,29 @@ const avatarPreviewUrl = ref(null);
 const showOldPassword = ref(false);
 const showNewPassword = ref(false);
 const showConfirmPassword = ref(false);
+
+const activeDropdown = ref(null);
+
+function handleExpertiseSearch(index, val) {
+  form.expertise[index] = val;
+  activeDropdown.value = index;
+}
+
+function getFilteredExpertises(index) {
+  const query = form.expertise[index]?.toLowerCase() || '';
+  return props.expertises.filter(exp => exp.toLowerCase().includes(query));
+}
+
+function selectExpertise(index, option) {
+  form.expertise[index] = option;
+  activeDropdown.value = null;
+}
+
+function hideDropdown() {
+  setTimeout(() => {
+    activeDropdown.value = null;
+  }, 150);
+}
 
 const form = useForm({
   _method: 'PATCH',
@@ -829,6 +866,37 @@ function submit() {
   background: #f9fafb;
   border-color: #9ca3af;
   color: #111827;
+}
+
+.custom-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #d1d5db;
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+  border-radius: 6px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin-top: 4px;
+}
+.dropdown-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 13.5px;
+  color: #111827;
+}
+.dropdown-item:hover {
+  background: #f3f4f6;
+}
+.dropdown-item.empty {
+  color: #6b7280;
+  cursor: default;
+}
+.dropdown-item.empty:hover {
+  background: white;
 }
 
 .proof-preview-container {
