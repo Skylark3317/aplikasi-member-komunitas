@@ -60,6 +60,18 @@
           </svg>
           <span>Riwayat Aktivitas</span>
         </Link>
+
+        <!-- Home -->
+        <Link
+          :href="route('home')"
+          :class="['nav-item', isActive('home') ? 'active' : '']"
+        >
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span>Home</span>
+        </Link>
       </nav>
 
       <!-- User section with popup -->
@@ -121,6 +133,7 @@ function isActive(routeName) {
   if (routeName === 'superadmin.pengaturan') return current.startsWith('/superadmin/pengaturan');
   if (routeName === 'superadmin.paket-premium') return current.startsWith('/superadmin/paket-premium');
   if (routeName === 'superadmin.riwayat-aktivitas') return current.startsWith('/superadmin/riwayat-aktivitas');
+  if (routeName === 'home') return current === '/';
   return false;
 }
 

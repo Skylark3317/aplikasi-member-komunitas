@@ -19,6 +19,18 @@
           </svg>
           <span>Pembayaran</span>
         </Link>
+
+        <!-- Home -->
+        <Link
+          :href="route('home')"
+          :class="['nav-item', isActive('home') ? 'active' : '']"
+        >
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span>Home</span>
+        </Link>
       </nav>
 
       <!-- User section with popup -->
@@ -77,6 +89,7 @@ function closePopup(e) {
 function isActive(routeName) {
   const current = $page.url;
   if (routeName === 'keuangan.pembayaran') return current.startsWith('/keuangan/pembayaran');
+  if (routeName === 'home') return current === '/';
   return false;
 }
 
