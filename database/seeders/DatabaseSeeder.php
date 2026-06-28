@@ -215,6 +215,23 @@ class DatabaseSeeder extends Seeder
             ],
         ];
 
+        $regularMembers = [
+            [
+                'name' => 'Min Paimin',
+                'email' => 'minpaimin@amk.com',
+                'institution' => 'Universitas Indonesia',
+                'department' => 'Teknik Elektro',
+                'address' => 'Jl. Margonda Raya, Depok',
+            ],
+            [
+                'name' => 'Nem Painem',
+                'email' => 'nempainem@amk.com',
+                'institution' => 'Universitas Indonesia',
+                'department' => 'Teknik Mesin',
+                'address' => 'Jl. Margonda Raya, Depok',
+            ],
+        ];
+
         $memberModels = [];
         foreach ($members as $m) {
             $user = User::updateOrCreate(
@@ -237,6 +254,31 @@ class DatabaseSeeder extends Seeder
                     'department' => $m['department'],
                     'address' => $m['address'],
                     'status' => 'active',
+                ]
+            );
+        }
+
+        // ── Regular Members (non-premium) ──────────────────────
+        foreach ($regularMembers as $m) {
+            $user = User::updateOrCreate(
+                ['email' => $m['email']],
+                [
+                    'name'              => $m['name'],
+                    'password'          => Hash::make('Password123'),
+                    'role'              => 'member',
+                    'telephone'         => '082991919192811',
+                    'email_verified_at' => now(),
+                ]
+            );
+
+            \App\Models\MemberProfile::updateOrCreate(
+                ['member_id' => $user->id],
+                [
+                    'expire_date' => now(),
+                    'institution' => $m['institution'],
+                    'department' => $m['department'],
+                    'address' => $m['address'],
+                    'status' => 'nonactive',
                 ]
             );
         }
