@@ -14,8 +14,13 @@ class ProfilController extends Controller
 {
     public function show(Request $request)
     {
-        $user = $request->user()->load('memberProfile');
+        $user = $request->user()->load('memberProfile.plan');
         $memberProfile = $user->memberProfile;
+
+        $planName = null;
+        if ($memberProfile && $memberProfile->plan) {
+            $planName = $memberProfile->plan->name;
+        }
 
         $profileData = [
             'id'                   => $user->id,
@@ -26,6 +31,8 @@ class ProfilController extends Controller
             'is_active'            => $user->is_active,
             'created_at'           => $user->created_at?->translatedFormat('j F Y'),
             'is_premium'           => $user->isPremium(),
+            'premium_status'       => $user->isPremium() ? 'Premium' : 'Regular',
+            'plan_name'            => $planName,
             'status'               => $user->membershipStatus(),
             'avatar_url'           => $user->avatar_url,
             'delete_requested_at'  => $user->delete_requested_at?->toISOString(),

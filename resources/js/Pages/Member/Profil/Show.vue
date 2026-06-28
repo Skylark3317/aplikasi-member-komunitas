@@ -30,7 +30,9 @@
           <div class="basic-details">
             <h2 class="user-fullname">
               {{ user.name }}
-              <i v-if="profileCompletion.percent === 100" class="bi bi-patch-check-fill" style="color: #0d6efd; font-size: 20px; margin-left: 6px; vertical-align: middle;" title="Profil Lengkap"></i>
+              <svg v-if="user.is_premium" viewBox="0 0 24 24" fill="#3b82f6" class="premium-badge" title="Premium Member">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
             </h2>
             <div class="meta-info-list">
               <div class="meta-item">
@@ -121,6 +123,19 @@
               <span class="stat-label">Sisa Masa Aktif Membership</span>
             </div>
           </div>
+
+          <!-- Box 5: Paket Premium -->
+          <div class="stat-box">
+            <div class="stat-icon-wrapper purple-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="stat-icon">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">{{ user.plan_name || '-' }}</span>
+              <span class="stat-label">Paket Premium</span>
+            </div>
+          </div>
         </div>
 
         <!-- Profile Completion Bar -->
@@ -189,10 +204,24 @@
           </div>
 
           <div class="info-row">
-            <span class="info-label">Status</span>
+            <span class="info-label">Status Premium</span>
             <span class="info-value">
               <span :class="['status-badge', user.is_premium ? 'badge-success' : 'badge-danger']">
-                {{ user.is_premium ? 'Aktif' : 'Nonaktif' }}
+                {{ user.premium_status }}
+              </span>
+            </span>
+          </div>
+
+          <div class="info-row">
+            <span class="info-label">Paket Premium</span>
+            <span class="info-value">{{ user.plan_name || '-' }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="info-label">Status</span>
+            <span class="info-value">
+              <span :class="['status-badge', user.is_active ? 'badge-success' : 'badge-danger']">
+                {{ user.is_active ? 'Aktif' : 'Nonaktif' }}
               </span>
             </span>
           </div>
@@ -894,6 +923,8 @@ function downloadCardAsImage() {
   flex-wrap: wrap;
 }
 
+.premium-badge { width: 24px; height: 24px; flex-shrink: 0; }
+
 /* Verified Badge */
 .verified-badge {
   display: inline-flex;
@@ -934,14 +965,20 @@ function downloadCardAsImage() {
   flex-shrink: 0;
 }
 
-/* 4 Grid Info Boxes */
+/* 5 Grid Info Boxes */
 .stats-boxes-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 20px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
+  .stats-boxes-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
   .stats-boxes-grid {
     grid-template-columns: repeat(2, 1fr);
   }

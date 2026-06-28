@@ -69,17 +69,27 @@ class KelolAkunController extends Controller
 
         $memberProfile = null;
         if ($user->role === 'member') {
+            $user->load('memberProfile.plan');
             $memberProfile = $user->memberProfile;
         }
 
+        $isPremium = $user->isPremium();
+        $planName  = null;
+        if ($memberProfile && $memberProfile->plan) {
+            $planName = $memberProfile->plan->name;
+        }
+
         $data = [
-            'id'           => $user->id,
-            'name'         => $user->name,
-            'email'        => $user->email,
-            'telephone'    => $user->telephone,
-            'role'         => $user->role,
-            'is_active'    => $user->is_active,
-            'created_at'   => $user->created_at?->translatedFormat('j F Y'),
+            'id'             => $user->id,
+            'name'           => $user->name,
+            'email'          => $user->email,
+            'telephone'      => $user->telephone,
+            'role'           => $user->role,
+            'is_active'      => $user->is_active,
+            'is_premium'     => $isPremium,
+            'premium_status' => $isPremium ? 'Premium' : 'Regular',
+            'plan_name'      => $planName,
+            'created_at'     => $user->created_at?->translatedFormat('j F Y'),
         ];
 
         if ($memberProfile) {

@@ -22,7 +22,12 @@
           <span v-else class="avatar-initials">{{ initials }}</span>
         </div>
         <div class="user-meta">
-          <h2 class="user-name">{{ user.name }}</h2>
+          <h2 class="user-name">
+            {{ user.name }}
+            <svg v-if="user.is_premium" viewBox="0 0 24 24" fill="#3b82f6" class="premium-badge" title="Premium Member">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+          </h2>
           <div class="user-sub-info">
             <span v-if="user.member_profile?.institution" class="sub-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -102,6 +107,17 @@
                 <div class="card-key">Sisa Masa Aktif Membership</div>
               </div>
             </div>
+            <div class="info-card">
+              <div class="card-icon purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                </svg>
+              </div>
+              <div>
+                <div class="card-val">{{ user.plan_name || '-' }}</div>
+                <div class="card-key">Paket Premium</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -127,6 +143,18 @@
           <div class="info-row">
             <div class="info-key">Nomor Anggota</div>
             <div class="info-val">{{ user.member_profile.member_number }}</div>
+          </div>
+          <div class="info-row">
+            <div class="info-key">Status Premium</div>
+            <div class="info-val">
+              <span :class="['badge', user.is_premium ? 'badge-premium' : 'badge-regular']">
+                {{ user.premium_status }}
+              </span>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-key">Paket Premium</div>
+            <div class="info-val">{{ user.plan_name || '-' }}</div>
           </div>
           <div class="info-row">
             <div class="info-key">Status</div>
@@ -342,7 +370,8 @@ function viewLarge(url) {
 .avatar-initials { font-size: 26px; font-weight: 700; color: var(--primary-color); }
 
 .user-meta { flex: 1; }
-.user-name { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 6px; }
+.user-name { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.premium-badge { width: 20px; height: 20px; flex-shrink: 0; }
 
 .user-sub-info { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
 .sub-item {
@@ -415,6 +444,8 @@ function viewLarge(url) {
 }
 .badge-aktif    { background: #d1fae5; color: #059669; }
 .badge-nonaktif { background: #fee2e2; color: #dc2626; }
+.badge-premium  { background: #d1fae5; color: #059669; }
+.badge-regular  { background: #f3f4f6; color: #6b7280; }
 
 /* Actions */
 .action-buttons {
