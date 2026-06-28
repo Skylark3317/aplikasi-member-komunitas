@@ -39,6 +39,10 @@
               <span class="info-value">{{ payment.invoice.number }}</span>
             </div>
             <div class="info-row">
+              <span class="info-label">Nama Member</span>
+              <span class="info-value">{{ payment.payer.name }}</span>
+            </div>
+            <div class="info-row">
               <span class="info-label">Tanggal Tagihan</span>
               <span class="info-value">{{ formatDate(payment.invoice.created_at) }}</span>
             </div>

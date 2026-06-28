@@ -47,6 +47,7 @@
           <thead>
             <tr>
               <th>Nomor Invoice</th>
+              <th>Member</th>
               <th>Atas Nama Pengirim</th>
               <th>Tanggal Tagihan</th>
               <th>Tanggal Pembayaran</th>
@@ -59,6 +60,7 @@
             <tr v-for="payment in payments.data" :key="payment.id">
               <td>{{ payment.invoice.number }}</td>
               <td>{{ payment.payer.name }}</td>
+              <td>{{ payment.account_holder_name }}</td>
               <td>{{ formatDate(payment.invoice.created_at) }}</td>
               <td>{{ formatDate(payment.date) }}</td>
               <td>{{ formatCurrency(payment.amount) }}</td>
@@ -77,7 +79,7 @@
               </td>
             </tr>
             <tr v-if="payments.data.length === 0">
-              <td colspan="7" class="empty-state">Tidak ada data pembayaran.</td>
+              <td colspan="8" class="empty-state">Tidak ada data pembayaran.</td>
             </tr>
           </tbody>
         </table>
