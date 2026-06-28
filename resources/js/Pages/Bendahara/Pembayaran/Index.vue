@@ -47,6 +47,7 @@
           <thead>
             <tr>
               <th>Nomor Invoice</th>
+              <th>Paket</th>
               <th>Member</th>
               <th>Atas Nama Pengirim</th>
               <th>Tanggal Tagihan</th>
@@ -59,6 +60,7 @@
           <tbody>
             <tr v-for="payment in payments.data" :key="payment.id">
               <td>{{ payment.invoice.number }}</td>
+              <td>{{ payment.invoice.plan ? payment.invoice.plan.name : '-' }}</td>
               <td>{{ payment.payer.name }}</td>
               <td>{{ payment.account_holder_name }}</td>
               <td>{{ formatDate(payment.invoice.created_at) }}</td>
@@ -79,7 +81,7 @@
               </td>
             </tr>
             <tr v-if="payments.data.length === 0">
-              <td colspan="8" class="empty-state">Tidak ada data pembayaran.</td>
+              <td colspan="9" class="empty-state">Tidak ada data pembayaran.</td>
             </tr>
           </tbody>
         </table>
@@ -299,24 +301,33 @@ function formatCurrency(amount) {
 .data-table th {
   background: #f9fafb;
   text-align: left;
-  padding: 14px 20px;
-  font-size: 13px;
+  padding: 12px 14px;
+  font-size: 12px;
   font-weight: 600;
   color: #374151;
   border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
 }
 .data-table td {
-  padding: 16px 20px;
-  font-size: 13.5px;
+  padding: 12px 14px;
+  font-size: 13px;
   color: #4b5563;
   border-bottom: 1px solid #f3f4f6;
+  vertical-align: middle;
+}
+.data-table th:last-child,
+.data-table td:last-child {
+  text-align: center;
+  width: 50px;
 }
 
 .status-badge {
-  padding: 4px 10px;
+  display: inline-block;
+  padding: 3px 8px;
   border-radius: 6px;
   font-size: 11px;
   font-weight: 600;
+  white-space: nowrap;
 }
 .status-badge.menunggu {
   background: #ffede6;

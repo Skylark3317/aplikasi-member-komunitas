@@ -18,8 +18,12 @@ class ProfilController extends Controller
         $memberProfile = $user->memberProfile;
 
         $planName = null;
-        if ($memberProfile && $memberProfile->plan) {
-            $planName = $memberProfile->plan->name;
+        if ($memberProfile) {
+            if ($memberProfile->plan_snapshot && isset($memberProfile->plan_snapshot['name'])) {
+                $planName = $memberProfile->plan_snapshot['name'];
+            } elseif ($memberProfile->plan) {
+                $planName = $memberProfile->plan->name;
+            }
         }
 
         $profileData = [

@@ -12,7 +12,7 @@ class PembayaranController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Payment::with(['payer', 'invoice'])
+        $query = Payment::with(['payer', 'invoice.plan'])
             ->latest();
 
         if ($request->search) {
@@ -45,7 +45,7 @@ class PembayaranController extends Controller
 
     public function show(Payment $payment)
     {
-        $payment->load(['payer', 'invoice']);
+        $payment->load(['payer', 'invoice.plan']);
         return Inertia::render('Bendahara/Pembayaran/Show', [
             'payment' => $payment,
         ]);
@@ -76,15 +76,25 @@ class PembayaranController extends Controller
             $expiry = now()->addMonths($durationMonths);
         }
 
-        \App\Models\MemberProfile::updateOrCreate(
-            ['member_id' => $payer->id],
-            [
-                'status'      => 'active',
-                'expire_date' => $expiry ?? now()->addYears(100), // lifetime
-                'plan_id'     => $plan?->id,
-                'address'     => '-',
-            ]
-        );
+        $profile = \App\Models\MemberProfile::where('member_id', $payer->id)->first();
+        
+        if ($profile) {
+            $profile->update([
+                'status'        => 'active',
+                'expire_date'   => $expiry ?? now()->addYears(100),
+                'plan_id'       => $plan?->id,
+                'plan_snapshot' => $plan ? $plan->toArray() : null,
+            ]);
+        } else {
+            \App\Models\MemberProfile::create([
+                'member_id'     => $payer->id,
+                'status'        => 'active',
+                'expire_date'   => $expiry ?? now()->addYears(100),
+                'plan_id'       => $plan?->id,
+                'plan_snapshot' => $plan ? $plan->toArray() : null,
+                'address'       => '-',
+            ]);
+        }
 
         // Send email notification to member
         try {

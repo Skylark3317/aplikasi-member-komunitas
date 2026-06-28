@@ -48,6 +48,8 @@ class PengaturanController extends Controller
             'stat_member_personal'=> 'nullable|integer|min:0',
             'available_benefits'  => 'nullable|array',
             'available_benefits.*'=> 'string|max:255',
+            'membership_fee'      => 'sometimes|required|numeric|min:0',
+            'membership_duration' => 'sometimes|required|integer|min:1',
         ]);
 
         $fields = [
@@ -62,6 +64,7 @@ class PengaturanController extends Controller
             'about_title', 'about_description',
             'stat_member_aktif', 'stat_member_pasif',
             'stat_member_company', 'stat_member_personal',
+            'membership_fee', 'membership_duration',
         ];
 
         $changes = [];

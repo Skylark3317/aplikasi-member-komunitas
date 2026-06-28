@@ -36,11 +36,12 @@ class InvoiceCreatedNotification extends Notification
             ->greeting('Halo, ' . $this->user->name . '!')
             ->line('Pesanan paket premium Anda telah berhasil dibuat. Berikut adalah rincian tagihan Anda:')
             ->line('Nomor Invoice: ' . $this->invoice->number)
+            ->line('Paket: ' . ($this->invoice->plan->name ?? '-'))
             ->line('Jumlah: Rp ' . number_format($this->invoice->amount, 0, ',', '.'))
             ->line('Atas Nama Rekening Tujuan: ' . $this->settings['bank_account_name'])
             ->line('Nomor Rekening Tujuan: ' . $this->settings['bank_account_number'])
             ->line('Nama Bank Tujuan: ' . $this->settings['bank_name'])
-            ->line('Batas Waktu Pembayaran: ' . \Carbon\Carbon::parse($this->invoice->due_date)->format('d/m/Y, H:i'))
+            ->line('Batas Waktu Pembayaran: ' . \Carbon\Carbon::parse($this->invoice->due_date)->setTimezone('Asia/Jakarta')->format('d/m/Y, H:i') . ' WIB')
             ->action('Lihat Halaman Invoice', $invoiceUrl)
             ->line('Silakan lakukan transfer sesuai jumlah di atas dan unggah bukti pembayaran melalui tautan tersebut sebelum batas waktu berakhir.');
     }

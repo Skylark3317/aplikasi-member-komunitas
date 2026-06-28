@@ -26,11 +26,20 @@ class KontenController extends Controller
         // Always load all content — frontend will gate per tab
         $contents = Content::latest()->get();
 
+        $activeBenefits = [];
+        if ($profile) {
+            if ($profile->plan_snapshot && isset($profile->plan_snapshot['features'])) {
+                $activeBenefits = $profile->plan_snapshot['features'];
+            } elseif ($profile->plan) {
+                $activeBenefits = $profile->plan->features ?? [];
+            }
+        }
+
         return Inertia::render('Member/Konten/Index', [
             'contents'        => $contents,
             'canAccessEbook'  => $canAccessEbook,
             'canAccessVideo'  => $canAccessVideo,
-            'activeBenefits'  => $profile?->plan?->features ?? [],
+            'activeBenefits'  => $activeBenefits,
         ]);
     }
 }

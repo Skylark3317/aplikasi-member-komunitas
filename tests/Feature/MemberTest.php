@@ -111,6 +111,17 @@ class MemberTest extends TestCase
     {
         $member = $this->makeMember();
 
+        // Buat paket aktif
+        \App\Models\MembershipPlan::create([
+            'name'          => 'Paket Emas',
+            'description'   => 'Deskripsi paket emas',
+            'price'         => 150000,
+            'duration'      => 1,
+            'duration_unit' => 'month',
+            'is_active'     => true,
+            'features'      => ['Akses Ebook Berkualitas'],
+        ]);
+
         // Pastikan tidak ada invoice yang sudah ada
         $this->assertDatabaseMissing('invoices', ['user_id' => $member->id]);
 
@@ -215,9 +226,20 @@ class MemberTest extends TestCase
     // ──────────────────────────────────────────────────────────
     public function test_MBR22_member_dapat_mengirim_pesan_chat(): void
     {
+        $plan = \App\Models\MembershipPlan::create([
+            'name'          => 'Paket Tanya Jawab',
+            'price'         => 50000,
+            'duration'      => 12,
+            'duration_unit' => 'month',
+            'features'      => ['Tanya Jawab dengan Admin'],
+            'is_active'     => true,
+        ]);
+
         $member       = $this->makeMember();
         MemberProfile::create([
             'member_id'     => $member->id,
+            'plan_id'       => $plan->id,
+            'plan_snapshot' => $plan->toArray(),
             'status'        => 'active',
             'expire_date'   => now()->addDays(30),
             'address'       => 'Test',
@@ -242,9 +264,20 @@ class MemberTest extends TestCase
     // ──────────────────────────────────────────────────────────
     public function test_MBR23_member_tidak_bisa_kirim_pesan_kosong(): void
     {
+        $plan = \App\Models\MembershipPlan::create([
+            'name'          => 'Paket Tanya Jawab',
+            'price'         => 50000,
+            'duration'      => 12,
+            'duration_unit' => 'month',
+            'features'      => ['Tanya Jawab dengan Admin'],
+            'is_active'     => true,
+        ]);
+
         $member       = $this->makeMember();
         MemberProfile::create([
             'member_id'     => $member->id,
+            'plan_id'       => $plan->id,
+            'plan_snapshot' => $plan->toArray(),
             'status'        => 'active',
             'expire_date'   => now()->addDays(30),
             'address'       => 'Test',

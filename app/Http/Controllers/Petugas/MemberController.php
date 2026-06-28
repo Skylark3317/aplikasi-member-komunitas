@@ -72,7 +72,14 @@ class MemberController extends Controller
                 $profile = $user->memberProfile;
                 
                 $status = $isPremium ? 'Premium' : 'Regular';
-                $planName = ($isPremium && $profile && $profile->plan) ? $profile->plan->name : '-';
+                $planName = '-';
+                if ($isPremium && $profile) {
+                    if ($profile->plan_snapshot && isset($profile->plan_snapshot['name'])) {
+                        $planName = $profile->plan_snapshot['name'];
+                    } elseif ($profile->plan) {
+                        $planName = $profile->plan->name;
+                    }
+                }
                 $expireDate = ($isPremium && $profile && $profile->expire_date) 
                     ? Carbon::parse($profile->expire_date)->format('d M Y') 
                     : '-';

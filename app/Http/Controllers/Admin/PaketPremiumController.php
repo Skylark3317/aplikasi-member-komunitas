@@ -82,12 +82,6 @@ class PaketPremiumController extends Controller
 
     public function destroy(MembershipPlan $plan)
     {
-        // Cegah hapus bila masih ada invoice terkait (data riwayat tetap utuh)
-        $invoiceCount = Invoice::where('plan_id', $plan->id)->count();
-        if ($invoiceCount > 0) {
-            return back()->with('error', "Tidak dapat menghapus paket ini karena masih terhubung dengan {$invoiceCount} invoice. Nonaktifkan paket sebagai gantinya.");
-        }
-
         $name = $plan->name;
         $id   = $plan->id;
 

@@ -16,6 +16,7 @@
             <tr>
               <th>Nomor Invoice</th>
               <th>Tanggal Tagihan</th>
+              <th>Paket</th>
               <th>Jumlah</th>
               <th>Status</th>
               <th class="text-center">Aksi</th>
@@ -30,6 +31,7 @@
             <tr v-for="invoice in paginatedInvoices" :key="invoice.id">
               <td class="font-semibold">{{ invoice.number }}</td>
               <td>{{ formatDate(invoice.created_at) }}</td>
+              <td>{{ invoice.plan ? invoice.plan.name : '-' }}</td>
               <td class="font-semibold">Rp{{ formatCurrency(invoice.amount) }}</td>
               <td>
                 <span :class="['status-badge', getBadgeClass(invoice)]">

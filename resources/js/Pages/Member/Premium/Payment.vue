@@ -124,6 +124,11 @@
                 <span class="detail-value font-semibold">{{ invoice.number }}</span>
               </div>
               
+              <div class="detail-row" v-if="invoice.plan">
+                <span class="detail-label">Paket</span>
+                <span class="detail-value font-medium">{{ invoice.plan.name }}</span>
+              </div>
+              
               <div class="detail-row">
                 <span class="detail-label">Tanggal Tagihan</span>
                 <span class="detail-value">{{ formatInvoiceDate(invoice.created_at) }}</span>

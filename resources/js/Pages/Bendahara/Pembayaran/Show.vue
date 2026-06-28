@@ -39,6 +39,10 @@
               <span class="info-value">{{ payment.invoice.number }}</span>
             </div>
             <div class="info-row">
+              <span class="info-label">Paket</span>
+              <span class="info-value">{{ payment.invoice.plan ? payment.invoice.plan.name : '-' }}</span>
+            </div>
+            <div class="info-row">
               <span class="info-label">Nama Member</span>
               <span class="info-value">{{ payment.payer.name }}</span>
             </div>

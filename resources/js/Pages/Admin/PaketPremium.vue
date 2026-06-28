@@ -167,8 +167,8 @@
             <label class="form-label">Fitur Paket (Pilihan Benefit)</label>
             <p class="field-hint">Pilih benefit yang termasuk dalam paket ini. (Diatur dari menu Pengaturan)</p>
             <div v-if="availableBenefits && availableBenefits.length > 0" style="display: grid; gap: 8px; margin-top: 8px;">
-              <label v-for="(benefit, i) in availableBenefits" :key="i" :style="{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13.5px', cursor: editing ? 'not-allowed' : 'pointer', color: '#374151', opacity: editing ? '0.7' : '1' }">
-                <input type="checkbox" :value="benefit" v-model="form.features" :disabled="!!editing" :style="{ width: '16px', height: '16px', accentColor: 'var(--primary-color)', cursor: editing ? 'not-allowed' : 'pointer' }" />
+              <label v-for="(benefit, i) in availableBenefits" :key="i" style="display: flex; align-items: center; gap: 8px; font-size: 13.5px; cursor: pointer; color: #374151;">
+                <input type="checkbox" :value="benefit" v-model="form.features" style="width: 16px; height: 16px; accent-color: var(--primary-color); cursor: pointer;" />
                 <span>{{ benefit }}</span>
               </label>
             </div>

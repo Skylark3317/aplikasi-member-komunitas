@@ -256,6 +256,7 @@ class DatabaseSeeder extends Seeder
                     'address' => $m['address'],
                     'status' => 'active',
                     'plan_id' => $lifetimePlan?->id,
+                    'plan_snapshot' => $lifetimePlan ? $lifetimePlan->toArray() : null,
                 ]
             );
         }

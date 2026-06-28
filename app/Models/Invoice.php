@@ -30,7 +30,7 @@ class Invoice extends Model
 
     public function plan()
     {
-        return $this->belongsTo(MembershipPlan::class, 'plan_id');
+        return $this->belongsTo(MembershipPlan::class, 'plan_id')->withTrashed();
     }
 
     public function payment()

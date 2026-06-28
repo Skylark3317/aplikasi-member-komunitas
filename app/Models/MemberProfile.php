@@ -7,13 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class MemberProfile extends Model
 {
     protected $fillable = [
-        'member_id', 'plan_id', 'member_number', 'expire_date', 'institution', 'department', 'address', 'status',
+        'member_id', 'plan_id', 'plan_snapshot', 'member_number', 'expire_date', 'institution', 'department', 'address', 'status',
         'gender', 'blood_type', 'last_education', 'expertise', 'expertise_proof'
     ];
 
     protected $casts = [
         'expertise' => 'array',
         'expertise_proof' => 'array',
+        'plan_snapshot' => 'array',
     ];
 
     protected static function booted(): void
@@ -51,7 +52,7 @@ class MemberProfile extends Model
 
     public function plan()
     {
-        return $this->belongsTo(MembershipPlan::class, 'plan_id');
+        return $this->belongsTo(MembershipPlan::class, 'plan_id')->withTrashed();
     }
 
     /**
@@ -59,10 +60,14 @@ class MemberProfile extends Model
      */
     public function hasBenefit(string $benefit): bool
     {
-        if (!$this->plan) {
+        $features = [];
+        if ($this->plan_snapshot && isset($this->plan_snapshot['features'])) {
+            $features = $this->plan_snapshot['features'];
+        } elseif ($this->plan) {
+            $features = $this->plan->features ?? [];
+        } else {
             return false;
         }
-        $features = $this->plan->features ?? [];
         return in_array($benefit, $features, true);
     }
 }

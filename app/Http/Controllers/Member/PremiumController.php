@@ -112,9 +112,9 @@ class PremiumController extends Controller
             ]);
         } else {
             $profile->update([
-                'institution' => $institution,
-                'department'  => $department,
-                'address'     => $address,
+                'institution'   => $institution,
+                'department'    => $department,
+                'address'       => $address,
             ]);
         }
 
@@ -152,7 +152,7 @@ class PremiumController extends Controller
     public function paymentIndex(Request $request)
     {
         $user = $request->user();
-        $invoices = $user->invoices()->with('payment')->latest()->get();
+        $invoices = $user->invoices()->with(['payment', 'plan'])->latest()->get();
 
         return Inertia::render('Member/Premium/PaymentIndex', [
             'invoices' => $invoices,
@@ -167,6 +167,7 @@ class PremiumController extends Controller
             abort(403);
         }
 
+        $invoice->load('plan');
         $payment = $invoice->payment;
 
         // Determine step-by-step status
