@@ -36,14 +36,22 @@ class KelolAkunController extends Controller
             $query->where('is_active', $request->status === 'aktif');
         }
 
-        $users = $query->orderBy('name')->get()->map(function (User $user) {
+        $users = $query->with('memberProfile.plan')->orderBy('name')->get()->map(function (User $user) {
+            $planName = null;
+            $profile  = $user->memberProfile;
+            if ($profile && $profile->plan) {
+                $planName = $profile->plan->name;
+            }
+
             return [
-                'id'         => $user->id,
-                'name'       => $user->name,
-                'email'      => $user->email,
-                'role'       => $user->role,
-                'is_active'  => $user->is_active,
-                'is_premium' => $user->isPremium(),
+                'id'             => $user->id,
+                'name'           => $user->name,
+                'email'          => $user->email,
+                'role'           => $user->role,
+                'is_active'      => $user->is_active,
+                'is_premium'     => $user->isPremium(),
+                'premium_status' => $user->isPremium() ? 'Premium' : 'Regular',
+                'plan_name'      => $planName,
             ];
         });
 

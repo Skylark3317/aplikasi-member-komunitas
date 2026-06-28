@@ -233,6 +233,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         $memberModels = [];
+        $lifetimePlan = \App\Models\MembershipPlan::where('is_lifetime', true)->first();
         foreach ($members as $m) {
             $user = User::updateOrCreate(
                 ['email' => $m['email']],
@@ -254,6 +255,7 @@ class DatabaseSeeder extends Seeder
                     'department' => $m['department'],
                     'address' => $m['address'],
                     'status' => 'active',
+                    'plan_id' => $lifetimePlan?->id,
                 ]
             );
         }

@@ -114,6 +114,16 @@
                 <span :class="['role-badge', `role-${user.role}`]">{{ roleLabel(user.role) }}</span>
               </td>
               <td>
+                <span v-if="user.role === 'member'" :class="['badge', user.is_premium ? 'badge-premium' : 'badge-regular']">
+                  {{ user.premium_status }}
+                </span>
+                <span v-else class="dash">&mdash;</span>
+              </td>
+              <td>
+                <span v-if="user.role === 'member' && user.plan_name" class="plan-name">{{ user.plan_name }}</span>
+                <span v-else class="dash">&mdash;</span>
+              </td>
+              <td>
                 <span :class="['badge', user.is_active ? 'badge-aktif' : 'badge-nonaktif']">
                   {{ user.is_active ? 'Aktif' : 'Nonaktif' }}
                 </span>
@@ -171,10 +181,12 @@ const statusOptions = [
 ];
 
 const columns = [
-  { key: 'name',     label: 'Nama' },
-  { key: 'email',    label: 'Email' },
-  { key: 'role',     label: 'Role' },
-  { key: 'is_active',label: 'Status' },
+  { key: 'name',           label: 'Nama' },
+  { key: 'email',          label: 'Email' },
+  { key: 'role',           label: 'Role' },
+  { key: 'premium_status', label: 'Status Premium' },
+  { key: 'plan_name',      label: 'Paket Premium' },
+  { key: 'is_active',      label: 'Status' },
 ];
 
 // Sorting state
@@ -446,6 +458,12 @@ function roleLabel(role) {
 .role-staff   { background: #dbeafe; color: #1d4ed8; }
 .role-finance { background: #fef9c3; color: #92400e; }
 .role-leader  { background: #fce7f3; color: #be185d; }
+
+.badge-premium { background: #d1fae5; color: #059669; }
+.badge-regular { background: #f3f4f6; color: #6b7280; }
+
+.plan-name { font-size: 12.5px; color: #374151; }
+.dash { color: #d1d5db; }
 
 /* View button */
 .btn-view {
