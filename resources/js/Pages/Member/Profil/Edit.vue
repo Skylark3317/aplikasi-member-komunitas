@@ -582,8 +582,8 @@ function submit() {
   align-items: center;
   justify-content: center;
   background: #fff;
-  border: 1px solid #007bff;
-  color: #007bff;
+  border: 1px solid #d1d5db;
+  color: #374151;
   padding: 8px 20px;
   border-radius: 6px;
   font-size: 13px;
@@ -593,16 +593,14 @@ function submit() {
   transition: background 0.15s ease;
 }
 
-.btn-cancel-top:hover {
-  background: #eff6ff;
-}
+.btn-cancel-top:hover { background: #f3f4f6; color: #374151; border-color: #d1d5db; }
 
 .btn-save-top {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: #007bff;
+  background: var(--primary-color);
   color: #fff;
   border: none;
   padding: 8px 20px;
@@ -610,12 +608,12 @@ function submit() {
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: filter 0.2s;
 }
 
-.btn-save-top:hover {
-  background: #0056b3;
-}
+.btn-save-top:hover { filter: brightness(0.9); }
+.btn-save-top svg { width: 16px; height: 16px; }
+
 
 .save-icon-sm {
   width: 14px;
@@ -740,30 +738,21 @@ function submit() {
 }
 
 .btn-upload {
-  background: #007bff;
+  background: var(--primary-color);;
   color: #fff;
   border: none;
 }
 
-.btn-upload:hover {
-  background: #0056b3;
-}
+.btn-upload:hover{ filter: brightness(0.9); }
+.btn-upload svg { width: 16px; height: 16px; }
 
 .btn-delete-avatar {
   background: #fff;
-  border: 1px solid #007bff;
-  color: #007bff;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
 }
 
-.btn-delete-avatar:hover:not(:disabled) {
-  background: #eff6ff;
-}
-
-.btn-delete-avatar:disabled {
-  border-color: #d1d5db;
-  color: #9ca3af;
-  cursor: not-allowed;
-}
+.btn-delete-avatar:hover { filter: brightness(0.95); }
 
 .hidden-file-input {
   display: none;

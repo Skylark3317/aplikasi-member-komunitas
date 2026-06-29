@@ -81,7 +81,8 @@
         <div class="user-info-text">
           <span class="user-name">
             {{ $page.props.auth.user.name }}
-            <i v-if="$page.props.auth.user.profile_completion_percent === 100" class="bi bi-patch-check-fill" style="color: #0d6efd; margin-left: 4px; font-size: 14px;" title="Profil Lengkap"></i>
+            <i v-if="$page.props.auth.user.is_premium" class="bi bi-patch-check-fill" style="color: #3b82f6; margin-left: 4px; font-size: 14px;" title="Premium Member"></i>
+            <i v-if="$page.props.auth.user.profile_completion_percent === 100" class="bi bi-star-fill" style="color: #f59e0b; margin-left: 4px; font-size: 14px;" title="Profil Lengkap"></i>
           </span>
           <span :class="['user-role', $page.props.auth.user.is_premium ? 'role-premium' : 'role-biasa']">
             {{ $page.props.auth.user.is_premium ? 'Member Premium' : 'Member' }}
@@ -97,7 +98,7 @@
             </svg>
             Profil
           </Link>
-          <Link :href="route('logout')" method="post" as="button" class="popup-item logout">
+          <Link :href="route('logout')" method="post" as="button" class="popup-item logout" @click="handleLogout">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
               <polyline points="16 17 21 12 16 7"/>
@@ -156,6 +157,10 @@ const showExpiringAlert = computed(() => {
 
 function togglePopup() {
   showPopup.value = !showPopup.value;
+}
+
+function handleLogout() {
+  window.incompleteBannerDismissed = {};
 }
 
 function closePopup(e) {
@@ -275,7 +280,7 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: #007bff;
+  background: var(--primary-color);
   color: #fff;
   padding: 10px 14px;
   border-radius: 8px;
@@ -286,9 +291,9 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
   width: 100%;
   box-sizing: border-box;
 }
-.btn-sidebar-premium:hover {
-  background: #0056b3;
-}
+
+.btn-sidebar-premium:hover { filter: brightness(0.9); }
+
 .lightning-icon {
   width: 14px;
   height: 14px;

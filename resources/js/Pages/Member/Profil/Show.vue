@@ -16,6 +16,64 @@
     <div class="divider" />
 
     <!-- Content Area -->
+    <!-- ===== Banner Kelengkapan Profil ===== -->
+    <!-- Kondisi A: Profil BELUM LENGKAP -->
+    <div
+      v-if="showIncompleteBanner"
+      class="profile-banner banner-incomplete"
+    >
+      <div class="banner-left">
+        <div class="banner-icon-wrap incomplete">
+          <i class="bi bi-person-fill-exclamation"></i>
+        </div>
+        <div class="banner-text">
+          <p class="banner-title">Lengkapi Profilmu!</p>
+          <p class="banner-sub">Profil kamu baru <strong>{{ profileCompletion.percent }}%</strong> lengkap. Lengkapi semua data untuk mendapatkan bintang ⭐ di samping namamu!</p>
+          <!-- Progress Bar -->
+          <div class="banner-progress-track">
+            <div
+              class="banner-progress-fill"
+              :style="{ width: profileCompletion.percent + '%' }"
+            ></div>
+          </div>
+          <!-- Chips Checklist -->
+          <div class="banner-checklist">
+            <div
+              v-for="field in profileCompletion.fields"
+              :key="field.key"
+              :class="['banner-chip', field.filled ? 'chip-filled' : 'chip-empty']"
+            >
+              <i :class="field.filled ? 'bi bi-check-circle-fill chip-check' : 'bi bi-circle chip-empty-icon'"></i>
+              <span>{{ field.label }}</span>
+              <Link v-if="!field.filled" :href="route('member.profil.edit')" class="chip-fill-link">Isi →</Link>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="banner-close-btn" @click="dismissIncompleteBanner" title="Tutup">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <!-- Kondisi B: Profil SUDAH LENGKAP 100% -->
+    <div
+      v-if="showCompleteBanner"
+      class="profile-banner banner-complete"
+    >
+      <div class="banner-left">
+        <div class="banner-icon-wrap complete">
+          <i class="bi bi-star-fill"></i>
+        </div>
+        <div class="banner-text">
+          <p class="banner-title">Profil Kamu Sudah Lengkap 100%! 🎉</p>
+          <p class="banner-sub">Luar biasa! Semua data profilmu sudah diisi. Bintang <i class="bi bi-star-fill" style="color:#f59e0b;font-size:13px;"></i> kini tampil di samping namamu sebagai tanda profil lengkap.</p>
+        </div>
+      </div>
+      <button class="banner-close-btn" @click="dismissCompleteBanner" title="Tutup">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
     <div class="content-area">
       <div class="profile-header-card">
         <!-- Avatar & Basic info row -->
@@ -30,9 +88,18 @@
           <div class="basic-details">
             <h2 class="user-fullname">
               {{ user.name }}
-              <svg v-if="user.is_premium" viewBox="0 0 24 24" fill="#3b82f6" class="premium-badge" title="Premium Member">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-              </svg>
+              <!-- Centang biru premium: muncul sebelah kiri -->
+              <i
+                v-if="user.is_premium"
+                class="bi bi-patch-check-fill premium-badge-icon"
+                title="Premium Member"
+              ></i>
+              <!-- Bintang kuning: muncul sebelah kanan, hanya jika profil 100% lengkap -->
+              <i
+                v-if="profileCompletion.percent === 100"
+                class="bi bi-star-fill name-star"
+                title="Profil Lengkap"
+              ></i>
             </h2>
             <div class="meta-info-list">
               <div class="meta-item">
@@ -138,49 +205,6 @@
           </div>
         </div>
 
-        <!-- Profile Completion Bar -->
-        <div class="completion-section">
-          <div class="completion-header">
-            <div class="completion-title-row">
-              <span class="completion-label">Kelengkapan Profil</span>
-              <span :class="['completion-percent-badge', profileCompletion.percent === 100 ? 'badge-complete' : 'badge-incomplete']">
-                {{ profileCompletion.percent }}%
-              </span>
-            </div>
-            <p class="completion-hint" v-if="profileCompletion.percent < 100">
-              Lengkapi profilmu untuk mendapatkan centang biru ✓ di samping namamu!
-            </p>
-          </div>
-
-          <!-- Progress Bar -->
-          <div class="progress-bar-track">
-            <div
-              class="progress-bar-fill"
-              :style="{ width: profileCompletion.percent + '%' }"
-              :class="profileCompletion.percent === 100 ? 'bar-complete' : 'bar-progress'"
-            ></div>
-          </div>
-
-          <!-- Field Checklist -->
-          <div class="completion-checklist">
-            <div
-              v-for="field in profileCompletion.fields"
-              :key="field.key"
-              :class="['checklist-item', field.filled ? 'item-filled' : 'item-empty']"
-            >
-              <span class="check-icon-wrap">
-                <svg v-if="field.filled" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="chk-icon">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="chk-icon">
-                  <circle cx="12" cy="12" r="10"/>
-                </svg>
-              </span>
-              <span class="check-field-name">{{ field.label }}</span>
-              <Link v-if="!field.filled" :href="route('member.profil.edit')" class="check-fill-link">Isi sekarang →</Link>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- Informasi Pribadi Section -->
@@ -430,7 +454,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { Head, Link, usePage, router } from '@inertiajs/vue3';
 import MemberLayout from '@/Layouts/MemberLayout.vue';
 
@@ -443,16 +467,7 @@ const settings = computed(() => page.props.settings || {});
 
 const showCardModal = ref(false);
 
-function isImage(url) {
-  if (!url) return false;
-  return !!url.match(/\.(jpeg|jpg|gif|png|webp)$/i);
-}
-
-function viewLarge(url) {
-  window.open(url, '_blank');
-}
-
-// Profile Completion Logic
+// Profile Completion Logic (harus di atas onMounted agar bisa digunakan)
 const profileCompletion = computed(() => {
   const fields = [
     {
@@ -511,7 +526,52 @@ const profileCompletion = computed(() => {
   return { fields, percent, filled, total: fields.length };
 });
 
-// Delete account logic
+// ===== Banner Kelengkapan Profil =====
+const completeDismissKey = computed(() => `profile_banner_complete_${props.user.id}`);
+
+const showIncompleteBanner = ref(false);
+const showCompleteBanner   = ref(false);
+
+onMounted(() => {
+  const pct = profileCompletion.value.percent;
+  if (pct < 100) {
+    // Hapus dismiss state untuk complete banner jika profil menjadi tidak lengkap lagi
+    localStorage.removeItem(completeDismissKey.value);
+    
+    // Tampilkan banner incomplete kecuali sudah di-dismiss pada sesi window ini
+    // Memakai window variable agar reset saat user login ulang (karena full page reload)
+    window.incompleteBannerDismissed = window.incompleteBannerDismissed || {};
+    showIncompleteBanner.value = !window.incompleteBannerDismissed[props.user.id];
+    showCompleteBanner.value = false;
+  } else {
+    // Tampilkan banner complete hanya SEKALI (persistent via localStorage)
+    const dismissed = localStorage.getItem(completeDismissKey.value);
+    showCompleteBanner.value = !dismissed;
+    showIncompleteBanner.value = false;
+  }
+});
+
+function dismissIncompleteBanner() {
+  window.incompleteBannerDismissed = window.incompleteBannerDismissed || {};
+  window.incompleteBannerDismissed[props.user.id] = true;
+  showIncompleteBanner.value = false;
+}
+
+function dismissCompleteBanner() {
+  localStorage.setItem(completeDismissKey.value, '1');
+  showCompleteBanner.value = false;
+}
+
+function isImage(url) {
+  if (!url) return false;
+  return !!url.match(/\.(jpeg|jpg|gif|png|webp)$/i);
+}
+
+function viewLarge(url) {
+  window.open(url, '_blank');
+}
+
+
 const deletionDurationMinutes = computed(() => {
   return parseInt(settings.value.account_deletion_duration || '10080', 10);
 });
@@ -817,21 +877,20 @@ function downloadCardAsImage() {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #007bff;
+  background: var(--primary-color);
   color: #fff;
-  border: none;
+  border-color: var(--primary-color);
   padding: 8px 16px;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.15s ease;
+  transition: filter 0.2s;
 }
 
-.btn-edit-profil:hover {
-  background: #0056b3;
-}
+.btn-edit-profil:hover { filter: brightness(0.9); }
+.btn-edit-profil svg { width: 16px; height: 16px; }
 
 .edit-icon-sm {
   width: 14px;
@@ -923,7 +982,12 @@ function downloadCardAsImage() {
   flex-wrap: wrap;
 }
 
-.premium-badge { width: 24px; height: 24px; flex-shrink: 0; }
+.premium-badge-icon {
+  color: #3b82f6;
+  font-size: 22px;
+  flex-shrink: 0;
+  line-height: 1;
+}
 
 /* Verified Badge */
 .verified-badge {
@@ -1133,12 +1197,12 @@ function downloadCardAsImage() {
 
 .btn-action-active {
   background: #fff;
-  border: 1px solid #007bff;
-  color: #007bff;
+  border: 1px solid var(--primary-color, #007bff);
+  color: var(--primary-color, #007bff);
 }
 
 .btn-action-active:hover {
-  background: #eff6ff;
+  background: var(--primary-color-light, #eff6ff);
 }
 
 .btn-action-disabled {
@@ -1345,7 +1409,7 @@ function downloadCardAsImage() {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: #007bff;
+  background: var(--primary-color, #007bff);
   color: #fff;
   border: none;
   padding: 12px;
@@ -1357,7 +1421,7 @@ function downloadCardAsImage() {
 }
 
 .btn-download-card:hover {
-  background: #0056b3;
+  background: var(--primary-color-dark, #0056b3);
 }
 
 .download-icon {
@@ -1365,153 +1429,192 @@ function downloadCardAsImage() {
   height: 14px;
 }
 
-/* ===== Profile Completion Section ===== */
-.completion-section {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding-top: 8px;
-  border-top: 1px solid #f3f4f6;
+/* ===== Bintang di samping nama ===== */
+.name-star {
+  color: #f59e0b;
+  font-size: 18px;
+  filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.5));
+  animation: starPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  flex-shrink: 0;
 }
 
-.completion-header {
+@keyframes starPop {
+  0% { transform: scale(0) rotate(-30deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* ===== Banner Kelengkapan Profil ===== */
+.profile-banner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin: 24px 32px 0;
+  border: 1px solid;
+  animation: bannerSlideIn 0.35s ease;
+}
+
+@keyframes bannerSlideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.banner-incomplete {
+  background: #fffbeb;
+  border-color: #fcd34d;
+}
+
+.banner-complete {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+.banner-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.banner-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.banner-icon-wrap.incomplete {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.banner-icon-wrap.complete {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.banner-icon-wrap.complete .bi-star-fill {
+  color: #f59e0b;
+}
+
+.banner-text {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
 }
 
-.completion-title-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.completion-label {
+.banner-title {
   font-size: 14px;
   font-weight: 700;
-  color: #374151;
+  color: #111827;
+  margin: 0;
 }
 
-.completion-percent-badge {
-  font-size: 13px;
-  font-weight: 800;
-  padding: 2px 10px;
-  border-radius: 20px;
-  letter-spacing: 0.2px;
-}
-
-.badge-complete {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.badge-incomplete {
-  background: #eff6ff;
-  color: #1d4ed8;
-}
-
-.completion-hint {
+.banner-sub {
   font-size: 12.5px;
   color: #6b7280;
-  margin: 0;
-  font-weight: 500;
+  margin: 0 0 8px;
+  line-height: 1.5;
 }
 
-.complete-hint {
-  color: #065f46;
-  font-weight: 600;
-}
-
-/* Progress Bar */
-.progress-bar-track {
+/* Progress bar dalam banner */
+.banner-progress-track {
   width: 100%;
-  height: 8px;
-  background: #f3f4f6;
+  max-width: 400px;
+  height: 6px;
+  background: #fde68a;
   border-radius: 999px;
   overflow: hidden;
+  margin-bottom: 10px;
 }
 
-.progress-bar-fill {
+.banner-progress-fill {
   height: 100%;
   border-radius: 999px;
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
   transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.bar-progress {
-  background: linear-gradient(90deg, #3b82f6, #60a5fa);
-}
-
-.bar-complete {
-  background: linear-gradient(90deg, #10b981, #34d399);
-}
-
-/* Checklist */
-.completion-checklist {
+/* Chips checklist dalam banner */
+.banner-checklist {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
-.checklist-item {
-  display: flex;
+.banner-chip {
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 12.5px;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 600;
   border: 1px solid;
-  transition: all 0.2s ease;
 }
 
-.item-filled {
+.chip-filled {
   background: #f0fdf4;
   border-color: #86efac;
   color: #15803d;
 }
 
-.item-empty {
-  background: #fafafa;
-  border-color: #e5e7eb;
+.chip-empty {
+  background: #fff;
+  border-color: #d1d5db;
   color: #6b7280;
 }
 
-.check-icon-wrap {
-  display: flex;
-  align-items: center;
-}
-
-.chk-icon {
-  width: 14px;
-  height: 14px;
-}
-
-.item-filled .chk-icon {
+.chip-check {
   color: #16a34a;
+  font-size: 11px;
 }
 
-.item-empty .chk-icon {
+.chip-empty-icon {
   color: #d1d5db;
+  font-size: 11px;
 }
 
-.check-field-name {
-  white-space: nowrap;
-}
-
-.check-fill-link {
-  font-size: 11.5px;
-  color: #2563eb;
+.chip-fill-link {
+  font-size: 11px;
+  color: var(--primary-color, #2563eb);
   font-weight: 700;
   text-decoration: none;
+  margin-left: 2px;
   white-space: nowrap;
-  margin-left: 4px;
-  transition: color 0.15s;
+}
+.chip-fill-link:hover {
+  text-decoration: underline;
 }
 
-.check-fill-link:hover {
-  color: #1d4ed8;
-  text-decoration: underline;
+/* Tombol close banner */
+.banner-close-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  font-size: 14px;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
+}
+
+.banner-close-btn:hover {
+  background: rgba(0,0,0,0.06);
+  color: #374151;
 }
 
 /* ── Bottom Split Row & Kepakaran ── */
@@ -1540,17 +1643,17 @@ function downloadCardAsImage() {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #007bff;
+  color: var(--primary-color, #007bff);
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
-  background: #eff6ff;
+  background: var(--primary-color-light, #eff6ff);
   padding: 6px 12px;
   border-radius: 6px;
   transition: background 0.15s;
 }
 .btn-view-proof:hover {
-  background: #dbeafe;
+  background: var(--primary-color-light-hover, #dbeafe);
 }
 .btn-icon-sm {
   width: 14px;
