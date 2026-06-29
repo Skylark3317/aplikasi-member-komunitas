@@ -49,7 +49,7 @@ class PaketPremiumController extends Controller
 
     public function update(Request $request, MembershipPlan $plan)
     {
-        $data = $this->validatePlan($request);
+        $data = $this->validatePlan($request, $plan);
 
         $changes = [];
         foreach ($data as $key => $value) {
@@ -140,10 +140,15 @@ class PaketPremiumController extends Controller
     /**
      * Validasi payload paket premium.
      */
-    private function validatePlan(Request $request): array
+    private function validatePlan(Request $request, ?MembershipPlan $plan = null): array
     {
+        $uniqueRule = 'unique:membership_plans,name';
+        if ($plan) {
+            $uniqueRule .= ',' . $plan->id;
+        }
+
         $validated = $request->validate([
-            'name'           => 'required|string|max:255',
+            'name'           => ['required', 'string', 'max:255', $uniqueRule],
             'description'    => 'nullable|string|max:1000',
             'price'          => 'required|numeric|min:0',
             'duration'       => 'required|integer|min:0',
@@ -154,6 +159,8 @@ class PaketPremiumController extends Controller
             'is_recommended' => 'boolean',
             'is_active'      => 'boolean',
             'sort_order'     => 'nullable|integer|min:0',
+        ], [
+            'name.unique' => 'Nama paket premium sudah digunakan. Silakan gunakan nama yang berbeda.',
         ]);
 
         // Lifetime mengabaikan durasi

@@ -17,7 +17,11 @@ class RegisteredUserController extends Controller
 {
     public function create(): Response
     {
-        return Inertia::render('Auth/Register');
+        $setting = \App\Models\Setting::where('key', 'terms_and_conditions')->first();
+        return Inertia::render('Auth/Register', [
+            'terms_and_conditions' => $setting ? $setting->value : null,
+            'terms_last_updated' => $setting ? $setting->updated_at->toISOString() : now()->toISOString(),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -33,6 +37,9 @@ class RegisteredUserController extends Controller
             'department'     => 'nullable|string|max:255',
             'address'        => 'nullable|string',
             'password'       => ['required', 'confirmed', Rules\Password::defaults()],
+            'terms'          => 'accepted',
+        ], [
+            'terms.accepted' => 'Silakan setujui Syarat & Ketentuan terlebih dahulu.',
         ]);
 
         $user = User::create([

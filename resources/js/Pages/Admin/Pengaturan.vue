@@ -389,6 +389,19 @@
 
           </div><!-- /form-card landing page -->
 
+          <!-- === SYARAT KETENTUAN === -->
+          <div class="form-card" v-show="activeTab === 'syaratketentuan'">
+            <h3 class="form-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Syarat & Ketentuan
+            </h3>
+            <p class="field-hint" style="margin-bottom:12px">Konten syarat dan ketentuan untuk form registrasi member.</p>
+            <div class="field-group">
+              <label class="field-label">Isi Syarat & Ketentuan</label>
+              <RichTextEditor v-model="form.terms_and_conditions" placeholder="Masukkan konten syarat dan ketentuan di sini..." />
+            </div>
+          </div>
+
         </form>
       </div>
 
@@ -413,6 +426,10 @@
               v-else-if="activeTab === 'keanggotaan'"
               :form="form"
             />
+            <div v-else-if="activeTab === 'syaratketentuan'" style="width: 100%; height: 100%; overflow-y: auto; background-color: #f9fafb; padding: 24px; color: #374151;">
+              <h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: var(--primary-color);">Syarat dan Ketentuan</h1>
+              <div class="ql-editor" style="padding:0 !important; font-family: inherit; font-size: 0.875rem;" v-html="form.terms_and_conditions"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -427,11 +444,33 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
 import PreviewLandingPage from './PreviewLandingPage.vue';
 import PreviewMemberCard from './PreviewMemberCard.vue';
 import PreviewMembership from './PreviewMembership.vue';
+import RichTextEditor from '@/Components/RichTextEditor.vue';
 
 const props = defineProps({ settings: Object });
 const $page = usePage();
 
 const s = props.settings ?? {};
+
+const defaultTerms = `<p>Selamat datang di Aplikasi Member Komunitas. Dengan mendaftar dan menggunakan aplikasi ini, Anda menyatakan setuju untuk terikat dan mematuhi Syarat dan Ketentuan di bawah ini. Harap membaca dengan cermat.</p>
+<h2>1. Ketentuan Umum</h2>
+<ul>
+  <li>Layanan ini disediakan untuk memudahkan pengelolaan dan komunikasi antar anggota komunitas.</li>
+  <li>Setiap member diwajibkan memberikan data diri yang benar, akurat, dan dapat dipertanggungjawabkan pada saat pendaftaran.</li>
+  <li>Pihak pengelola berhak untuk menonaktifkan atau menghapus akun jika ditemukan pelanggaran atau penyalahgunaan.</li>
+</ul>
+<h2>2. Keanggotaan dan Akun</h2>
+<ul>
+  <li>Setiap individu hanya diperbolehkan memiliki satu akun aktif.</li>
+  <li>Anda bertanggung jawab penuh atas kerahasiaan kata sandi (password) dan semua aktivitas yang dilakukan melalui akun Anda.</li>
+  <li>Segera laporkan kepada admin jika Anda mencurigai adanya akses tidak sah ke akun Anda.</li>
+</ul>
+<h2>3. Privasi dan Data Pribadi</h2>
+<ul>
+  <li>Kami menghargai privasi Anda dan akan menjaga kerahasiaan data pribadi sesuai dengan kebijakan privasi yang berlaku.</li>
+  <li>Data pribadi yang dikumpulkan hanya akan digunakan untuk keperluan administratif komunitas dan tidak akan diperjualbelikan kepada pihak ketiga.</li>
+</ul>
+<h2>4. Perubahan Syarat dan Ketentuan</h2>
+<p>Pengelola komunitas berhak untuk memperbarui atau mengubah Syarat dan Ketentuan ini sewaktu-waktu. Perubahan akan diinformasikan kepada member melalui platform, dan kelanjutan penggunaan layanan setelah perubahan menandakan persetujuan Anda atas Syarat dan Ketentuan yang baru.</p>`;
 
 const form = useForm({
   community_name:      s.community_name      ?? '',
@@ -460,6 +499,7 @@ const form = useForm({
   stat_member_pasif:   s.stat_member_pasif   ?? '',
   stat_member_company: s.stat_member_company ?? '',
   stat_member_personal: s.stat_member_personal ?? '',
+  terms_and_conditions: s.terms_and_conditions ?? defaultTerms,
   available_benefits:  (s.available_benefits && s.available_benefits.length) ? s.available_benefits : [''],
   logo:                null,
   delete_logo:         false,
@@ -478,6 +518,7 @@ const tabs = [
   { key: 'keanggotaan', label: 'Keanggotaan' },
   { key: 'kartumember', label: 'Kartu Member' },
   { key: 'landingpage', label: 'Landing Page' },
+  { key: 'syaratketentuan', label: 'Syarat & Ketentuan' },
 ];
 
 // Image previews

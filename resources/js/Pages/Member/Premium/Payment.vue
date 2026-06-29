@@ -512,7 +512,7 @@ function formatDueDate(dateStr) {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #007bff;
+  background: var(--primary-color);
   color: #fff;
   border: none;
   padding: 8px 16px;
@@ -520,11 +520,11 @@ function formatDueDate(dateStr) {
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: filter 0.15s ease;
 }
 
 .btn-top-send:hover:not(:disabled) {
-  background: #0056b3;
+  filter: brightness(0.9);
 }
 
 .btn-top-send:disabled {
@@ -606,10 +606,10 @@ function formatDueDate(dateStr) {
 
 /* Active & Done Step Classes */
 .step-active {
-  color: #007bff !important;
+  color: var(--primary-color) !important;
 }
 .step-active .step-circle {
-  background: #007bff !important;
+  background: var(--primary-color) !important;
   color: #fff !important;
 }
 
@@ -809,8 +809,8 @@ function formatDueDate(dateStr) {
 }
 
 .form-input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 1px #007bff;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1px var(--primary-color);
 }
 
 .form-input.has-error {
@@ -882,7 +882,7 @@ function formatDueDate(dateStr) {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #007bff;
+  background: var(--primary-color);
   color: #fff;
   border: none;
   padding: 8px 16px;
@@ -890,11 +890,11 @@ function formatDueDate(dateStr) {
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: filter 0.15s ease;
 }
 
 .btn-upload-trigger:hover {
-  background: #0056b3;
+  filter: brightness(0.9);
 }
 
 .upload-icon {
@@ -913,7 +913,7 @@ function formatDueDate(dateStr) {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: #007bff;
+  background: var(--primary-color);
   color: #fff;
   border: none;
   padding: 10px 20px;
@@ -921,11 +921,11 @@ function formatDueDate(dateStr) {
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: filter 0.15s ease;
 }
 
 .btn-bottom-send:hover:not(:disabled) {
-  background: #0056b3;
+  filter: brightness(0.9);
 }
 
 .btn-bottom-send:disabled {

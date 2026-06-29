@@ -308,6 +308,17 @@ function submitForm() {
     sort_order: form.sort_order ?? 0,
   };
 
+  const normalizedNewName = form.name.trim().toLowerCase();
+  const isDuplicate = props.plans.some(plan => {
+    if (editing.value && plan.id === editing.value.id) return false;
+    return plan.name.toLowerCase() === normalizedNewName;
+  });
+
+  if (isDuplicate) {
+    form.setError('name', 'Nama paket premium sudah digunakan. Silakan gunakan nama yang berbeda.');
+    return;
+  }
+
   if (editing.value) {
     if (!window.confirm("Apakah Anda yakin ingin menyimpan perubahan pada paket ini?")) {
       return;

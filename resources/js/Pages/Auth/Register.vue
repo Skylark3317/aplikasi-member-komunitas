@@ -3,19 +3,38 @@ import { Form, Link } from "@inertiajs/vue3";
 import { ref } from "vue";
 import PillButton from "../../Components/Ui/PillButton.vue";
 import HomeLayout from "../../Layouts/HomeLayout.vue";
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 const passwordVisible = ref(false);
 const passwordConfirmationVisible = ref(false);
+
+const props = defineProps({
+    terms_and_conditions: String,
+    terms_last_updated: String,
+});
+
+const showTerms = ref(false);
+
+function openTerms() {
+    showTerms.value = true;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function closeTerms() {
+    showTerms.value = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 </script>
 
 <template>
     <HomeLayout>
-        <section class="p-8 lg:p-0 lg:px-4 lg:py-8 lg:flex lg:justify-center bg-primary">
-            <div class="lg:w-full lg:max-w-270 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-white">
-                <h1 class="font-medium text-2xl">Daftar Membership</h1>
-            </div>
-        </section>
-        <section class="p-8 lg:p-0 lg:px-4 lg:py-16 lg:flex lg:justify-center">
+        <div v-show="!showTerms">
+            <section class="p-8 lg:p-0 lg:px-4 lg:py-8 lg:flex lg:justify-center bg-primary">
+                <div class="lg:w-full lg:max-w-270 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-white">
+                    <h1 class="font-medium text-2xl">Daftar Membership</h1>
+                </div>
+            </section>
+            <section class="p-8 lg:p-0 lg:px-4 lg:py-16 lg:flex lg:justify-center">
             <Form class="flex flex-col gap-8 lg:w-full lg:max-w-lg" :action="route('register')" method="post" v-slot="{ errors }">
                 <div class="flex flex-col gap-2">
                     <label class="font-medium" for="name">Nama lengkap *</label>
@@ -126,12 +145,55 @@ const passwordConfirmationVisible = ref(false);
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-alert-icon lucide-circle-alert"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
                     * wajib diisi
                 </div>
+                <div class="flex flex-col gap-2">
+                    <label class="flex items-start gap-2 cursor-pointer" for="terms">
+                        <input type="checkbox" name="terms" id="terms" class="mt-1">
+                        <span>
+                            Saya telah membaca dan menyetujui 
+                            <button type="button" @click.stop="openTerms" class="text-primary hover:underline">Syarat & Ketentuan</button> 
+                            yang berlaku.
+                        </span>
+                    </label>
+                    <p class="text-danger-500 text-sm" v-if="errors.terms">{{ errors.terms }}</p>
+                </div>
                 <PillButton class="justify-center">Daftar membership</PillButton>
                 <p class="text-center">
                     Sudah memiliki akun?
                     <Link :href="route('login')" class="text-primary">Login</Link>
                 </p>
             </Form>
-        </section>
+            </section>
+        </div>
+
+        <div v-if="showTerms">
+            <section class="p-8 lg:p-0 lg:px-4 lg:py-8 lg:flex lg:justify-center bg-primary">
+                <div class="lg:w-full lg:max-w-4xl flex items-center gap-4 text-white">
+                    <button type="button" @click="closeTerms" class="w-8 h-8 flex justify-center items-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors" title="Kembali">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <h1 class="font-medium text-2xl">Syarat dan Ketentuan</h1>
+                </div>
+            </section>
+            <section class="p-8 lg:p-0 lg:px-4 lg:py-16 lg:flex lg:justify-center">
+                <div class="lg:w-full lg:max-w-4xl bg-white rounded-[1.25rem] p-8 shadow-sm text-onyx-800">
+                    <div v-if="terms_and_conditions" class="ql-editor" style="padding:0 !important; font-family: inherit; font-size: 1rem; color: inherit;" v-html="terms_and_conditions"></div>
+                    <div v-else class="flex flex-col gap-4 text-justify leading-relaxed">
+                        <p>Selamat datang di Aplikasi Member Komunitas. Dengan mendaftar dan menggunakan aplikasi ini, Anda menyatakan setuju untuk terikat dan mematuhi Syarat dan Ketentuan di bawah ini. Harap membaca dengan cermat.</p>
+                        <h2 class="text-xl font-semibold mt-4 text-onyx-900">1. Ketentuan Umum</h2>
+                        <ul class="list-disc pl-6 flex flex-col gap-2">
+                            <li>Layanan ini disediakan untuk memudahkan pengelolaan dan komunikasi antar anggota komunitas.</li>
+                            <li>Setiap member diwajibkan memberikan data diri yang benar, akurat, dan dapat dipertanggungjawabkan pada saat pendaftaran.</li>
+                            <li>Pihak pengelola berhak untuk menonaktifkan atau menghapus akun jika ditemukan pelanggaran atau penyalahgunaan.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mt-8 pt-4 border-t border-gray-100">
+                        <p class="font-medium text-onyx-600">
+                            Terakhir diperbarui: {{ new Date(terms_last_updated || Date.now()).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) }}
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
     </HomeLayout>
 </template>

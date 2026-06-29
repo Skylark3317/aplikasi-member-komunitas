@@ -76,7 +76,7 @@ class LoginRequest extends FormRequest
             request()->session()->regenerateToken();
 
             throw ValidationException::withMessages([
-                'email' => 'Akun Anda telah dinonaktifkan oleh administrator.',
+                'email' => 'Akun Anda telah dinonaktifkan oleh administrator. Silakan <a href="/#contact" class="underline text-primary hover:text-primary/80">hubungi admin</a> untuk info lebih lanjut.',
             ]);
         }
 

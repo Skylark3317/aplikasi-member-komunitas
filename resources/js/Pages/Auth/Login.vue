@@ -19,7 +19,7 @@ const passwordVisible = ref(false);
                 <div class="flex flex-col gap-2">
                     <label class="font-medium" for="email">Email</label>
                     <input class="w-full px-6 py-2 rounded-full ring ring-inset ring-onyx-400 placeholder:text-onyx-400" name="email" id="email" type="email" placeholder="Email">
-                    <p class="text-danger-500 text-sm" v-if="errors.email">{{ errors.email }}</p>
+                    <p class="text-danger-500 text-sm" v-if="errors.email" v-html="errors.email"></p>
                 </div>
                 <div class="flex flex-col gap-2">
                     <label class="font-medium" for="password">Password</label>
