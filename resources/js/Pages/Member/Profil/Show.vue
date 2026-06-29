@@ -143,23 +143,35 @@
             </div>
           </div>
 
-          <!-- Box 2: Status -->
+          <!-- Box 2: Status Premium -->
           <div class="stat-box">
             <div class="stat-icon-wrapper" :class="user.is_premium ? 'green-icon' : 'red-icon'">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="stat-icon">
-                <circle cx="12" cy="12" r="10"/>
-                <polyline v-if="user.is_premium" points="16 12 12 8 8 12"/>
-                <line v-if="user.is_premium" x1="12" y1="16" x2="12" y2="8"/>
-                <line v-else x1="15" y1="9" x2="9" y2="15"/>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon">
+                <path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/>
+                <path d="M5 21h14"/>
               </svg>
             </div>
             <div class="stat-content">
-              <span class="stat-value">{{ user.is_premium ? 'Aktif' : 'Nonaktif' }}</span>
+              <span class="stat-value">{{ user.premium_status }}</span>
+              <span class="stat-label">Status Premium</span>
+            </div>
+          </div>
+
+          <!-- Box 3: Status -->
+          <div class="stat-box">
+            <div class="stat-icon-wrapper" :class="user.is_active ? 'green-icon' : 'red-icon'">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <span class="stat-value">{{ user.is_active ? 'Aktif' : 'Nonaktif' }}</span>
               <span class="stat-label">Status</span>
             </div>
           </div>
 
-          <!-- Box 3: Bergabung Sejak -->
+          <!-- Box 4: Bergabung Sejak -->
           <div class="stat-box">
             <div class="stat-icon-wrapper purple-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="stat-icon">
@@ -175,7 +187,7 @@
             </div>
           </div>
 
-          <!-- Box 4: Sisa Masa Aktif -->
+          <!-- Box 5: Sisa Masa Aktif -->
           <div class="stat-box">
             <div class="stat-icon-wrapper orange-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="stat-icon">
@@ -188,19 +200,6 @@
                 {{ user.is_premium && user.member_profile?.days_remaining ? Math.round(user.member_profile.days_remaining) + ' hari lagi' : '-' }}
               </span>
               <span class="stat-label">Sisa Masa Aktif Membership</span>
-            </div>
-          </div>
-
-          <!-- Box 5: Paket Premium -->
-          <div class="stat-box">
-            <div class="stat-icon-wrapper purple-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="stat-icon">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-              </svg>
-            </div>
-            <div class="stat-content">
-              <span class="stat-value">{{ user.plan_name || '-' }}</span>
-              <span class="stat-label">Paket Premium</span>
             </div>
           </div>
         </div>
