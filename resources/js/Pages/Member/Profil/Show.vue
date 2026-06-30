@@ -645,11 +645,19 @@ function formatShortDate(dateStr) {
 function printLetter() {
   if (!props.user.is_premium) return;
 
-  const communityName = settings.value.community_name || 'Aplikasi Member Komunitas';
+  // Use cv_community_name if available, otherwise fallback to community_name
+  const communityName = settings.value.cv_community_name || settings.value.community_name || 'Aplikasi Member Komunitas';
   
-  // Calculate website domain
+  // Use cv_email if available, otherwise fallback to general email
+  const cvEmail = settings.value.cv_email || settings.value.email || 'support@amk.com';
+  
+  // Use cv_website if available, otherwise calculate from appUrl
+  const cvWebsite = settings.value.cv_website;
   const appUrl = page.props.appUrl || window.location.origin;
-  const websiteDomain = appUrl.replace(/^https?:\/\//, '');
+  const websiteDomain = cvWebsite || appUrl.replace(/^https?:\/\//, '');
+
+  // Use cv_letter_title if available
+  const letterTitle = settings.value.cv_letter_title || 'Surat Keterangan Keanggotaan Premium';
 
   const cvIntroduction = settings.value.cv_introduction || 'Dengan ini menerangkan bahwa data di bawah ini adalah anggota resmi dan terdaftar secara aktif dalam komunitas **Aplikasi Member Komunitas**:';
   const cvClosing = settings.value.cv_closing || 'Demikian surat keterangan keanggotaan ini dibuat dengan sebenar-benarnya untuk dapat dipergunakan sebagaimana mestinya.';
@@ -659,7 +667,7 @@ function printLetter() {
   const signatureImage = settings.value.cv_signature_image ? '/storage/' + settings.value.cv_signature_image : null;
 
   const printWindow = window.open('', '_blank', 'width=800,height=900');
-  printWindow.document.write('<html><head><title>Surat Keterangan Keanggotaan - ' + communityName + '</title>');
+  printWindow.document.write('<html><head><title>' + letterTitle + ' - ' + communityName + '</title>');
   printWindow.document.write('<style>');
   printWindow.document.write('body { font-family: "Arial", sans-serif; padding: 40px; line-height: 1.6; color: #333; }');
   printWindow.document.write('.kop-surat { text-align: center; border-bottom: 3px double #000; padding-bottom: 20px; margin-bottom: 30px; }');
@@ -677,9 +685,9 @@ function printLetter() {
   printWindow.document.write('</style></head><body>');
   printWindow.document.write('<div class="kop-surat">');
   printWindow.document.write('<h1 class="kop-title">' + communityName + '</h1>');
-  printWindow.document.write('<p class="kop-sub">Email: ' + (settings.value.email || 'support@amk.com') + ' | Website: ' + websiteDomain + '</p>');
+  printWindow.document.write('<p class="kop-sub">Email: ' + cvEmail + ' | Website: ' + websiteDomain + '</p>');
   printWindow.document.write('</div>');
-  printWindow.document.write('<h2 class="letter-title">Surat Keterangan Keanggotaan Premium</h2>');
+  printWindow.document.write('<h2 class="letter-title">' + letterTitle + '</h2>');
   printWindow.document.write('<div class="content">');
   printWindow.document.write('<p style="white-space: pre-wrap;">' + cvIntroduction + '</p>');
   printWindow.document.write('<table class="table-details">');

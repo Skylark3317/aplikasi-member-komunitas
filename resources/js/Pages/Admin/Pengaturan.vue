@@ -409,6 +409,38 @@
               Template Surat Keterangan Keanggotaan
             </h3>
 
+            <p class="form-subsection">Informasi Kop Surat</p>
+            
+            <!-- Community Name for CV -->
+            <div class="field-group">
+              <label class="field-label">Nama Komunitas (Kop Surat)</label>
+              <input v-model="form.cv_community_name" type="text" class="field-input" placeholder="Contoh: Aplikasi Member Komunitas" />
+              <span v-if="form.errors.cv_community_name" class="error-msg">{{ form.errors.cv_community_name }}</span>
+            </div>
+
+            <!-- Email Community for CV -->
+            <div class="field-group">
+              <label class="field-label">Email Komunitas (Kop Surat)</label>
+              <input v-model="form.cv_email" type="email" class="field-input" placeholder="Contoh: info@komunitasamk.com" />
+              <span v-if="form.errors.cv_email" class="error-msg">{{ form.errors.cv_email }}</span>
+            </div>
+
+            <!-- Website Community -->
+            <div class="field-group">
+              <label class="field-label">Website Komunitas</label>
+              <input v-model="form.cv_website" type="text" class="field-input" placeholder="Contoh: www.komunitasamk.com" />
+              <span v-if="form.errors.cv_website" class="error-msg">{{ form.errors.cv_website }}</span>
+            </div>
+
+            <!-- Letter Title -->
+            <div class="field-group">
+              <label class="field-label">Judul Surat</label>
+              <input v-model="form.cv_letter_title" type="text" class="field-input" placeholder="Contoh: Surat Keterangan Keanggotaan Premium" />
+              <span v-if="form.errors.cv_letter_title" class="error-msg">{{ form.errors.cv_letter_title }}</span>
+            </div>
+
+            <p class="form-subsection mt-4">Konten Surat</p>
+
             <!-- Introduction Text -->
             <div class="field-group">
               <label class="field-label">Teks Pembuka (Keterangan)</label>
@@ -488,7 +520,7 @@
       <div class="settings-preview-col">
         <div class="preview-sticky">
           <h4 class="preview-title">Live Preview</h4>
-          <div :class="['preview-container', activeTab === 'cvtemplate' ? 'preview-container--portrait' : '']">
+          <div :class="['preview-container', ['cvtemplate'].includes(activeTab) ? 'preview-container--full' : '']">
             <PreviewLandingPage
               v-if="['identitas', 'kontak', 'landingpage'].includes(activeTab)"
               :settings="form"
@@ -514,10 +546,10 @@
               <div class="cv-preview-page">
                 <!-- Kop Surat -->
                 <div class="cv-kop">
-                  <h4 class="cv-kop-title">{{ form.community_name || 'Aplikasi Member Komunitas' }}</h4>
-                  <p class="cv-kop-sub">Email: {{ form.email || 'support@amk.com' }} | Website: {{ (form.community_name || '').toLowerCase().replace(/\s+/g, '') + '.com' }}</p>
+                  <h4 class="cv-kop-title">{{ form.cv_community_name || form.community_name || 'Aplikasi Member Komunitas' }}</h4>
+                  <p class="cv-kop-sub">Email: {{ form.cv_email || form.email || 'support@amk.com' }} | Website: {{ form.cv_website || 'www.komunitasamk.com' }}</p>
                 </div>
-                <h5 class="cv-letter-title">Surat Keterangan Keanggotaan Premium</h5>
+                <h5 class="cv-letter-title">{{ form.cv_letter_title || 'Surat Keterangan Keanggotaan Premium' }}</h5>
                 <div class="cv-body">
                   <p class="cv-para">{{ form.cv_introduction }}</p>
                   <table class="cv-table">
@@ -614,6 +646,10 @@ const form = useForm({
   stat_member_personal: s.stat_member_personal ?? '',
   terms_and_conditions: s.terms_and_conditions ?? defaultTerms,
   available_benefits:  (s.available_benefits && s.available_benefits.length) ? s.available_benefits : [''],
+  cv_community_name:   s.cv_community_name   ?? '',
+  cv_email:            s.cv_email            ?? '',
+  cv_website:          s.cv_website          ?? '',
+  cv_letter_title:     s.cv_letter_title     ?? '',
   cv_introduction:     s.cv_introduction     ?? '',
   cv_closing:          s.cv_closing          ?? '',
   cv_city:             s.cv_city             ?? '',
@@ -991,8 +1027,13 @@ function removeBenefit(index) {
   flex-shrink: 0;
   transition: aspect-ratio 0.25s ease;
 }
-.preview-container--portrait {
-  aspect-ratio: 1 / 1.414;
+.preview-container--full {
+  aspect-ratio: auto;
+  flex: 1;
+  min-height: 0;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 .field-group { margin-bottom: 14px; }
@@ -1141,42 +1182,33 @@ function removeBenefit(index) {
 .section-divider { display: none; }
 
 /* ===== CV LETTER PREVIEW ===== */
-/*
- * Technique: "Virtual A4 sheet"
- * .cv-preview-shell  = clipped viewport (matches container dimensions)
- * .cv-preview-page   = real A4 at 595px wide, scaled down via transform-scale
- *   so the entire page fits the viewport proportionally.
- */
 .cv-preview-shell {
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  background: #e5e7eb;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #fff;
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 12px;
+  padding: 0 12px;
   box-sizing: border-box;
 }
 
+.cv-preview-shell::-webkit-scrollbar { width: 3px; }
+.cv-preview-shell::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
 .cv-preview-page {
-  /* A4 at 72dpi: 595 × 842 px */
   width: 595px;
   min-height: 842px;
   flex-shrink: 0;
   background: #fff;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.18);
   padding: 52px 56px;
   box-sizing: border-box;
   font-family: 'Arial', sans-serif;
   font-size: 13px;
   color: #222;
   line-height: 1.6;
-
-  /* Scale-down to fit the shell:
-     shell max-width ≈ container - 24px padding.
-     We scale relative to 595px source width.
-     Using transform-origin top-center so it stays pinned at top. */
   transform-origin: top center;
   transform: scale(var(--cv-scale, 0.52));
   margin-bottom: calc((842px * var(--cv-scale, 0.52) - 842px));
@@ -1259,6 +1291,7 @@ function removeBenefit(index) {
   margin: 0;
   font-size: 13px;
 }
+
 </style>
 
 
