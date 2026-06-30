@@ -26,7 +26,7 @@
       <!-- Form Column -->
       <div class="settings-form-col content-area">
         <!-- Tab Bar -->
-        <div class="tab-bar">
+        <div class="tab-bar" ref="tabBarRef">
           <button v-for="tab in tabs" :key="tab.key"
             :class="['tab-btn', activeTab === tab.key ? 'tab-active' : '']"
             @click="activeTab = tab.key" type="button">
@@ -98,6 +98,18 @@
             <label class="field-label">Email</label>
             <input v-model="form.email" type="email" class="field-input" />
             <span v-if="form.errors.email" class="error-msg">{{ form.errors.email }}</span>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Nama Pengirim Email</label>
+            <input v-model="form.email_sender_name" type="text" class="field-input" placeholder="Nama aplikasi default jika dikosongkan" />
+            <span v-if="form.errors.email_sender_name" class="error-msg">{{ form.errors.email_sender_name }}</span>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Alamat Email Pengirim</label>
+            <input v-model="form.email_sender_address" type="email" class="field-input" placeholder="Email SMTP default jika dikosongkan" />
+            <span v-if="form.errors.email_sender_address" class="error-msg">{{ form.errors.email_sender_address }}</span>
           </div>
 
         <!-- Nomor Telepon -->
@@ -620,6 +632,8 @@ const defaultTerms = `<p>Selamat datang di Aplikasi Member Komunitas. Dengan men
 const form = useForm({
   community_name:      s.community_name      ?? '',
   email:               s.email               ?? '',
+  email_sender_name:   s.email_sender_name   ?? '',
+  email_sender_address: s.email_sender_address ?? '',
   phone:               s.phone               ?? '',
   address:             s.address             ?? '',
   social_x:            s.social_x            ?? '',
@@ -687,6 +701,7 @@ const cvSignaturePreview = ref(s.cv_signature_image ? `/storage/${s.cv_signature
 
 // Dynamically scale the A4 preview page to fit the shell container
 const cvShellRef = ref(null);
+const tabBarRef = ref(null);
 let cvResizeObserver = null;
 function updateCvScale() {
   if (!cvShellRef.value) return;
@@ -694,13 +709,36 @@ function updateCvScale() {
   const scale = Math.min(shellW / 595, 1);
   cvShellRef.value.style.setProperty('--cv-scale', scale);
 }
+
+// Handle horizontal scroll with mouse wheel on tab bar
+function handleTabBarScroll(e) {
+  if (!tabBarRef.value) return;
+  // Prevent vertical scroll and scroll horizontally instead
+  if (e.deltaY !== 0) {
+    e.preventDefault();
+    tabBarRef.value.scrollLeft += e.deltaY;
+  }
+}
+
 onMounted(() => {
   if (typeof ResizeObserver !== 'undefined') {
     cvResizeObserver = new ResizeObserver(updateCvScale);
   }
+  
+  // Add wheel event listener to tab bar for horizontal scrolling on next tick
+  setTimeout(() => {
+    if (tabBarRef.value) {
+      tabBarRef.value.addEventListener('wheel', handleTabBarScroll, { passive: false });
+    }
+  }, 0);
 });
 onUnmounted(() => {
   if (cvResizeObserver) cvResizeObserver.disconnect();
+  
+  // Remove wheel event listener
+  if (tabBarRef.value) {
+    tabBarRef.value.removeEventListener('wheel', handleTabBarScroll);
+  }
 });
 function onCvShellMounted(el) {
   if (!el) { if (cvResizeObserver && cvShellRef.value) cvResizeObserver.unobserve(cvShellRef.value); return; }
