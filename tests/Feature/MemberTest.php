@@ -323,4 +323,26 @@ class MemberTest extends TestCase
         $member->refresh();
         $this->assertNull($member->delete_requested_at);
     }
+
+    // ──────────────────────────────────────────────────────────
+    // MBR-26: Pengaturan shared Inertia prop terisi dan sesuai settings DB
+    // ──────────────────────────────────────────────────────────
+    public function test_MBR26_halaman_profil_memuat_pengaturan_sistem(): void
+    {
+        // Setup custom settings
+        \App\Models\Setting::updateOrCreate(['key' => 'community_name'], ['value' => 'Komunitas Eksklusif']);
+        \App\Models\Setting::updateOrCreate(['key' => 'email'], ['value' => 'info@eksklusif.com']);
+        \App\Models\Setting::updateOrCreate(['key' => 'address'], ['value' => 'Jl. Kebagusan, Bandung, Jawa Barat']);
+
+        $member = $this->makeMember();
+
+        $response = $this->actingAs($member)->get('/member/profil');
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn ($page) => $page
+            ->where('settings.community_name', 'Komunitas Eksklusif')
+            ->where('settings.email', 'info@eksklusif.com')
+            ->where('settings.address', 'Jl. Kebagusan, Bandung, Jawa Barat')
+        );
+    }
 }

@@ -41,6 +41,12 @@ class SettingsSeeder extends Seeder
             'stat_member_company'   => '217',
             'stat_member_personal'  => '1801',
             'available_benefits'    => json_encode(['Akses Ebook Berkualitas', 'Akses Video Premium', 'Tanya Jawab dengan Admin', 'Sertifikat Digital']),
+            'cv_introduction'       => 'Dengan ini menerangkan bahwa data di bawah ini adalah anggota resmi dan terdaftar secara aktif dalam komunitas **Aplikasi Member Komunitas**:',
+            'cv_closing'            => 'Demikian surat keterangan keanggotaan ini dibuat dengan sebenar-benarnya untuk dapat dipergunakan sebagaimana mestinya.',
+            'cv_city'               => 'Jakarta',
+            'cv_signer_title'       => 'Pengurus Pusat AMK',
+            'cv_signer_name'        => 'Admin AMK',
+            'cv_signature_image'    => null,
         ];
 
         foreach ($settings as $key => $value) {

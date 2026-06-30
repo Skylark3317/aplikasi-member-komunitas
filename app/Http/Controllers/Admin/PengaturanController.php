@@ -51,6 +51,11 @@ class PengaturanController extends Controller
             'membership_fee'      => 'sometimes|required|numeric|min:0',
             'membership_duration' => 'sometimes|required|integer|min:1',
             'terms_and_conditions'=> 'nullable|string',
+            'cv_introduction'     => 'nullable|string',
+            'cv_closing'          => 'nullable|string',
+            'cv_city'             => 'nullable|string|max:255',
+            'cv_signer_title'     => 'nullable|string|max:255',
+            'cv_signer_name'      => 'nullable|string|max:255',
         ]);
 
         $fields = [
@@ -67,6 +72,8 @@ class PengaturanController extends Controller
             'stat_member_company', 'stat_member_personal',
             'membership_fee', 'membership_duration',
             'terms_and_conditions',
+            'cv_introduction', 'cv_closing', 'cv_city',
+            'cv_signer_title', 'cv_signer_name',
         ];
 
         $changes = [];
@@ -183,6 +190,29 @@ class PengaturanController extends Controller
             if (Setting::get('about_image')) {
                 Setting::set('about_image', null);
                 $changes['about_image'] = 'Dihapus';
+            }
+        }
+
+        // Handle CV signature image upload
+        if ($request->hasFile('cv_signature_image')) {
+            $request->validate(['cv_signature_image' => 'image|mimes:jpg,jpeg,png|max:1024']);
+            $old = Setting::get('cv_signature_image');
+            if ($old && Storage::disk('public')->exists($old)) {
+                Storage::disk('public')->delete($old);
+            }
+            $path = $request->file('cv_signature_image')->store('cv_signatures', 'public');
+            Setting::set('cv_signature_image', $path);
+            $changes['cv_signature_image'] = 'Diperbarui';
+        }
+
+        if ($request->boolean('delete_cv_signature_image')) {
+            $old = Setting::get('cv_signature_image');
+            if ($old && Storage::disk('public')->exists($old)) {
+                Storage::disk('public')->delete($old);
+            }
+            if (Setting::get('cv_signature_image')) {
+                Setting::set('cv_signature_image', null);
+                $changes['cv_signature_image'] = 'Dihapus';
             }
         }
 

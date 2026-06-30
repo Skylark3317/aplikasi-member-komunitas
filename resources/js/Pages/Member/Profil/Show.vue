@@ -645,8 +645,21 @@ function formatShortDate(dateStr) {
 function printLetter() {
   if (!props.user.is_premium) return;
 
+  const communityName = settings.value.community_name || 'Aplikasi Member Komunitas';
+  
+  // Calculate website domain
+  const appUrl = page.props.appUrl || window.location.origin;
+  const websiteDomain = appUrl.replace(/^https?:\/\//, '');
+
+  const cvIntroduction = settings.value.cv_introduction || 'Dengan ini menerangkan bahwa data di bawah ini adalah anggota resmi dan terdaftar secara aktif dalam komunitas **Aplikasi Member Komunitas**:';
+  const cvClosing = settings.value.cv_closing || 'Demikian surat keterangan keanggotaan ini dibuat dengan sebenar-benarnya untuk dapat dipergunakan sebagaimana mestinya.';
+  const city = settings.value.cv_city || 'Jakarta';
+  const signerTitle = settings.value.cv_signer_title || 'Pengurus Pusat AMK';
+  const signerName = settings.value.cv_signer_name || 'Admin AMK';
+  const signatureImage = settings.value.cv_signature_image ? '/storage/' + settings.value.cv_signature_image : null;
+
   const printWindow = window.open('', '_blank', 'width=800,height=900');
-  printWindow.document.write('<html><head><title>Surat Keterangan Keanggotaan</title>');
+  printWindow.document.write('<html><head><title>Surat Keterangan Keanggotaan - ' + communityName + '</title>');
   printWindow.document.write('<style>');
   printWindow.document.write('body { font-family: "Arial", sans-serif; padding: 40px; line-height: 1.6; color: #333; }');
   printWindow.document.write('.kop-surat { text-align: center; border-bottom: 3px double #000; padding-bottom: 20px; margin-bottom: 30px; }');
@@ -659,16 +672,16 @@ function printLetter() {
   printWindow.document.write('.table-details td.label { width: 220px; font-weight: bold; color: #555; }');
   printWindow.document.write('.signature-block { display: flex; justify-content: space-between; margin-top: 50px; }');
   printWindow.document.write('.sig-item { text-align: center; width: 250px; }');
-  printWindow.document.write('.sig-space { height: 80px; }');
+  printWindow.document.write('.sig-space { height: 80px; display: flex; align-items: center; justify-content: center; margin: 5px 0; }');
   printWindow.document.write('.sig-name { font-weight: bold; text-decoration: underline; }');
   printWindow.document.write('</style></head><body>');
   printWindow.document.write('<div class="kop-surat">');
-  printWindow.document.write('<h1 class="kop-title">Aplikasi Member Komunitas (AMK)</h1>');
-  printWindow.document.write('<p class="kop-sub">Email: support@amk.com | Website: www.amk.com</p>');
+  printWindow.document.write('<h1 class="kop-title">' + communityName + '</h1>');
+  printWindow.document.write('<p class="kop-sub">Email: ' + (settings.value.email || 'support@amk.com') + ' | Website: ' + websiteDomain + '</p>');
   printWindow.document.write('</div>');
   printWindow.document.write('<h2 class="letter-title">Surat Keterangan Keanggotaan Premium</h2>');
   printWindow.document.write('<div class="content">');
-  printWindow.document.write('<p>Dengan ini menerangkan bahwa data di bawah ini adalah anggota resmi dan terdaftar secara aktif dalam komunitas **Aplikasi Member Komunitas (AMK)**:</p>');
+  printWindow.document.write('<p style="white-space: pre-wrap;">' + cvIntroduction + '</p>');
   printWindow.document.write('<table class="table-details">');
   printWindow.document.write('<tr><td class="label">Nama Lengkap</td><td>: ' + props.user.name + '</td></tr>');
   printWindow.document.write('<tr><td class="label">Nomor Anggota</td><td>: ' + (props.user.member_profile?.member_number || '-') + '</td></tr>');
@@ -679,18 +692,35 @@ function printLetter() {
   printWindow.document.write('<tr><td class="label">Institusi</td><td>: ' + (props.user.member_profile?.institution || '-') + '</td></tr>');
   printWindow.document.write('<tr><td class="label">Jurusan</td><td>: ' + (props.user.member_profile?.department || '-') + '</td></tr>');
   printWindow.document.write('</table>');
-  printWindow.document.write('<p>Demikian surat keterangan keanggotaan ini dibuat dengan sebenar-benarnya untuk dapat dipergunakan sebagaimana mestinya.</p>');
+  printWindow.document.write('<p style="white-space: pre-wrap;">' + cvClosing + '</p>');
   printWindow.document.write('</div>');
   printWindow.document.write('<div class="signature-block">');
   printWindow.document.write('<div></div>');
   printWindow.document.write('<div class="sig-item">');
-  printWindow.document.write('<p>Surakarta, ' + new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) + '</p>');
-  printWindow.document.write('<p><strong>Pengurus Pusat AMK</strong></p>');
-  printWindow.document.write('<div class="sig-space"></div>');
-  printWindow.document.write('<p class="sig-name">Admin AMK</p>');
+  printWindow.document.write('<p>' + city + ', ' + new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) + '</p>');
+  printWindow.document.write('<p><strong>' + signerTitle + '</strong></p>');
+  
+  if (signatureImage) {
+    printWindow.document.write('<div class="sig-space"><img src="' + signatureImage + '" style="max-height: 80px; max-width: 200px; object-fit: contain;" /></div>');
+  } else {
+    printWindow.document.write('<div class="sig-space"></div>');
+  }
+  
+  printWindow.document.write('<p class="sig-name">' + signerName + '</p>');
   printWindow.document.write('</div>');
   printWindow.document.write('</div>');
-  printWindow.document.write('<script>window.onload = function() { window.print(); window.close(); }</' + 'script>');
+
+  if (signatureImage) {
+    printWindow.document.write('<' + 'script>');
+    printWindow.document.write('const img = new Image();');
+    printWindow.document.write('img.src = "' + signatureImage + '";');
+    printWindow.document.write('img.onload = function() { window.print(); window.close(); };');
+    printWindow.document.write('img.onerror = function() { window.print(); window.close(); };');
+    printWindow.document.write('</' + 'script>');
+  } else {
+    printWindow.document.write('<' + 'script>window.onload = function() { window.print(); window.close(); }</' + 'script>');
+  }
+
   printWindow.document.write('</body></html>');
   printWindow.document.close();
 }

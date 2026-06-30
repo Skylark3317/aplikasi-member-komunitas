@@ -402,6 +402,85 @@
             </div>
           </div>
 
+          <!-- === TEMPLATE SURAT (CV) === -->
+          <div class="form-card" v-show="activeTab === 'cvtemplate'">
+            <h3 class="form-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Template Surat Keterangan Keanggotaan
+            </h3>
+
+            <!-- Introduction Text -->
+            <div class="field-group">
+              <label class="field-label">Teks Pembuka (Keterangan)</label>
+              <textarea v-model="form.cv_introduction" class="field-textarea" rows="4" placeholder="Dengan ini menerangkan bahwa data di bawah ini adalah anggota resmi..." />
+              <span v-if="form.errors.cv_introduction" class="error-msg">{{ form.errors.cv_introduction }}</span>
+            </div>
+
+            <!-- Closing Text -->
+            <div class="field-group">
+              <label class="field-label">Teks Penutup</label>
+              <textarea v-model="form.cv_closing" class="field-textarea" rows="3" placeholder="Demikian surat keterangan keanggotaan ini dibuat dengan sebenar-benarnya..." />
+              <span v-if="form.errors.cv_closing" class="error-msg">{{ form.errors.cv_closing }}</span>
+            </div>
+
+            <!-- City -->
+            <div class="field-group">
+              <label class="field-label">Tempat/Kota TTD</label>
+              <input v-model="form.cv_city" type="text" class="field-input" placeholder="Contoh: Jakarta atau Surakarta" />
+              <span v-if="form.errors.cv_city" class="error-msg">{{ form.errors.cv_city }}</span>
+            </div>
+
+            <!-- Signer Title / Jabatan -->
+            <div class="field-group">
+              <label class="field-label">Jabatan Penandatangan</label>
+              <input v-model="form.cv_signer_title" type="text" class="field-input" placeholder="Contoh: Pengurus Pusat AMK atau Ketua Umum" />
+              <span v-if="form.errors.cv_signer_title" class="error-msg">{{ form.errors.cv_signer_title }}</span>
+            </div>
+
+            <!-- Signer Name -->
+            <div class="field-group">
+              <label class="field-label">Nama Penandatangan</label>
+              <input v-model="form.cv_signer_name" type="text" class="field-input" placeholder="Contoh: Admin AMK atau Ahmad, M.Kom." />
+              <span v-if="form.errors.cv_signer_name" class="error-msg">{{ form.errors.cv_signer_name }}</span>
+            </div>
+
+            <!-- Signature Image -->
+            <div class="field-group">
+              <label class="field-label">Gambar Tanda Tangan (Signature)</label>
+              <div class="logo-preview" style="height: 100px; width: 180px;">
+                <img v-if="cvSignaturePreview" :src="cvSignaturePreview" alt="Tanda Tangan" class="preview-img" style="object-fit: contain; background: #fff;" />
+                <span v-else class="logo-text" style="font-size: 14px; color: #9ca3af; letter-spacing: 0;">Belum ada TTD</span>
+              </div>
+              <p class="field-hint">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                Format JPG atau PNG (disarankan background transparan), max 1MB
+              </p>
+              <div class="btn-row">
+                <label class="btn-upload">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                  Unggah tanda tangan
+                  <input type="file" accept=".jpg,.jpeg,.png" @change="onCvSignatureChange" hidden />
+                </label>
+                <button type="button" class="btn-delete" @click="deleteCvSignature">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                  </svg>
+                  Hapus tanda tangan
+                </button>
+              </div>
+              <span v-if="form.errors.cv_signature_image" class="error-msg">{{ form.errors.cv_signature_image }}</span>
+            </div>
+          </div><!-- /form-card cvtemplate -->
+
         </form>
       </div>
 
@@ -409,7 +488,7 @@
       <div class="settings-preview-col">
         <div class="preview-sticky">
           <h4 class="preview-title">Live Preview</h4>
-          <div class="preview-container">
+          <div :class="['preview-container', activeTab === 'cvtemplate' ? 'preview-container--portrait' : '']">
             <PreviewLandingPage
               v-if="['identitas', 'kontak', 'landingpage'].includes(activeTab)"
               :settings="form"
@@ -430,6 +509,40 @@
               <h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: var(--primary-color);">Syarat dan Ketentuan</h1>
               <div class="ql-editor" style="padding:0 !important; font-family: inherit; font-size: 0.875rem;" v-html="form.terms_and_conditions"></div>
             </div>
+            <!-- CV Template Preview: A4 virtual sheet scaled down -->
+            <div v-else-if="activeTab === 'cvtemplate'" class="cv-preview-shell" :ref="onCvShellMounted">
+              <div class="cv-preview-page">
+                <!-- Kop Surat -->
+                <div class="cv-kop">
+                  <h4 class="cv-kop-title">{{ form.community_name || 'Aplikasi Member Komunitas' }}</h4>
+                  <p class="cv-kop-sub">Email: {{ form.email || 'support@amk.com' }} | Website: {{ (form.community_name || '').toLowerCase().replace(/\s+/g, '') + '.com' }}</p>
+                </div>
+                <h5 class="cv-letter-title">Surat Keterangan Keanggotaan Premium</h5>
+                <div class="cv-body">
+                  <p class="cv-para">{{ form.cv_introduction }}</p>
+                  <table class="cv-table">
+                    <tr><td class="cv-td-label">Nama Lengkap</td><td>: Nem Painem</td></tr>
+                    <tr><td class="cv-td-label">Nomor Anggota</td><td>: 290620261</td></tr>
+                    <tr><td class="cv-td-label">Email Terdaftar</td><td>: nem@amk.com</td></tr>
+                    <tr><td class="cv-td-label">Status Membership</td><td>: Aktif (Premium)</td></tr>
+                    <tr><td class="cv-td-label">Bergabung Sejak</td><td>: 01 Januari 2025</td></tr>
+                    <tr><td class="cv-td-label">Masa Berlaku</td><td>: 01 Januari 2026</td></tr>
+                  </table>
+                  <p class="cv-para">{{ form.cv_closing }}</p>
+                </div>
+                <div class="cv-sig-block">
+                  <div class="cv-sig-item">
+                    <p class="cv-sig-city">{{ form.cv_city || 'Jakarta' }}, {{ new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) }}</p>
+                    <p class="cv-sig-role"><strong>{{ form.cv_signer_title || 'Pengurus Pusat AMK' }}</strong></p>
+                    <div class="cv-sig-img-wrap">
+                      <img v-if="cvSignaturePreview" :src="cvSignaturePreview" alt="Tanda Tangan" class="cv-sig-img" />
+                      <div v-else class="cv-sig-placeholder">(Tanpa TTD)</div>
+                    </div>
+                    <p class="cv-sig-name">{{ form.cv_signer_name || 'Admin AMK' }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -438,7 +551,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Head, Link, useForm, router, usePage } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import PreviewLandingPage from './PreviewLandingPage.vue';
@@ -501,6 +614,11 @@ const form = useForm({
   stat_member_personal: s.stat_member_personal ?? '',
   terms_and_conditions: s.terms_and_conditions ?? defaultTerms,
   available_benefits:  (s.available_benefits && s.available_benefits.length) ? s.available_benefits : [''],
+  cv_introduction:     s.cv_introduction     ?? '',
+  cv_closing:          s.cv_closing          ?? '',
+  cv_city:             s.cv_city             ?? '',
+  cv_signer_title:     s.cv_signer_title     ?? '',
+  cv_signer_name:      s.cv_signer_name      ?? '',
   logo:                null,
   delete_logo:         false,
   bg_image:            null,
@@ -509,6 +627,8 @@ const form = useForm({
   delete_card_background: false,
   about_image:         null,
   delete_about_image:  false,
+  cv_signature_image:   null,
+  delete_cv_signature_image: false,
 });
 
 const activeTab = ref('identitas');
@@ -518,6 +638,7 @@ const tabs = [
   { key: 'keanggotaan', label: 'Keanggotaan' },
   { key: 'kartumember', label: 'Kartu Member' },
   { key: 'landingpage', label: 'Landing Page' },
+  { key: 'cvtemplate',  label: 'Template Surat' },
   { key: 'syaratketentuan', label: 'Syarat & Ketentuan' },
 ];
 
@@ -526,6 +647,31 @@ const logoPreview  = ref(s.community_logo ? `/storage/${s.community_logo}` : nul
 const bgPreview    = ref(s.bg_image       ? `/storage/${s.bg_image}`       : null);
 const cardBgPreview = ref(s.card_background ? `/storage/${s.card_background}` : null);
 const aboutPreview = ref(s.about_image    ? `/storage/${s.about_image}`    : null);
+const cvSignaturePreview = ref(s.cv_signature_image ? `/storage/${s.cv_signature_image}` : null);
+
+// Dynamically scale the A4 preview page to fit the shell container
+const cvShellRef = ref(null);
+let cvResizeObserver = null;
+function updateCvScale() {
+  if (!cvShellRef.value) return;
+  const shellW = cvShellRef.value.offsetWidth - 24; // subtract 12px padding each side
+  const scale = Math.min(shellW / 595, 1);
+  cvShellRef.value.style.setProperty('--cv-scale', scale);
+}
+onMounted(() => {
+  if (typeof ResizeObserver !== 'undefined') {
+    cvResizeObserver = new ResizeObserver(updateCvScale);
+  }
+});
+onUnmounted(() => {
+  if (cvResizeObserver) cvResizeObserver.disconnect();
+});
+function onCvShellMounted(el) {
+  if (!el) { if (cvResizeObserver && cvShellRef.value) cvResizeObserver.unobserve(cvShellRef.value); return; }
+  cvShellRef.value = el;
+  updateCvScale();
+  if (cvResizeObserver) cvResizeObserver.observe(el);
+}
 
 const initials = computed(() =>
   (s.community_name ?? 'AMK').split(' ').slice(0, 3).map(w => w[0]).join('').toUpperCase()
@@ -608,6 +754,23 @@ function deleteAbout() {
   form.errors.about_image = null;
 }
 
+function onCvSignatureChange(e) {
+  const file = e.target.files[0];
+  if (file && validateFile(file, 'cv_signature_image')) {
+    form.cv_signature_image = file;
+    form.delete_cv_signature_image = false;
+    cvSignaturePreview.value = URL.createObjectURL(file);
+  } else {
+    e.target.value = '';
+  }
+}
+function deleteCvSignature() {
+  form.cv_signature_image = null;
+  form.delete_cv_signature_image = true;
+  cvSignaturePreview.value = null;
+  form.errors.cv_signature_image = null;
+}
+
 function submit() {
   form.post(route('superadmin.pengaturan.update'), {
     forceFormData: true,
@@ -617,11 +780,13 @@ function submit() {
       bgPreview.value = s.bg_image ? `/storage/${s.bg_image}` : null;
       cardBgPreview.value = s.card_background ? `/storage/${s.card_background}` : null;
       aboutPreview.value = s.about_image ? `/storage/${s.about_image}` : null;
+      cvSignaturePreview.value = s.cv_signature_image ? `/storage/${s.cv_signature_image}` : null;
       
       form.logo = null;
       form.bg_image = null;
       form.card_background = null;
       form.about_image = null;
+      form.cv_signature_image = null;
     }
   });
 }
@@ -824,6 +989,10 @@ function removeBenefit(index) {
   box-shadow: 0 20px 40px -8px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.06);
   background: #fff;
   flex-shrink: 0;
+  transition: aspect-ratio 0.25s ease;
+}
+.preview-container--portrait {
+  aspect-ratio: 1 / 1.414;
 }
 
 .field-group { margin-bottom: 14px; }
@@ -970,6 +1139,126 @@ function removeBenefit(index) {
 }
 
 .section-divider { display: none; }
+
+/* ===== CV LETTER PREVIEW ===== */
+/*
+ * Technique: "Virtual A4 sheet"
+ * .cv-preview-shell  = clipped viewport (matches container dimensions)
+ * .cv-preview-page   = real A4 at 595px wide, scaled down via transform-scale
+ *   so the entire page fits the viewport proportionally.
+ */
+.cv-preview-shell {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #e5e7eb;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.cv-preview-page {
+  /* A4 at 72dpi: 595 × 842 px */
+  width: 595px;
+  min-height: 842px;
+  flex-shrink: 0;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+  padding: 52px 56px;
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+  font-size: 13px;
+  color: #222;
+  line-height: 1.6;
+
+  /* Scale-down to fit the shell:
+     shell max-width ≈ container - 24px padding.
+     We scale relative to 595px source width.
+     Using transform-origin top-center so it stays pinned at top. */
+  transform-origin: top center;
+  transform: scale(var(--cv-scale, 0.52));
+  margin-bottom: calc((842px * var(--cv-scale, 0.52) - 842px));
+}
+
+.cv-kop {
+  text-align: center;
+  border-bottom: 2.5px double #000;
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+}
+.cv-kop-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.cv-kop-sub {
+  font-size: 11px;
+  color: #666;
+  margin: 4px 0 0;
+}
+
+.cv-letter-title {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-transform: uppercase;
+  margin: 0 0 22px;
+}
+
+.cv-body { margin-bottom: 20px; }
+
+.cv-para {
+  margin: 0 0 14px;
+  white-space: pre-wrap;
+  text-align: justify;
+}
+
+.cv-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 13px;
+}
+.cv-table td { padding: 5px 0; vertical-align: top; }
+.cv-td-label { width: 180px; font-weight: 600; color: #444; }
+
+.cv-sig-block {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 32px;
+}
+.cv-sig-item { text-align: center; width: 200px; }
+.cv-sig-city  { margin: 0 0 4px; font-size: 13px; }
+.cv-sig-role  { margin: 0 0 6px; font-size: 13px; }
+.cv-sig-img-wrap {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0;
+}
+.cv-sig-img { max-height: 100%; max-width: 100%; object-fit: contain; }
+.cv-sig-placeholder {
+  width: 100%;
+  height: 60px;
+  border: 1px dashed #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  font-size: 11px;
+}
+.cv-sig-name {
+  font-weight: 700;
+  text-decoration: underline;
+  margin: 0;
+  font-size: 13px;
+}
 </style>
 
 

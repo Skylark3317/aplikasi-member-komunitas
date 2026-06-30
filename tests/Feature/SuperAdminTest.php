@@ -460,4 +460,58 @@ class SuperAdminTest extends TestCase
             'name' => 'Super Admin Baru',
         ]);
     }
+
+    // ──────────────────────────────────────────────────────────
+    // ADM-24: Simpan pengaturan Template Surat (CV) berhasil
+    // ──────────────────────────────────────────────────────────
+    public function test_ADM24_superadmin_dapat_mengubah_template_surat_keanggotaan(): void
+    {
+        $admin = $this->makeAdmin();
+
+        $response = $this->actingAs($admin)->post('/superadmin/pengaturan', [
+            'cv_introduction' => 'Teks pembuka kustom',
+            'cv_closing'      => 'Teks penutup kustom',
+            'cv_city'         => 'Surakarta',
+            'cv_signer_title' => 'Ketua Umum',
+            'cv_signer_name'  => 'Ketua AMK',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('settings', [
+            'key'   => 'cv_introduction',
+            'value' => 'Teks pembuka kustom',
+        ]);
+        $this->assertDatabaseHas('settings', [
+            'key'   => 'cv_closing',
+            'value' => 'Teks penutup kustom',
+        ]);
+        $this->assertDatabaseHas('settings', [
+            'key'   => 'cv_city',
+            'value' => 'Surakarta',
+        ]);
+        $this->assertDatabaseHas('settings', [
+            'key'   => 'cv_signer_title',
+            'value' => 'Ketua Umum',
+        ]);
+        $this->assertDatabaseHas('settings', [
+            'key'   => 'cv_signer_name',
+            'value' => 'Ketua AMK',
+        ]);
+    }
+
+    // ──────────────────────────────────────────────────────────
+    // ADM-25: Upload tanda tangan ketua berhasil
+    // ──────────────────────────────────────────────────────────
+    public function test_ADM25_superadmin_dapat_upload_tanda_tangan_ketua(): void
+    {
+        Storage::fake('public');
+        $admin = $this->makeAdmin();
+        $signature = UploadedFile::fake()->image('signature.png', 100, 100)->size(50);
+
+        $response = $this->actingAs($admin)->post('/superadmin/pengaturan', [
+            'cv_signature_image' => $signature,
+        ]);
+
+        $response->assertRedirect();
+    }
 }
