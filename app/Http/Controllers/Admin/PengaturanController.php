@@ -52,6 +52,7 @@ class PengaturanController extends Controller
             'membership_duration' => 'sometimes|required|integer|min:1',
             'terms_and_conditions'=> 'nullable|string',
             'cv_community_name'   => 'nullable|string|max:255',
+            'cv_email'            => 'nullable|email|max:255',
             'cv_website'          => 'nullable|string|max:255',
             'cv_letter_title'     => 'nullable|string|max:255',
             'cv_introduction'     => 'nullable|string',
@@ -75,7 +76,7 @@ class PengaturanController extends Controller
             'stat_member_company', 'stat_member_personal',
             'membership_fee', 'membership_duration',
             'terms_and_conditions',
-            'cv_community_name', 'cv_website', 'cv_letter_title',
+            'cv_community_name', 'cv_email', 'cv_website', 'cv_letter_title',
             'cv_introduction', 'cv_closing', 'cv_city',
             'cv_signer_title', 'cv_signer_name',
         ];

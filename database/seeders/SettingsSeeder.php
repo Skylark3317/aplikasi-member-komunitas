@@ -42,6 +42,7 @@ class SettingsSeeder extends Seeder
             'stat_member_personal'  => '1801',
             'available_benefits'    => json_encode(['Akses Ebook Berkualitas', 'Akses Video Premium', 'Tanya Jawab dengan Admin', 'Sertifikat Digital']),
             'cv_community_name'     => 'Aplikasi Member Komunitas',
+            'cv_email'              => 'info@komunitasamk.com',
             'cv_website'            => 'www.komunitasamk.com',
             'cv_letter_title'       => 'Surat Keterangan Keanggotaan Premium',
             'cv_introduction'       => 'Dengan ini menerangkan bahwa data di bawah ini adalah anggota resmi dan terdaftar secara aktif dalam komunitas **Aplikasi Member Komunitas**:',
