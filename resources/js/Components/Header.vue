@@ -71,12 +71,13 @@ const scrollToSection = (e, id, url) => {
     <header class="hidden lg:block sticky top-0 z-1 animate-slide-in-down">
         <nav class="flex flex-col relative">
             <div class="h-14 flex justify-center px-4 bg-white">
-                <div class="w-full max-w-270 h-full flex justify-between">
+                <div class="w-full max-w-[1080px] h-full flex justify-between relative">
                     <!-- Logo Container with fixed size spanning both rows -->
-<Link class="absolute left-105 top-0 flex items-center justify-center bg-white shadow-[0.0625rem] hover-scale z-10 w-[112px] h-[112px] rounded-lg" :href="route('home')">                        <img :src="settings.community_logo ? `${storageUrl}/${settings.community_logo}` : `${appUrl}/images/community-logo.svg`" alt="Logo" class="h-full w-full object-contain p-1">
+                    <Link class="absolute left-0 top-0 flex items-center justify-center bg-white shadow-[0.0625rem] hover-scale z-10 w-[112px] h-[112px] rounded-b-lg" :href="route('home')">
+                        <img :src="settings.community_logo ? `${storageUrl}/${settings.community_logo}` : `${appUrl}/images/community-logo.svg`" alt="Logo" class="h-full w-full object-contain p-1">
                     </Link>
                     <!-- Spacer for logo -->
-                    <div class="w-[270px]"></div>
+                    <div class="w-[112px]"></div>
                     <div class="flex">
                         <a class="nav-item-animate w-full h-full flex items-center gap-3 px-4 font-medium shadow-[0.0625rem_0_0_var(--color-onyx-200)_inset,-0.0625rem_0_0_var(--color-onyx-200)_inset] whitespace-nowrap hover-brightness" :href="settings.email ? `mailto:${settings.email}` : '#'" target="_blank">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail-icon lucide-mail"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
@@ -97,13 +98,15 @@ const scrollToSection = (e, id, url) => {
                     </div>
                 </div>
             </div>
-            <div class="relative h-14 flex justify-center items-center gap-8 px-4 bg-[rgba(0,0,0,0.2)]">
+            <div class="relative h-14 flex justify-center px-4 bg-[rgba(0,0,0,0.2)]">
                 <div class="absolute top-0 left-0 w-full h-full bg-primary -z-1" />
-                <a class="font-medium text-white cursor-pointer" :href="`${route('home')}#about`" @click="scrollToSection($event, 'about', `${route('home')}#about`)">TENTANG</a>
-                <Link class="font-medium text-white" :href="route('blog.index')">BLOG</Link>
-                <a class="font-medium text-white cursor-pointer" :href="`${route('home')}#contact`" @click="scrollToSection($event, 'contact', `${route('home')}#contact`)">KONTAK</a>
-                <Link v-if="user" class="px-6 py-2 rounded-full ring ring-inset ring-white font-medium text-white" :href="route('dashboard')">Dashboard</Link>
-                <Link v-else class="px-6 py-2 rounded-full ring ring-inset ring-white font-medium text-white" :href="route('login')">Login</Link>
+                <div class="w-full max-w-[1080px] h-full flex justify-center items-center gap-8">
+                    <a class="font-medium text-white cursor-pointer" :href="`${route('home')}#about`" @click="scrollToSection($event, 'about', `${route('home')}#about`)">TENTANG</a>
+                    <Link class="font-medium text-white" :href="route('blog.index')">BLOG</Link>
+                    <a class="font-medium text-white cursor-pointer" :href="`${route('home')}#contact`" @click="scrollToSection($event, 'contact', `${route('home')}#contact`)">KONTAK</a>
+                    <Link v-if="user" class="px-6 py-2 rounded-full ring ring-inset ring-white font-medium text-white" :href="route('dashboard')">Dashboard</Link>
+                    <Link v-else class="px-6 py-2 rounded-full ring ring-inset ring-white font-medium text-white" :href="route('login')">Login</Link>
+                </div>
             </div>
         </nav>
     </header>

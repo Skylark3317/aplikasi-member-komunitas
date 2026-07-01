@@ -453,11 +453,14 @@ watch([searchQuery, activeTab], () => {
 });
 
 function openChat(id, msgId = null) {
-  if (msgId) {
-    router.visit(route('petugas.pertanyaan.show', id) + `?msg=${msgId}`);
-  } else {
-    router.visit(route('petugas.pertanyaan.show', id));
-  }
+  const url = msgId 
+    ? route('petugas.pertanyaan.show', id) + `?msg=${msgId}`
+    : route('petugas.pertanyaan.show', id);
+    
+  router.visit(url, {
+    preserveState: true,
+    preserveScroll: true
+  });
 }
 
 function submitReply() {
@@ -555,86 +558,7 @@ function checkAndScrollToMessage() {
 onMounted(() => {
   checkAndScrollToMessage();
   if (inputField.value) inputField.value.focus();
-
-  // Animations
-  nextTick(() => {
-    // Sidebar animation
-    const sidebar = document.querySelector('.chat-sidebar');
-    if (sidebar) {
-      sidebar.style.opacity = '0';
-      sidebar.style.transform = 'translateX(-30px)';
-      setTimeout(() => {
-        sidebar.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        sidebar.style.opacity = '1';
-        sidebar.style.transform = 'translateX(0)';
-      }, 50);
-    }
-
-    // Chat room animation
-    const chatRoom = document.querySelector('.chat-main-room');
-    if (chatRoom) {
-      chatRoom.style.opacity = '0';
-      chatRoom.style.transform = 'translateX(30px)';
-      setTimeout(() => {
-        chatRoom.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        chatRoom.style.opacity = '1';
-        chatRoom.style.transform = 'translateX(0)';
-      }, 150);
-    }
-
-    // Search box animation
-    const searchBox = document.querySelector('.search-box');
-    if (searchBox) {
-      searchBox.style.opacity = '0';
-      searchBox.style.transform = 'scale(0.95)';
-      setTimeout(() => {
-        searchBox.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        searchBox.style.opacity = '1';
-        searchBox.style.transform = 'scale(1)';
-      }, 300);
-    }
-
-    // Filter tabs animation
-    const filterTabs = document.querySelectorAll('.filter-tab');
-    filterTabs.forEach((tab, index) => {
-      tab.style.opacity = '0';
-      tab.style.transform = 'translateY(-10px)';
-      setTimeout(() => {
-        tab.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        tab.style.opacity = '1';
-        tab.style.transform = 'translateY(0)';
-      }, 400 + index * 80);
-    });
-
-    // Chat items stagger
-    animateChatItems();
-
-    // Messages entrance
-    const messages = document.querySelectorAll('.message-bubble-row');
-    messages.forEach((msg, index) => {
-      msg.style.opacity = '0';
-      msg.style.transform = 'translateY(15px)';
-      setTimeout(() => {
-        msg.style.transition = 'all 0.4s ease';
-        msg.style.opacity = '1';
-        msg.style.transform = 'translateY(0)';
-      }, 600 + index * 30);
-    });
-  });
 });
-
-function animateChatItems() {
-  const chatItems = document.querySelectorAll('.chat-item');
-  chatItems.forEach((item, index) => {
-    item.style.opacity = '0';
-    item.style.transform = 'translateX(-20px)';
-    setTimeout(() => {
-      item.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
-      item.style.opacity = '1';
-      item.style.transform = 'translateX(0)';
-    }, 500 + index * 60);
-  });
-}
 
 // If the conversation updates, scroll to bottom (unless a specific message is being highlighted)
 watch(() => props.conversation.messages, () => {

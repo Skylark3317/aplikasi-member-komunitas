@@ -3,38 +3,44 @@
 
     <!-- ===== HEADER ===== -->
     <header class="lp-header">
-      <!-- Top bar: email + phone -->
-      <div class="lp-header-top-wrap">
-        <div class="lp-container lp-header-top">
-          <div class="lp-logo-wrap">
-            <img :src="logoUrl" alt="Logo" class="lp-logo-img">
-          </div>
-          <div class="lp-contact-bar">
-            <span class="lp-contact-item">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
-              {{ settings.email || '-' }}
-            </span>
-            <span class="lp-contact-item">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg>
-              {{ settings.phone || '-' }}
-            </span>
-            <span class="lp-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z"/></svg>
-              YouTube
-            </span>
-            <span class="lp-contact-item">
-              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/></svg>
-              Instagram
-            </span>
+      <nav class="lp-nav-container">
+        <!-- Top White Bar -->
+        <div class="lp-top-bar">
+          <div class="lp-container lp-top-inner">
+            <div class="lp-logo-box">
+              <img :src="logoUrl" alt="Logo" class="lp-logo-img">
+            </div>
+            <div class="lp-logo-spacer"></div>
+            <div class="lp-contact-bar">
+              <span class="lp-contact-item">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+                {{ settings.email || '-' }}
+              </span>
+              <span class="lp-contact-item">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg>
+                {{ settings.phone || '-' }}
+              </span>
+              <span class="lp-contact-item">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z"/></svg>
+                YouTube
+              </span>
+              <span class="lp-contact-item">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/></svg>
+                Instagram
+              </span>
+            </div>
           </div>
         </div>
-      </div>
-      <!-- Nav bar -->
-      <nav class="lp-nav">
-        <span class="lp-nav-link">TENTANG</span>
-        <span class="lp-nav-link">BLOG</span>
-        <span class="lp-nav-link">KONTAK</span>
-        <span class="lp-nav-btn">Login</span>
+        <!-- Bottom Translucent Bar -->
+        <div class="lp-bottom-bar">
+          <div class="lp-bottom-bg"></div>
+          <div class="lp-container lp-bottom-inner">
+            <span class="lp-nav-link">TENTANG</span>
+            <span class="lp-nav-link">BLOG</span>
+            <span class="lp-nav-link">KONTAK</span>
+            <span class="lp-nav-btn">Login</span>
+          </div>
+        </div>
       </nav>
     </header>
 
@@ -237,29 +243,28 @@ const cssVars = computed(() => ({
 }
 
 /* === HEADER === */
-.lp-header { position: sticky; top: 0; z-index: 20; background: #fff; }
-.lp-header-top-wrap {
-  border-bottom: 1px solid #e5e7eb;
-}
-.lp-header-top {
-  display: flex;
-  align-items: stretch;
-  height: 36px;
-  padding: 24px; 
-}
-.lp-logo-wrap {
+.lp-header { position: sticky; top: 0; z-index: 20; background: transparent; }
+.lp-nav-container { display: flex; flex-direction: column; position: relative; }
+.lp-top-bar { height: 36px; background: #fff; display: flex; justify-content: center; }
+.lp-top-inner { display: flex; justify-content: space-between; align-items: stretch; height: 100%; position: relative; }
+.lp-logo-box {
+  position: absolute;
+  left: 24px;
+  top: 0;
   display: flex;
   align-items: center;
-  padding-right: 14px;
+  justify-content: center;
+  background: #fff;
+  z-index: 10;
+  width: 70px;
+  height: 70px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
-.lp-logo-img { height: 22px; width: auto; object-fit: contain; display: block; }
-.lp-contact-bar {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  flex: 1;
-  justify-content: flex-end;
-}
+.lp-logo-img { height: 100%; width: 100%; object-fit: contain; padding: 4px; }
+.lp-logo-spacer { width: 70px; }
+.lp-contact-bar { display: flex; align-items: center; flex: 1; justify-content: flex-end; }
 .lp-contact-item {
   display: flex;
   align-items: center;
@@ -271,15 +276,9 @@ const cssVars = computed(() => ({
   height: 100%;
   white-space: nowrap;
 }
-.lp-nav {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  height: 32px;
-  background: var(--lp-primary);
-  position: relative;
-}
+.lp-bottom-bar { position: relative; height: 36px; display: flex; justify-content: center; background: rgba(0,0,0,0.2); }
+.lp-bottom-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--lp-primary); z-index: -1; }
+.lp-bottom-inner { display: flex; justify-content: center; align-items: center; gap: 20px; height: 100%; }
 .lp-nav-link { color: #fff; font-size: 10px; font-weight: 500; cursor: pointer; }
 .lp-nav-btn {
   color: #fff;
