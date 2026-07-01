@@ -346,149 +346,170 @@
 
           <!-- === MEMBER ASSETS === -->
           <div class="form-card" v-show="activeTab === 'member-assets'">
-            <h3 class="form-card-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2" ry="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              Kartu Member Design
-            </h3>
-
-          <!-- Card Background image -->
-          <div class="field-group">
-            <label class="field-label">Gambar Latar Belakang Kartu Member</label>
-          <div class="img-preview-box">
-            <img v-if="cardBgPreview" :src="cardBgPreview" alt="Latar Belakang Kartu" />
-          </div>
-          <p class="field-hint">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="12"/>
-              <line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            Format JPG atau PNG, ukuran maksimal 1MB
-          </p>
-          <div class="btn-row">
-            <label class="btn-upload">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
-              Unggah background kartu
-              <input type="file" accept=".jpg,.jpeg,.png" @change="onCardBgChange" hidden />
-            </label>
-            <button type="button" class="btn-delete" @click="deleteCardBg">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3 6 5 6 21 6"/>
-                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-              </svg>
-              Hapus background kartu
-            </button>
-          </div>
-          <span v-if="form.errors.card_background" class="error-msg">{{ form.errors.card_background }}</span>
-          </div>
-
-          <p class="form-subsection mt-4">Template Surat Keterangan</p>
-          <p class="form-subsection" style="margin-top: 12px; margin-bottom: 8px;">Informasi Kop Surat</p>
-            
-            <!-- Community Name for CV -->
-            <div class="field-group">
-              <label class="field-label">Nama Komunitas (Kop Surat)</label>
-              <input v-model="form.cv_community_name" type="text" class="field-input" placeholder="Contoh: Aplikasi Member Komunitas" />
-              <span v-if="form.errors.cv_community_name" class="error-msg">{{ form.errors.cv_community_name }}</span>
-            </div>
-
-            <!-- Email Community for CV -->
-            <div class="field-group">
-              <label class="field-label">Email Komunitas (Kop Surat)</label>
-              <input v-model="form.cv_email" type="email" class="field-input" placeholder="Contoh: info@komunitasamk.com" />
-              <span v-if="form.errors.cv_email" class="error-msg">{{ form.errors.cv_email }}</span>
-            </div>
-
-            <!-- Website Community -->
-            <div class="field-group">
-              <label class="field-label">Website Komunitas</label>
-              <input v-model="form.cv_website" type="text" class="field-input" placeholder="Contoh: www.komunitasamk.com" />
-              <span v-if="form.errors.cv_website" class="error-msg">{{ form.errors.cv_website }}</span>
-            </div>
-
-            <!-- Letter Title -->
-            <div class="field-group">
-              <label class="field-label">Judul Surat</label>
-              <input v-model="form.cv_letter_title" type="text" class="field-input" placeholder="Contoh: Surat Keterangan Keanggotaan Premium" />
-              <span v-if="form.errors.cv_letter_title" class="error-msg">{{ form.errors.cv_letter_title }}</span>
-            </div>
-
-            <p class="form-subsection mt-4">Konten Surat</p>
-
-            <!-- Introduction Text -->
-            <div class="field-group">
-              <label class="field-label">Teks Pembuka (Keterangan)</label>
-              <textarea v-model="form.cv_introduction" class="field-textarea" rows="4" placeholder="Dengan ini menerangkan bahwa data di bawah ini adalah anggota resmi..." />
-              <span v-if="form.errors.cv_introduction" class="error-msg">{{ form.errors.cv_introduction }}</span>
-            </div>
-
-            <!-- Closing Text -->
-            <div class="field-group">
-              <label class="field-label">Teks Penutup</label>
-              <textarea v-model="form.cv_closing" class="field-textarea" rows="3" placeholder="Demikian surat keterangan keanggotaan ini dibuat dengan sebenar-benarnya..." />
-              <span v-if="form.errors.cv_closing" class="error-msg">{{ form.errors.cv_closing }}</span>
-            </div>
-
-            <!-- City -->
-            <div class="field-group">
-              <label class="field-label">Tempat/Kota TTD</label>
-              <input v-model="form.cv_city" type="text" class="field-input" placeholder="Contoh: Jakarta atau Surakarta" />
-              <span v-if="form.errors.cv_city" class="error-msg">{{ form.errors.cv_city }}</span>
-            </div>
-
-            <!-- Signer Title / Jabatan -->
-            <div class="field-group">
-              <label class="field-label">Jabatan Penandatangan</label>
-              <input v-model="form.cv_signer_title" type="text" class="field-input" placeholder="Contoh: Pengurus Pusat AMK atau Ketua Umum" />
-              <span v-if="form.errors.cv_signer_title" class="error-msg">{{ form.errors.cv_signer_title }}</span>
-            </div>
-
-            <!-- Signer Name -->
-            <div class="field-group">
-              <label class="field-label">Nama Penandatangan</label>
-              <input v-model="form.cv_signer_name" type="text" class="field-input" placeholder="Contoh: Admin AMK atau Ahmad, M.Kom." />
-              <span v-if="form.errors.cv_signer_name" class="error-msg">{{ form.errors.cv_signer_name }}</span>
-            </div>
-
-            <!-- Signature Image -->
-            <div class="field-group">
-              <label class="field-label">Gambar Tanda Tangan (Signature)</label>
-              <div class="logo-preview" style="height: 100px; width: 180px;">
-                <img v-if="cvSignaturePreview" :src="cvSignaturePreview" alt="Tanda Tangan" class="preview-img" style="object-fit: contain; background: #fff;" />
-                <span v-else class="logo-text" style="font-size: 14px; color: #9ca3af; letter-spacing: 0;">Belum ada TTD</span>
-              </div>
-              <p class="field-hint">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <circle cx="12" cy="12" r="10"/>
-                  <line x1="12" y1="8" x2="12" y2="12"/>
-                  <line x1="12" y1="16" x2="12.01" y2="16"/>
-                </svg>
-                Format JPG atau PNG (disarankan background transparan), max 1MB
+            <!-- Kartu Member Section -->
+            <div class="form-section-group">
+              <h3 class="form-card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2" ry="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Desain Kartu Member
+              </h3>
+              <p class="field-hint" style="margin-bottom: 12px; margin-top: -8px;">
+                Kartu member menggunakan rasio standar CR80 (85.6mm × 53.98mm)
               </p>
-              <div class="btn-row">
-                <label class="btn-upload">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                    <polyline points="17 8 12 3 7 8"/>
-                    <line x1="12" y1="3" x2="12" y2="15"/>
+
+              <!-- Card Background image -->
+              <div class="field-group">
+                <label class="field-label">Gambar Latar Belakang Kartu</label>
+                <div class="img-preview-box">
+                  <img v-if="cardBgPreview" :src="cardBgPreview" alt="Latar Belakang Kartu" />
+                </div>
+                <p class="field-hint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
                   </svg>
-                  Unggah tanda tangan
-                  <input type="file" accept=".jpg,.jpeg,.png" @change="onCvSignatureChange" hidden />
-                </label>
-                <button type="button" class="btn-delete" @click="deleteCvSignature">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="3 6 5 6 21 6"/>
-                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                  </svg>
-                  Hapus tanda tangan
-                </button>
+                  Format JPG atau PNG, ukuran maksimal 1MB
+                </p>
+                <div class="btn-row">
+                  <label class="btn-upload">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    Unggah background kartu
+                    <input type="file" accept=".jpg,.jpeg,.png" @change="onCardBgChange" hidden />
+                  </label>
+                  <button type="button" class="btn-delete" @click="deleteCardBg">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    </svg>
+                    Hapus background kartu
+                  </button>
+                </div>
+                <span v-if="form.errors.card_background" class="error-msg">{{ form.errors.card_background }}</span>
               </div>
-              <span v-if="form.errors.cv_signature_image" class="error-msg">{{ form.errors.cv_signature_image }}</span>
-            </div>
+            </div><!-- /Kartu Member Section -->
+
+            <!-- Section Divider -->
+            <div class="form-section-divider"></div>
+
+            <!-- Template Surat Section -->
+            <div class="form-section-group">
+              <h3 class="form-card-title" style="border-bottom: none; margin-bottom: 8px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Template Surat Keterangan
+              </h3>
+              <p class="field-hint" style="margin-bottom: 16px;">
+                Template surat menggunakan format A4 standar (210mm × 297mm)
+              </p>
+
+              <p class="form-subsection">Informasi Kop Surat</p>
+              
+              <!-- Community Name for CV -->
+              <div class="field-group">
+                <label class="field-label">Nama Komunitas <span class="label-helper">(untuk kop surat)</span></label>
+                <input v-model="form.cv_community_name" type="text" class="field-input" placeholder="Contoh: Aplikasi Member Komunitas" />
+                <span v-if="form.errors.cv_community_name" class="error-msg">{{ form.errors.cv_community_name }}</span>
+              </div>
+
+              <!-- Email Community for CV -->
+              <div class="field-group">
+                <label class="field-label">Email Komunitas <span class="label-helper">(untuk kop surat)</span></label>
+                <input v-model="form.cv_email" type="email" class="field-input" placeholder="Contoh: info@komunitasamk.com" />
+                <span v-if="form.errors.cv_email" class="error-msg">{{ form.errors.cv_email }}</span>
+              </div>
+
+              <!-- Website Community -->
+              <div class="field-group">
+                <label class="field-label">Website Komunitas</label>
+                <input v-model="form.cv_website" type="text" class="field-input" placeholder="Contoh: www.komunitasamk.com" />
+                <span v-if="form.errors.cv_website" class="error-msg">{{ form.errors.cv_website }}</span>
+              </div>
+
+              <!-- Letter Title -->
+              <div class="field-group">
+                <label class="field-label">Judul Surat</label>
+                <input v-model="form.cv_letter_title" type="text" class="field-input" placeholder="Contoh: Surat Keterangan Keanggotaan Premium" />
+                <span v-if="form.errors.cv_letter_title" class="error-msg">{{ form.errors.cv_letter_title }}</span>
+              </div>
+
+              <p class="form-subsection mt-4">Konten Surat</p>
+
+              <!-- Introduction Text -->
+              <div class="field-group">
+                <label class="field-label">Teks Pembuka <span class="label-helper">(keterangan)</span></label>
+                <textarea v-model="form.cv_introduction" class="field-textarea" rows="4" placeholder="Dengan ini menerangkan bahwa data di bawah ini adalah anggota resmi..." />
+                <span v-if="form.errors.cv_introduction" class="error-msg">{{ form.errors.cv_introduction }}</span>
+              </div>
+
+              <!-- Closing Text -->
+              <div class="field-group">
+                <label class="field-label">Teks Penutup</label>
+                <textarea v-model="form.cv_closing" class="field-textarea" rows="3" placeholder="Demikian surat keterangan keanggotaan ini dibuat dengan sebenar-benarnya..." />
+                <span v-if="form.errors.cv_closing" class="error-msg">{{ form.errors.cv_closing }}</span>
+              </div>
+
+              <p class="form-subsection mt-4">Informasi Penandatangan</p>
+
+              <!-- City -->
+              <div class="field-group">
+                <label class="field-label">Tempat/Kota TTD</label>
+                <input v-model="form.cv_city" type="text" class="field-input field-half" placeholder="Contoh: Jakarta" />
+                <span v-if="form.errors.cv_city" class="error-msg">{{ form.errors.cv_city }}</span>
+              </div>
+
+              <!-- Signer Title / Jabatan -->
+              <div class="field-group">
+                <label class="field-label">Jabatan Penandatangan</label>
+                <input v-model="form.cv_signer_title" type="text" class="field-input" placeholder="Contoh: Ketua Umum" />
+                <span v-if="form.errors.cv_signer_title" class="error-msg">{{ form.errors.cv_signer_title }}</span>
+              </div>
+
+              <!-- Signer Name -->
+              <div class="field-group">
+                <label class="field-label">Nama Penandatangan</label>
+                <input v-model="form.cv_signer_name" type="text" class="field-input" placeholder="Contoh: Ahmad, M.Kom." />
+                <span v-if="form.errors.cv_signer_name" class="error-msg">{{ form.errors.cv_signer_name }}</span>
+              </div>
+
+              <!-- Signature Image -->
+              <div class="field-group">
+                <label class="field-label">Gambar Tanda Tangan</label>
+                <div class="logo-preview" style="height: 100px; width: 180px;">
+                  <img v-if="cvSignaturePreview" :src="cvSignaturePreview" alt="Tanda Tangan" class="preview-img" style="object-fit: contain; background: #fff;" />
+                  <span v-else class="logo-text" style="font-size: 14px; color: #9ca3af; letter-spacing: 0;">Belum ada TTD</span>
+                </div>
+                <p class="field-hint">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  Format PNG (background transparan), maksimal 1MB
+                </p>
+                <div class="btn-row">
+                  <label class="btn-upload">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    Unggah tanda tangan
+                    <input type="file" accept=".jpg,.jpeg,.png" @change="onCvSignatureChange" hidden />
+                  </label>
+                  <button type="button" class="btn-delete" @click="deleteCvSignature">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    </svg>
+                    Hapus tanda tangan
+                  </button>
+                </div>
+                <span v-if="form.errors.cv_signature_image" class="error-msg">{{ form.errors.cv_signature_image }}</span>
+              </div>
+            </div><!-- /Template Surat Section -->
           </div><!-- /form-card member-assets -->
 
           <!-- === LEGAL === -->
@@ -528,21 +549,30 @@
               <div class="ql-editor" style="padding:0 !important; font-family: inherit; font-size: 0.875rem;" v-html="form.terms_and_conditions"></div>
             </div>
             <!-- Member Assets Preview: Kartu Member Card + CV Template -->
-            <div v-else-if="activeTab === 'member-assets'" style="width: 100%; height: 100%; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; padding: 16px; background: #f9fafb;">
-              <!-- Kartu Member Preview -->
-              <div style="background: #fff; border-radius: 12px; padding: 16px; border: 1px solid #e5e7eb;">
-                <h5 style="font-size: 0.875rem; font-weight: 600; color: #6b7280; margin: 0 0 12px 0;">Preview Kartu Member</h5>
-                <PreviewMemberCard
-                  :form="form"
-                  :cardBgUrl="cardBgPreview"
-                />
+            <div v-else-if="activeTab === 'member-assets'" class="flex gap-6 h-full overflow-y-auto px-4 py-6 bg-slate-50">
+              <!-- Kartu Member Preview Box -->
+              <div class="flex-1 flex flex-col items-start">
+                <h5 class="text-sm font-semibold text-gray-700 mb-4 px-4 pb-3 border-b border-gray-100 w-full flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_0_2px_rgba(34,197,94,0.25)]"></span>
+                  Preview Kartu Member
+                </h5>
+                <div class="w-full px-4" style="pointer-events: none;">
+                  <PreviewMemberCard
+                    :form="form"
+                    :cardBgUrl="cardBgPreview"
+                  />
+                </div>
               </div>
               
-              <!-- CV Template Preview -->
-              <div style="background: #fff; border-radius: 12px; padding: 16px; border: 1px solid #e5e7eb; flex: 1; min-height: 0;">
-                <h5 style="font-size: 0.875rem; font-weight: 600; color: #6b7280; margin: 0 0 12px 0;">Preview Template Surat</h5>
-                <div class="cv-preview-shell" :ref="onCvShellMounted">
-              <div class="cv-preview-page">
+              <!-- CV Template Preview Box -->
+              <div class="flex-1 flex flex-col items-start">
+                <h5 class="text-sm font-semibold text-gray-700 mb-4 px-4 pb-3 border-b border-gray-100 w-full flex items-center gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_0_2px_rgba(34,197,94,0.25)]"></span>
+                  Preview Template Surat
+                </h5>
+                <div class="w-full px-4 overflow-y-auto" style="max-height: calc(100vh - 200px);">
+                  <div class="cv-preview-shell">
+                    <div class="cv-preview-page">
                 <!-- Kop Surat -->
                 <div class="cv-kop">
                   <h4 class="cv-kop-title">{{ form.cv_community_name || form.community_name || 'Aplikasi Member Komunitas' }}</h4>
@@ -572,10 +602,11 @@
                     <p class="cv-sig-name">{{ form.cv_signer_name || 'Admin AMK' }}</p>
                   </div>
                 </div>
-              </div><!-- /cv-preview-page -->
-              </div><!-- /cv-preview-shell -->
-              </div><!-- /CV Template Preview Card -->
-            </div><!-- /member-assets preview container -->
+                  </div><!-- /cv-preview-page -->
+                </div><!-- /cv-preview-shell -->
+              </div><!-- /px-4 wrapper -->
+              </div><!-- /CV Template Preview Box -->
+            </div><!-- /member-assets flex container -->
           </div><!-- /preview-container -->
         </div><!-- /preview-sticky -->
       </div><!-- /settings-preview-col -->
@@ -687,17 +718,8 @@ const cardBgPreview = ref(s.card_background ? `/storage/${s.card_background}` : 
 const aboutPreview = ref(s.about_image    ? `/storage/${s.about_image}`    : null);
 const cvSignaturePreview = ref(s.cv_signature_image ? `/storage/${s.cv_signature_image}` : null);
 
-// Dynamically scale the A4 preview page to fit the shell container
-const cvShellRef = ref(null);
+// Tab bar ref for horizontal scrolling
 const tabBarRef = ref(null);
-let cvResizeObserver = null;
-
-function updateCvScale() {
-  if (!cvShellRef.value) return;
-  const shellW = cvShellRef.value.offsetWidth - 24; // subtract 12px padding each side
-  const scale = Math.min(shellW / 595, 1);
-  cvShellRef.value.style.setProperty('--cv-scale', scale);
-}
 
 // Handle horizontal scroll with mouse wheel on tab bar
 function handleTabBarScroll(e) {
@@ -710,10 +732,6 @@ function handleTabBarScroll(e) {
 }
 
 onMounted(() => {
-  if (typeof ResizeObserver !== 'undefined') {
-    cvResizeObserver = new ResizeObserver(updateCvScale);
-  }
-  
   // Add wheel event listener to tab bar for horizontal scrolling on next tick
   setTimeout(() => {
     if (tabBarRef.value) {
@@ -723,19 +741,11 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  if (cvResizeObserver) cvResizeObserver.disconnect();
-  
   // Remove wheel event listener
   if (tabBarRef.value) {
     tabBarRef.value.removeEventListener('wheel', handleTabBarScroll);
   }
 });
-function onCvShellMounted(el) {
-  if (!el) { if (cvResizeObserver && cvShellRef.value) cvResizeObserver.unobserve(cvShellRef.value); return; }
-  cvShellRef.value = el;
-  updateCvScale();
-  if (cvResizeObserver) cvResizeObserver.observe(el);
-}
 
 const initials = computed(() =>
   (s.community_name ?? 'AMK').split(' ').slice(0, 3).map(w => w[0]).join('').toUpperCase()
@@ -1115,6 +1125,46 @@ function removeBenefit(index) {
   margin: 14px 0 10px;
 }
 .form-subsection:first-of-type { margin-top: 0; }
+
+/* Form Section Grouping */
+.form-section-group {
+  padding: 16px;
+  background: #fafbfc;
+  border: 1px solid #f0f1f3;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.form-section-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-section-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #e5e7eb 20%, #e5e7eb 80%, transparent);
+  margin: 24px 0;
+  position: relative;
+}
+
+.form-section-divider::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  background: #cbd5e1;
+  border-radius: 50%;
+}
+
+.label-helper {
+  font-size: 11px;
+  font-weight: 400;
+  color: #9ca3af;
+  text-transform: lowercase;
+}
+
 .social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
 .membership-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
 .color-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
@@ -1331,88 +1381,115 @@ function removeBenefit(index) {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  background: #fff;
+  background: #f8fafc;
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 0 12px;
+  padding: 12px;
   box-sizing: border-box;
 }
 
-.cv-preview-shell::-webkit-scrollbar { width: 3px; }
+.cv-preview-shell::-webkit-scrollbar { width: 6px; }
+.cv-preview-shell::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 3px; }
 .cv-preview-shell::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+.cv-preview-shell::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
 .cv-preview-page {
-  width: 595px;
-  min-height: 842px;
-  flex-shrink: 0;
+  width: 100%;
+  max-width: 595px;
+  /* Standard A4 aspect ratio: 1 : 1.414 (210mm × 297mm) */
+  aspect-ratio: 1 / 1.414;
   background: #fff;
-  padding: 52px 56px;
+  padding: clamp(32px, 5%, 52px) clamp(28px, 4.5%, 56px);
   box-sizing: border-box;
   font-family: 'Arial', sans-serif;
-  font-size: 13px;
+  font-size: clamp(10px, 1.8vw, 13px);
   color: #222;
   line-height: 1.6;
-  transform-origin: top center;
-  transform: scale(var(--cv-scale, 0.52));
-  margin-bottom: calc((842px * var(--cv-scale, 0.52) - 842px));
+  box-shadow: 0 4px 12px -2px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06);
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .cv-kop {
   text-align: center;
   border-bottom: 2.5px double #000;
-  padding-bottom: 14px;
-  margin-bottom: 18px;
+  padding-bottom: clamp(10px, 2%, 14px);
+  margin-bottom: clamp(12px, 2.5%, 18px);
 }
 .cv-kop-title {
-  font-size: 17px;
+  font-size: clamp(13px, 2.2vw, 17px);
   font-weight: 700;
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  line-height: 1.3;
 }
 .cv-kop-sub {
-  font-size: 11px;
+  font-size: clamp(9px, 1.5vw, 11px);
   color: #666;
   margin: 4px 0 0;
+  line-height: 1.4;
 }
 
 .cv-letter-title {
   text-align: center;
-  font-size: 14px;
+  font-size: clamp(11px, 2vw, 14px);
   font-weight: 700;
   text-decoration: underline;
   text-transform: uppercase;
-  margin: 0 0 22px;
+  margin: 0 0 clamp(14px, 2.5%, 22px);
+  line-height: 1.3;
 }
 
-.cv-body { margin-bottom: 20px; }
+.cv-body { margin-bottom: clamp(14px, 2.5%, 20px); }
 
 .cv-para {
-  margin: 0 0 14px;
+  margin: 0 0 clamp(10px, 1.8%, 14px);
   white-space: pre-wrap;
   text-align: justify;
+  font-size: clamp(10px, 1.8vw, 13px);
+  line-height: 1.6;
 }
 
 .cv-table {
   width: 100%;
   border-collapse: collapse;
-  margin: 16px 0;
-  font-size: 13px;
+  margin: clamp(12px, 2%, 16px) 0;
+  font-size: clamp(10px, 1.8vw, 13px);
 }
-.cv-table td { padding: 5px 0; vertical-align: top; }
-.cv-td-label { width: 180px; font-weight: 600; color: #444; }
+.cv-table td { 
+  padding: clamp(3px, 0.6%, 5px) 0; 
+  vertical-align: top;
+  line-height: 1.5;
+}
+.cv-td-label { 
+  width: clamp(140px, 30%, 180px); 
+  font-weight: 600; 
+  color: #444; 
+}
 
 .cv-sig-block {
   display: flex;
   justify-content: flex-end;
-  margin-top: 32px;
+  margin-top: clamp(20px, 3.5%, 32px);
 }
-.cv-sig-item { text-align: center; width: 200px; }
-.cv-sig-city  { margin: 0 0 4px; font-size: 13px; }
-.cv-sig-role  { margin: 0 0 6px; font-size: 13px; }
+.cv-sig-item { 
+  text-align: center; 
+  width: clamp(160px, 33%, 200px); 
+}
+.cv-sig-city  { 
+  margin: 0 0 4px; 
+  font-size: clamp(10px, 1.8vw, 13px);
+  line-height: 1.4;
+}
+.cv-sig-role  { 
+  margin: 0 0 6px; 
+  font-size: clamp(10px, 1.8vw, 13px);
+  line-height: 1.4;
+}
 .cv-sig-img-wrap {
-  height: 72px;
+  height: clamp(50px, 10%, 72px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1421,19 +1498,49 @@ function removeBenefit(index) {
 .cv-sig-img { max-height: 100%; max-width: 100%; object-fit: contain; }
 .cv-sig-placeholder {
   width: 100%;
-  height: 60px;
+  height: clamp(45px, 9%, 60px);
   border: 1px dashed #cbd5e1;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #94a3b8;
-  font-size: 11px;
+  font-size: clamp(9px, 1.5vw, 11px);
 }
 .cv-sig-name {
   font-weight: 700;
   text-decoration: underline;
   margin: 0;
-  font-size: 13px;
+  font-size: clamp(10px, 1.8vw, 13px);
+  line-height: 1.4;
+}
+
+/* ===== MEMBER ASSETS PREVIEW LAYOUT (Tailwind-based) ===== */
+/* Minimal custom CSS - most styling in Tailwind classes */
+
+.cv-preview-shell {
+  width: 100%;
+  background: transparent;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.cv-preview-page {
+  width: 100%;
+  max-width: 595px;
+  /* Standard A4 aspect ratio: 1 : 1.414 (210mm × 297mm) */
+  aspect-ratio: 1 / 1.414;
+  background: #fff;
+  padding: clamp(32px, 5%, 52px) clamp(28px, 4.5%, 56px);
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+  font-size: clamp(10px, 1.8vw, 13px);
+  color: #222;
+  line-height: 1.6;
+  box-shadow: 0 4px 12px -2px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.06);
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 </style>

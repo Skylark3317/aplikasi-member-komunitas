@@ -28,13 +28,13 @@
         <!-- Filter Tabs (Only show when searchQuery is empty) -->
         <div v-if="searchQuery.trim() === ''" class="filter-tabs">
           <button 
-            :class="['filter-tab hover-scale', activeTab === 'all' ? 'active' : '']" 
+            :class="['filter-tab', activeTab === 'all' ? 'active' : '']" 
             @click="activeTab = 'all'"
           >
             Semua
           </button>
           <button 
-            :class="['filter-tab hover-scale', activeTab === 'unread' ? 'active' : '']" 
+            :class="['filter-tab', activeTab === 'unread' ? 'active' : '']" 
             @click="activeTab = 'unread'"
           >
             Belum Dibaca
@@ -379,6 +379,11 @@ function formatTime(dateStr) {
   // Otherwise show date
   return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
 }
+
+// Add animations on mount
+onMounted(() => {
+  // Animations removed for better performance when switching between chat rooms
+});
 </script>
 
 <style scoped>
@@ -388,6 +393,12 @@ function formatTime(dateStr) {
   height: 100vh;
   background: #f8fafc;
   overflow: hidden;
+}
+
+/* Disable all animations inside chat container */
+.chat-container-layout * {
+  animation: none !important;
+  transition-duration: 0.15s !important;
 }
 
 /* Sidebar styling */
@@ -468,7 +479,6 @@ function formatTime(dateStr) {
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s;
 }
 
 .filter-tab:hover {

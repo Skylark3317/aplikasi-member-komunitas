@@ -582,6 +582,12 @@ watch(() => props.conversation.id, () => {
   overflow: hidden;
 }
 
+/* Disable all animations inside chat container */
+.chat-container-layout * {
+  animation: none !important;
+  transition-duration: 0.15s !important;
+}
+
 /* Sidebar styling */
 .chat-sidebar {
   width: 380px;
@@ -660,20 +666,17 @@ watch(() => props.conversation.id, () => {
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.15s ease;
 }
 
 .filter-tab:hover {
   background: #e2e8f0;
   color: #334155;
-  transform: scale(1.05);
 }
 
 .filter-tab.active {
   background: var(--primary-color, #2563eb);
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-  transform: scale(1.05);
 }
 
 .filter-tab.active .tab-badge {
@@ -718,12 +721,11 @@ watch(() => props.conversation.id, () => {
   padding: 16px 24px;
   cursor: pointer;
   border-bottom: 1px solid #f1f5f9;
-  transition: all 0.2s ease;
+  transition: background 0.15s ease;
 }
 
 .chat-item:hover {
   background: #f8fafc;
-  transform: translateX(4px);
 }
 
 .active-chat-item {
@@ -841,7 +843,7 @@ watch(() => props.conversation.id, () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.15s ease;
   line-height: 1;
 }
 
@@ -849,8 +851,6 @@ watch(() => props.conversation.id, () => {
   background: var(--primary-color, #2563eb);
   color: #ffffff;
   border-color: var(--primary-color, #2563eb);
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 .pagination-btn:disabled {

@@ -38,29 +38,35 @@ defineProps({
 <style scoped>
 .preview-member-card-wrapper {
   width: 100%;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8fafc;
+  padding: 10px;
+  background: transparent;
   box-sizing: border-box;
-  container-type: inline-size; /* aktifkan container query */
+  pointer-events: none !important;
 }
 
 .member-card-box {
-  container-type: inline-size; /* card jadi container untuk cqw */
+  container-type: inline-size;
   position: relative;
   width: 100%;
-  aspect-ratio: 8 / 5;
+  max-width: 1000px;
+  /* Standard CR80 card ratio: 85.6mm x 53.98mm = 1.586:1 */
+  aspect-ratio: 85.6 / 53.98;
   background: linear-gradient(135deg, #ebf5ff 0%, #f3f4f6 100%);
-  border-radius: 3cqw;
-  padding: 5cqw;
-  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+  border-radius: clamp(8px, 3cqw, 16px);
+  padding: clamp(16px, 5cqw, 24px);
+  box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1) !important;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
   box-sizing: border-box;
+  pointer-events: none !important;
+  cursor: default !important;
+  transform: none !important;
+  transition: none !important;
 }
 
 .member-card-box.has-bg {
@@ -69,23 +75,23 @@ defineProps({
 }
 
 .card-brand {
-  height: 2cqw;
+  height: clamp(8px, 2cqw, 12px);
 }
 
 .card-body-row {
   display: flex;
   align-items: center;
-  gap: 4cqw;
+  gap: clamp(12px, 4cqw, 20px);
   z-index: 1;
 }
 
 .card-avatar-wrapper {
-  width: 16cqw;
-  height: 16cqw;
+  width: clamp(48px, 16cqw, 72px);
+  height: clamp(48px, 16cqw, 72px);
   flex-shrink: 0;
   border-radius: 50%;
   background: #fff;
-  border: 0.5cqw solid #bfdbfe;
+  border: clamp(2px, 0.5cqw, 3px) solid #bfdbfe;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -94,7 +100,7 @@ defineProps({
 }
 
 .card-avatar-initial {
-  font-size: 6cqw;
+  font-size: clamp(20px, 6cqw, 32px);
   font-weight: 700;
   color: #4b5563;
 }
@@ -102,26 +108,29 @@ defineProps({
 .card-text-details {
   display: flex;
   flex-direction: column;
-  gap: 1cqw;
+  gap: clamp(2px, 1cqw, 4px);
   min-width: 0;
+  flex: 1;
 }
 
 .card-user-name {
   margin: 0;
-  font-size: 4.5cqw;
+  font-size: clamp(14px, 4.5cqw, 20px);
   font-weight: 700;
   color: #111827;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.2;
 }
 .has-bg .card-user-name { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
 
 .card-user-id {
   margin: 0;
-  font-size: 3cqw;
+  font-size: clamp(11px, 3cqw, 14px);
   font-weight: 600;
   color: #4b5563;
+  line-height: 1.2;
 }
 .has-bg .card-user-id { color: #f3f4f6; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 
@@ -130,22 +139,25 @@ defineProps({
   align-items: flex-end;
   justify-content: space-between;
   z-index: 1;
+  gap: clamp(8px, 2cqw, 12px);
 }
 
 .card-validity {
-  font-size: 2.5cqw;
+  font-size: clamp(9px, 2.5cqw, 12px);
   font-weight: 500;
   color: #6b7280;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 .has-bg .card-validity { color: #e5e7eb; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 
 .card-qr-box {
-  width: 13cqw;
-  height: 13cqw;
+  width: clamp(40px, 13cqw, 60px);
+  height: clamp(40px, 13cqw, 60px);
   flex-shrink: 0;
   background: #fff;
-  border-radius: 1.5cqw;
-  padding: 1cqw;
+  border-radius: clamp(4px, 1.5cqw, 8px);
+  padding: clamp(3px, 1cqw, 5px);
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   display: flex;
   align-items: center;
@@ -160,7 +172,7 @@ defineProps({
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2cqw;
+  font-size: clamp(8px, 2cqw, 12px);
   font-weight: bold;
 }
 </style>
