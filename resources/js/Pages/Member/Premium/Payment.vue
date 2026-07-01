@@ -27,19 +27,6 @@
           </svg>
           <span>Batalkan Pesanan</span>
         </button>
-
-        <button 
-          v-if="step === 1" 
-          @click="submitPayment" 
-          class="btn-top-send"
-          :disabled="form.processing"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="send-icon-sm">
-            <line x1="22" y1="2" x2="11" y2="13"/>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-          </svg>
-          <span>Kirim bukti pembayaran</span>
-        </button>
       </div>
     </div>
     <div class="divider" />

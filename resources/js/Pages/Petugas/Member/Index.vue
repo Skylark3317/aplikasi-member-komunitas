@@ -77,6 +77,7 @@
           <table class="data-table">
             <thead>
               <tr>
+                <th class="th-num">#</th>
                 <th>Nama</th>
                 <th>Email</th>
                 <th>Status</th>
@@ -87,9 +88,10 @@
             </thead>
             <tbody>
               <tr v-if="members.length === 0">
-                <td colspan="6" class="empty-state">Belum ada member ditemukan</td>
+                <td colspan="7" class="empty-state">Belum ada member ditemukan</td>
               </tr>
-              <tr v-for="member in members" :key="member.id">
+              <tr v-for="(member, idx) in paginated" :key="member.id">
+                <td class="td-num">{{ (page - 1) * perPage + idx + 1 }}</td>
                 <td>
                   <div class="font-medium text-gray-900">{{ member.name }}</div>
                 </td>
@@ -110,6 +112,21 @@
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Pagination -->
+        <div v-if="totalPages > 1" class="pagination">
+          <button class="pg-btn" :disabled="page === 1" @click="page = 1">«</button>
+          <button class="pg-btn" :disabled="page === 1" @click="page--">‹</button>
+          <button
+            v-for="p in pageRange"
+            :key="p"
+            :class="['pg-btn', p === page ? 'pg-active' : '']"
+            @click="page = p"
+          >{{ p }}</button>
+          <button class="pg-btn" :disabled="page === totalPages" @click="page++">›</button>
+          <button class="pg-btn" :disabled="page === totalPages" @click="page = totalPages">»</button>
+          <span class="pg-info">Hal {{ page }} dari {{ totalPages }}</span>
         </div>
       </div>
     </div>
@@ -219,6 +236,22 @@ function navigate(dir, period) {
     { preserveState: true, preserveScroll: true, replace: true }
   );
 }
+
+// Pagination
+const page = ref(1);
+const perPage = 20;
+
+const totalPages = computed(() => Math.max(1, Math.ceil(props.members.length / perPage)));
+const paginated = computed(() => props.members.slice((page.value - 1) * perPage, page.value * perPage));
+
+const pageRange = computed(() => {
+  const total = totalPages.value;
+  const cur   = page.value;
+  const delta = 2;
+  const start = Math.max(1, cur - delta);
+  const end   = Math.min(total, cur + delta);
+  return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+});
 </script>
 
 <style scoped>
@@ -451,5 +484,26 @@ function navigate(dir, period) {
   text-align: center;
   padding: 48px;
   color: #6b7280;
+}
+
+/* Pagination */
+.pagination {
+  display: flex; align-items: center; gap: 4px;
+  padding: 14px 24px; border-top: 1px solid #f3f4f6; flex-wrap: wrap;
+  background: #fff;
+}
+.pg-btn {
+  min-width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e5e7eb;
+  background: #fff; font-size: 13px; color: #374151; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s; padding: 0 8px;
+}
+.pg-btn:hover:not(:disabled) { background: #f3f4f6; }
+.pg-btn:disabled { opacity: .4; cursor: not-allowed; }
+.pg-btn.pg-active { background: var(--primary-color, #007bff); color: #fff; border-color: var(--primary-color, #007bff); font-weight: 700; }
+.pg-info { font-size: 12px; color: #9ca3af; margin-left: 8px; }
+
+.th-num, .td-num {
+  width: 48px; text-align: center;
 }
 </style>

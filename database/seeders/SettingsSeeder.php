@@ -51,6 +51,7 @@ class SettingsSeeder extends Seeder
             'cv_signer_title'       => 'Pengurus Pusat AMK',
             'cv_signer_name'        => 'Admin AMK',
             'cv_signature_image'    => null,
+            'terms_and_conditions'  => '<h2><strong>Syarat dan Ketentuan</strong></h2><p>Dengan mendaftar dan menggunakan layanan ini, Anda menyatakan telah membaca, memahami, dan menyetujui syarat dan ketentuan berikut:</p><ol><li>Anda wajib memberikan informasi yang benar, akurat, dan terbaru saat melakukan pendaftaran.</li><li>Anda bertanggung jawab menjaga kerahasiaan akun dan kata sandi yang digunakan.</li><li>Data pribadi yang Anda berikan akan digunakan untuk keperluan operasional layanan dan dikelola sesuai kebijakan privasi yang berlaku.</li><li>Dilarang menggunakan layanan untuk aktivitas yang melanggar hukum, merugikan pengguna lain, atau menyalahgunakan fitur yang tersedia.</li><li>Pengelola berhak menangguhkan atau menghapus akun yang terbukti melanggar syarat dan ketentuan.</li><li>Pengelola berhak mengubah syarat dan ketentuan ini sewaktu-waktu. Perubahan akan berlaku setelah dipublikasikan pada platform.</li></ol><p>Dengan mencentang kotak persetujuan dan melanjutkan proses registrasi, Anda dianggap telah membaca, memahami, dan menyetujui seluruh Syarat dan Ketentuan yang berlaku.</p>',
         ];
 
         foreach ($settings as $key => $value) {

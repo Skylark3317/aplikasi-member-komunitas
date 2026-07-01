@@ -58,7 +58,7 @@ class LoginRequest extends FormRequest
                 $user->delete();
                 RateLimiter::hit($this->throttleKey());
                 throw ValidationException::withMessages([
-                    'email' => 'Akun ini telah dihapus secara permanen.',
+                    'email' => 'Email tidak terdaftar.',
                 ]);
             }
         }
