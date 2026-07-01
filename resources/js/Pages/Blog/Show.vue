@@ -1,21 +1,25 @@
 <script setup>
 import { Link, usePage } from "@inertiajs/vue3";
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import PostCategory from "../../Enums/PostCategory.js";
 import HomeLayout from "../../Layouts/HomeLayout.vue";
+import { useScrollReveal } from "@/composables/useScrollReveal";
 
 const page = usePage();
 
 const post = computed(() => page.props.post);
 const category = computed(() => PostCategory.from(post.value?.category?.slug));
+
+// Initialize scroll reveal animations
+useScrollReveal('.scroll-reveal', { repeat: true });
 </script>
 
 <template>
     <HomeLayout>
-        <section class="p-8 lg:p-0 lg:px-4 lg:py-8 lg:flex lg:justify-center bg-primary">
+        <section class="p-8 lg:p-0 lg:px-4 lg:py-8 lg:flex lg:justify-center bg-primary animate-fade-in">
             <div class="lg:w-full lg:max-w-270 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 text-white">
-                <h1 class="font-medium text-2xl">Blog</h1>
-                <div>
+                <h1 class="font-medium text-2xl animate-fade-in-left">Blog</h1>
+                <div class="animate-fade-in-right animate-delay-200 animate-fill-both">
                     <Link :href="route('home')">Beranda</Link>
                     &gt;
                     <Link :href="route('blog.index')">Blog</Link>
@@ -33,14 +37,14 @@ const category = computed(() => PostCategory.from(post.value?.category?.slug));
                 </div>
             </div>
         </section>
-        <section class="p-8 lg:p-0 lg:px-4 lg:py-6 lg:flex lg:justify-center">
+        <section class="p-8 lg:p-0 lg:px-4 lg:py-6 lg:flex lg:justify-center scroll-reveal">
             <div class="flex flex-col gap-8 w-full lg:max-w-270 lg:grid lg:grid-cols-3">
-                <div v-if="post" class="flex flex-col gap-6 p-6 lg:col-span-2 ring ring-inset ring-onyx-200">
-                    <span class="bg-primary text-white text-sm p-1 self-start">{{ post.date }}</span>
-                    <h1 class="font-medium text-2xl">{{ post.title }}</h1>
-                    <span class="h-px bg-onyx-200" />
-                    <div class="text-onyx-400 flex flex-col gap-4" v-html="post.content" />
-                    <div class="flex items-center gap-2.5">
+                <div v-if="post" class="flex flex-col gap-6 p-6 lg:col-span-2 ring ring-inset ring-onyx-200 hover-lift">
+                    <span class="bg-primary text-white text-sm p-1 self-start animate-fade-in-up">{{ post.date }}</span>
+                    <h1 class="font-medium text-2xl animate-fade-in-up animate-delay-100 animate-fill-both">{{ post.title }}</h1>
+                    <span class="h-px bg-onyx-200 animate-fade-in animate-delay-200 animate-fill-both" />
+                    <div class="text-onyx-400 flex flex-col gap-4 animate-fade-in-up animate-delay-300 animate-fill-both" v-html="post.content" />
+                    <div class="flex items-center gap-2.5 animate-fade-in-up animate-delay-400 animate-fill-both">
                         <div class="shrink-0 w-8 h-8 flex justify-center items-center">
                             <span class="w-6 h-0.5 bg-primary" />
                         </div>
@@ -52,8 +56,8 @@ const category = computed(() => PostCategory.from(post.value?.category?.slug));
                         </div>
                     </div>
                 </div>
-                <p v-else class="w-full lg:max-w-270 lg:col-span-2">Postingan tidak ditemukan.</p>
-                <div class="flex flex-col gap-6 p-6 lg:self-start ring ring-inset ring-onyx-200">
+                <p v-else class="w-full lg:max-w-270 lg:col-span-2 animate-fade-in">Postingan tidak ditemukan.</p>
+                <div class="flex flex-col gap-6 p-6 lg:self-start ring ring-inset ring-onyx-200 hover-lift">
                     <h3 class="font-medium">Kategori</h3>
                     <div class="flex flex-col gap-2">
                         <template v-for="[key, c] in PostCategory.entries()" :key="key">

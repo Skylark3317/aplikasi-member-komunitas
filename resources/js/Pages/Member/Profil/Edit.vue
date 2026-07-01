@@ -359,7 +359,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, getCurrentInstance, onMounted, nextTick } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import MemberLayout from '@/Layouts/MemberLayout.vue';
 
@@ -367,6 +367,8 @@ const props = defineProps({
   user: Object,
   expertises: Array,
 });
+
+const { proxy } = getCurrentInstance();
 
 const fileInput = ref(null);
 const avatarPreviewUrl = ref(null);
@@ -422,12 +424,16 @@ function triggerFileInput() {
   fileInput.value.click();
 }
 
-function handleFileChange(event) {
+async function handleFileChange(event) {
   const file = event.target.files[0];
   if (file) {
     // Check file size (1MB max)
     if (file.size > 1024 * 1024) {
-      alert('Ukuran file maksimal adalah 1MB.');
+      await proxy.$dialog.alert({
+        title: 'File Terlalu Besar',
+        message: 'Ukuran file maksimal adalah 1MB.',
+        variant: 'error'
+      });
       return;
     }
     form.avatar = file;
@@ -436,12 +442,26 @@ function handleFileChange(event) {
   }
 }
 
-function deleteAvatarPhoto() {
-  form.avatar = null;
-  form.delete_avatar = true;
-  avatarPreviewUrl.value = null;
-  if (fileInput.value) {
-    fileInput.value.value = '';
+async function deleteAvatarPhoto() {
+  try {
+    const confirmed = await proxy.$dialog.confirm({
+      title: 'Hapus Foto Profil',
+      message: 'Apakah Anda yakin ingin menghapus foto profil?',
+      variant: 'warning',
+      confirmText: 'Hapus',
+      cancelText: 'Batal'
+    });
+    
+    if (confirmed) {
+      form.avatar = null;
+      form.delete_avatar = true;
+      avatarPreviewUrl.value = null;
+      if (fileInput.value) {
+        fileInput.value.value = '';
+      }
+    }
+  } catch {
+    // User cancelled
   }
 }
 
@@ -474,13 +494,17 @@ const allProofs = computed(() => {
   return [...existing, ...newOnes];
 });
 
-function handleExpertiseProofs(event) {
+async function handleExpertiseProofs(event) {
   const files = Array.from(event.target.files);
   const totalLimit = 10;
   
   for (const file of files) {
     if (file.size > 2 * 1024 * 1024) {
-      alert(`Ukuran file ${file.name} maksimal adalah 2MB.`);
+      await proxy.$dialog.alert({
+        title: 'File Terlalu Besar',
+        message: `Ukuran file ${file.name} maksimal adalah 2MB.`,
+        variant: 'error'
+      });
       continue;
     }
     if (form.existing_proofs.length + form.expertise_proofs.length < totalLimit) {
@@ -490,7 +514,11 @@ function handleExpertiseProofs(event) {
         url: URL.createObjectURL(file)
       });
     } else {
-      alert('Maksimal 10 file bukti kepakaran.');
+      await proxy.$dialog.alert({
+        title: 'Batas Maksimal',
+        message: 'Maksimal 10 file bukti kepakaran.',
+        variant: 'warning'
+      });
       break;
     }
   }
@@ -535,6 +563,47 @@ function submit() {
     }
   });
 }
+
+// Animations
+onMounted(() => {
+  nextTick(() => {
+    // Top bar entrance
+    const topBar = document.querySelector('.top-bar');
+    if (topBar) {
+      topBar.style.opacity = '0';
+      topBar.style.transform = 'translateY(-20px)';
+      setTimeout(() => {
+        topBar.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        topBar.style.opacity = '1';
+        topBar.style.transform = 'translateY(0)';
+      }, 50);
+    }
+
+    // Form sections stagger
+    const sections = document.querySelectorAll('.form-section');
+    sections.forEach((section, index) => {
+      section.style.opacity = '0';
+      section.style.transform = 'translateY(30px) scale(0.98)';
+      setTimeout(() => {
+        section.style.transition = 'all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        section.style.opacity = '1';
+        section.style.transform = 'translateY(0) scale(1)';
+      }, 200 + index * 150);
+    });
+
+    // Form groups stagger
+    const formGroups = document.querySelectorAll('.form-group');
+    formGroups.forEach((group, index) => {
+      group.style.opacity = '0';
+      group.style.transform = 'translateX(-15px)';
+      setTimeout(() => {
+        group.style.transition = 'all 0.5s ease';
+        group.style.opacity = '1';
+        group.style.transform = 'translateX(0)';
+      }, 600 + index * 50);
+    });
+  });
+});
 </script>
 
 <style scoped>
@@ -608,10 +677,14 @@ function submit() {
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: filter 0.2s;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.btn-save-top:hover { filter: brightness(0.9); }
+.btn-save-top:hover { 
+  filter: brightness(0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.3);
+}
 .btn-save-top svg { width: 16px; height: 16px; }
 
 
@@ -741,9 +814,14 @@ function submit() {
   background: var(--primary-color);;
   color: #fff;
   border: none;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.btn-upload:hover{ filter: brightness(0.9); }
+.btn-upload:hover{ 
+  filter: brightness(0.9); 
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
 .btn-upload svg { width: 16px; height: 16px; }
 
 .btn-delete-avatar {

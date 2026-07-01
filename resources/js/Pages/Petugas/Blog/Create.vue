@@ -78,6 +78,7 @@
 </template>
 
 <script setup>
+import { onMounted, nextTick } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import PetugasLayout from '@/Layouts/PetugasLayout.vue';
 import RichTextEditor from '@/Components/RichTextEditor.vue';
@@ -92,6 +93,35 @@ const form = useForm({
 function submit() {
   form.post(route('petugas.blog.store'));
 }
+
+// Animations
+onMounted(() => {
+  nextTick(() => {
+    // Top bar animation
+    const topBar = document.querySelector('.top-bar');
+    if (topBar) {
+      topBar.style.opacity = '0';
+      topBar.style.transform = 'translateY(-20px)';
+      setTimeout(() => {
+        topBar.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        topBar.style.opacity = '1';
+        topBar.style.transform = 'translateY(0)';
+      }, 50);
+    }
+
+    // Form groups stagger
+    const formGroups = document.querySelectorAll('.form-group');
+    formGroups.forEach((group, index) => {
+      group.style.opacity = '0';
+      group.style.transform = 'translateY(30px) scale(0.98)';
+      setTimeout(() => {
+        group.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        group.style.opacity = '1';
+        group.style.transform = 'translateY(0) scale(1)';
+      }, 200 + index * 120);
+    });
+  });
+});
 </script>
 
 <style scoped>
@@ -149,7 +179,7 @@ function submit() {
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  transition: filter 0.2s;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   border: 1px solid transparent;
   box-sizing: border-box;
 }
@@ -157,8 +187,15 @@ function submit() {
 .btn-primary { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
 .btn-outline { background: #fff; color: var(--primary-color); border-color: var(--primary-color); }
 
-.btn-primary:hover { filter: brightness(0.9); }
-.btn-outline:hover { background: #eff6ff; }
+.btn-primary:hover { 
+  filter: brightness(0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.3);
+}
+.btn-outline:hover { 
+  background: #eff6ff;
+  transform: translateY(-1px);
+}
 
 .divider { height: 1px; background: #e5e7eb; margin: 0; }
 

@@ -555,7 +555,86 @@ function checkAndScrollToMessage() {
 onMounted(() => {
   checkAndScrollToMessage();
   if (inputField.value) inputField.value.focus();
+
+  // Animations
+  nextTick(() => {
+    // Sidebar animation
+    const sidebar = document.querySelector('.chat-sidebar');
+    if (sidebar) {
+      sidebar.style.opacity = '0';
+      sidebar.style.transform = 'translateX(-30px)';
+      setTimeout(() => {
+        sidebar.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        sidebar.style.opacity = '1';
+        sidebar.style.transform = 'translateX(0)';
+      }, 50);
+    }
+
+    // Chat room animation
+    const chatRoom = document.querySelector('.chat-main-room');
+    if (chatRoom) {
+      chatRoom.style.opacity = '0';
+      chatRoom.style.transform = 'translateX(30px)';
+      setTimeout(() => {
+        chatRoom.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        chatRoom.style.opacity = '1';
+        chatRoom.style.transform = 'translateX(0)';
+      }, 150);
+    }
+
+    // Search box animation
+    const searchBox = document.querySelector('.search-box');
+    if (searchBox) {
+      searchBox.style.opacity = '0';
+      searchBox.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        searchBox.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        searchBox.style.opacity = '1';
+        searchBox.style.transform = 'scale(1)';
+      }, 300);
+    }
+
+    // Filter tabs animation
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    filterTabs.forEach((tab, index) => {
+      tab.style.opacity = '0';
+      tab.style.transform = 'translateY(-10px)';
+      setTimeout(() => {
+        tab.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        tab.style.opacity = '1';
+        tab.style.transform = 'translateY(0)';
+      }, 400 + index * 80);
+    });
+
+    // Chat items stagger
+    animateChatItems();
+
+    // Messages entrance
+    const messages = document.querySelectorAll('.message-bubble-row');
+    messages.forEach((msg, index) => {
+      msg.style.opacity = '0';
+      msg.style.transform = 'translateY(15px)';
+      setTimeout(() => {
+        msg.style.transition = 'all 0.4s ease';
+        msg.style.opacity = '1';
+        msg.style.transform = 'translateY(0)';
+      }, 600 + index * 30);
+    });
+  });
 });
+
+function animateChatItems() {
+  const chatItems = document.querySelectorAll('.chat-item');
+  chatItems.forEach((item, index) => {
+    item.style.opacity = '0';
+    item.style.transform = 'translateX(-20px)';
+    setTimeout(() => {
+      item.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      item.style.opacity = '1';
+      item.style.transform = 'translateX(0)';
+    }, 500 + index * 60);
+  });
+}
 
 // If the conversation updates, scroll to bottom (unless a specific message is being highlighted)
 watch(() => props.conversation.messages, () => {
@@ -657,17 +736,20 @@ watch(() => props.conversation.id, () => {
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .filter-tab:hover {
   background: #e2e8f0;
   color: #334155;
+  transform: scale(1.05);
 }
 
 .filter-tab.active {
   background: var(--primary-color, #2563eb);
   color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transform: scale(1.05);
 }
 
 .filter-tab.active .tab-badge {
@@ -712,11 +794,12 @@ watch(() => props.conversation.id, () => {
   padding: 16px 24px;
   cursor: pointer;
   border-bottom: 1px solid #f1f5f9;
-  transition: background 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .chat-item:hover {
   background: #f8fafc;
+  transform: translateX(4px);
 }
 
 .active-chat-item {
@@ -834,7 +917,7 @@ watch(() => props.conversation.id, () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.15s;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   line-height: 1;
 }
 
@@ -842,6 +925,8 @@ watch(() => props.conversation.id, () => {
   background: var(--primary-color, #2563eb);
   color: #ffffff;
   border-color: var(--primary-color, #2563eb);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 .pagination-btn:disabled {
@@ -1123,11 +1208,13 @@ watch(() => props.conversation.id, () => {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .chat-room-send-btn:hover:not(:disabled) {
   filter: brightness(0.9);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
 }
 
 .chat-room-send-btn:disabled {

@@ -3,9 +3,9 @@
     <Head title="Kelola Blog - AMK" />
 
     <!-- Top Bar -->
-    <div class="top-bar">
+    <div class="top-bar animate-fade-in">
       <h1 class="page-title">Blog</h1>
-      <Link :href="route('petugas.blog.create')" class="btn-primary">
+      <Link :href="route('petugas.blog.create')" class="btn-primary hover-scale">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -73,7 +73,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import PetugasLayout from '@/Layouts/PetugasLayout.vue';
 
@@ -105,6 +105,17 @@ function truncateText(text, length) {
   const stripped = text.replace(/(<([^>]+)>)/gi, "");
   return stripped.length > length ? stripped.substring(0, length) + '...' : stripped;
 }
+
+// Add animations on mount
+onMounted(() => {
+  setTimeout(() => {
+    const cards = document.querySelectorAll('.blog-card');
+    cards.forEach((card, index) => {
+      card.style.animationDelay = `${index * 150}ms`;
+      card.classList.add('animate-fade-in-up', 'animate-fill-both');
+    });
+  }, 100);
+});
 </script>
 
 <style scoped>

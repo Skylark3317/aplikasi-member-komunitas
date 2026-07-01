@@ -111,13 +111,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, getCurrentInstance } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import PetugasLayout from '@/Layouts/PetugasLayout.vue';
 
 const props = defineProps({
   content: Object,
 });
+
+const { proxy } = getCurrentInstance();
 
 const form = useForm({
   title: props.content.title,
@@ -155,9 +157,21 @@ function submit() {
   });
 }
 
-function deleteContent() {
-  if (confirm('Apakah Anda yakin ingin menghapus konten ini?')) {
-    form.delete(route('petugas.konten.destroy', props.content.id));
+async function deleteContent() {
+  try {
+    const confirmed = await proxy.$dialog.confirm({
+      title: 'Hapus Konten',
+      message: 'Apakah Anda yakin ingin menghapus konten ini?',
+      variant: 'danger',
+      confirmText: 'Hapus',
+      cancelText: 'Batal'
+    });
+    
+    if (confirmed) {
+      form.delete(route('petugas.konten.destroy', props.content.id));
+    }
+  } catch {
+    // User cancelled
   }
 }
 </script>

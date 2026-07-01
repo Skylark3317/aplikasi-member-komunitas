@@ -284,13 +284,15 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, getCurrentInstance } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 
 const props = defineProps({
   user: Object,
 });
+
+const { proxy } = getCurrentInstance();
 
 const initials = computed(() => {
   return props.user.name
@@ -312,14 +314,40 @@ function roleLabel(role) {
   return map[role] ?? role;
 }
 
-function toggleStatus() {
-  if (!confirm(`Yakin ingin ${props.user.is_active ? 'menonaktifkan' : 'mengaktifkan'} akun ini?`)) return;
-  router.patch(route('superadmin.kelol-akun.toggle-status', props.user.id));
+async function toggleStatus() {
+  try {
+    const confirmed = await proxy.$dialog.confirm({
+      title: 'Ubah Status Akun',
+      message: `Yakin ingin ${props.user.is_active ? 'menonaktifkan' : 'mengaktifkan'} akun ini?`,
+      variant: 'warning',
+      confirmText: props.user.is_active ? 'Nonaktifkan' : 'Aktifkan',
+      cancelText: 'Batal'
+    });
+    
+    if (confirmed) {
+      router.patch(route('superadmin.kelol-akun.toggle-status', props.user.id));
+    }
+  } catch {
+    // User cancelled
+  }
 }
 
-function deleteAccount() {
-  if (!confirm('Yakin ingin menghapus akun ini secara permanen?')) return;
-  router.delete(route('superadmin.kelol-akun.destroy', props.user.id));
+async function deleteAccount() {
+  try {
+    const confirmed = await proxy.$dialog.confirm({
+      title: 'Hapus Akun',
+      message: 'Yakin ingin menghapus akun ini secara permanen? Tindakan ini tidak dapat dibatalkan.',
+      variant: 'danger',
+      confirmText: 'Hapus Permanen',
+      cancelText: 'Batal'
+    });
+    
+    if (confirmed) {
+      router.delete(route('superadmin.kelol-akun.destroy', props.user.id));
+    }
+  } catch {
+    // User cancelled
+  }
 }
 
 function isImage(url) {

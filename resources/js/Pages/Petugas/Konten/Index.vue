@@ -34,7 +34,12 @@
         Belum ada konten untuk tipe ini.
       </div>
       <div v-else :class="['content-grid', activeTab === 'video' ? 'video-grid' : 'ebook-grid']">
-        <div v-for="item in paginatedContents" :key="item.id" class="content-card">
+        <Link 
+          v-for="item in paginatedContents" 
+          :key="item.id" 
+          :href="route('petugas.konten.edit', item.id)"
+          class="content-card"
+        >
           <!-- Thumbnail -->
           <div :class="['card-thumbnail', activeTab === 'video' ? 'video-thumb' : 'ebook-thumb']">
             <img v-if="item.thumbnail_url" :src="`/storage/${item.thumbnail_url}`" alt="Thumbnail" />
@@ -47,12 +52,8 @@
             <div class="card-meta">
               {{ formatDate(item.created_at) }}
             </div>
-            
-            <Link :href="route('petugas.konten.edit', item.id)" class="card-action-overlay">
-              Edit Konten
-            </Link>
           </div>
-        </div>
+        </Link>
       </div>
       
       <!-- Pagination -->
@@ -91,9 +92,10 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import PetugasLayout from '@/Layouts/PetugasLayout.vue';
+import { useScrollReveal } from '@/composables/useScrollReveal';
 
 const props = defineProps({
   contents: Array,
@@ -135,6 +137,55 @@ function formatDate(dateStr) {
   
   return `${formattedDate} • ${hours}:${minutes}`;
 }
+
+// Animations
+onMounted(() => {
+  // Top bar animation
+  const topBar = document.querySelector('.top-bar');
+  if (topBar) {
+    topBar.style.opacity = '0';
+    topBar.style.transform = 'translateY(-20px)';
+    setTimeout(() => {
+      topBar.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      topBar.style.opacity = '1';
+      topBar.style.transform = 'translateY(0)';
+    }, 100);
+  }
+
+  // Tabs animation
+  const tabs = document.querySelectorAll('.tab-btn');
+  tabs.forEach((tab, index) => {
+    tab.style.opacity = '0';
+    tab.style.transform = 'scale(0.8)';
+    setTimeout(() => {
+      tab.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      tab.style.opacity = '1';
+      tab.style.transform = 'scale(1)';
+    }, 200 + index * 80);
+  });
+
+  animateCards();
+});
+
+// Animate cards when they appear
+watch([activeTab, currentPage], () => {
+  nextTick(() => {
+    animateCards();
+  });
+});
+
+function animateCards() {
+  const cards = document.querySelectorAll('.content-card');
+  cards.forEach((card, index) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(30px) scale(0.95)';
+    setTimeout(() => {
+      card.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0) scale(1)';
+    }, index * 100);
+  });
+}
 </script>
 
 <style scoped>
@@ -165,14 +216,18 @@ function formatDate(dateStr) {
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  transition: filter 0.2s;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   border: 1px solid transparent;
   box-sizing: border-box;
   background: var(--primary-color, #007bff);
   color: #fff;
   border-color: var(--primary-color, #007bff);
 }
-.btn-primary:hover { filter: brightness(0.9); }
+.btn-primary:hover { 
+  filter: brightness(0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
 
 .divider { 
   height: 1px; 
@@ -205,11 +260,19 @@ function formatDate(dateStr) {
   border: none;
   background: #eff6ff;
   color: var(--primary-color, #007bff);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tab-btn:hover:not(.active) {
+  background: #dbeafe;
+  transform: scale(1.05);
 }
 
 .tab-btn.active {
   background: var(--primary-color, #007bff);
   color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+  transform: scale(1.05);
 }
 
 /* Empty State */
@@ -251,6 +314,17 @@ function formatDate(dateStr) {
   flex-direction: column;
   position: relative;
   background: #fff;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.content-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
 .card-thumbnail {
@@ -258,6 +332,20 @@ function formatDate(dateStr) {
   border-radius: 8px;
   overflow: hidden;
   margin-bottom: 12px;
+  position: relative;
+}
+
+.card-thumbnail::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.3));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.content-card:hover .card-thumbnail::after {
+  opacity: 1;
 }
 
 .video-thumb {
@@ -278,6 +366,11 @@ function formatDate(dateStr) {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.content-card:hover .card-thumbnail img {
+  transform: scale(1.1);
 }
 
 .card-info {
@@ -304,12 +397,7 @@ function formatDate(dateStr) {
   color: #9ca3af;
 }
 
-.card-action-overlay {
-  position: absolute;
-  inset: 0;
-  color: transparent;
-  z-index: 10;
-}
+/* Removed card-action-overlay since whole card is now clickable */
 
 /* Pagination */
 .pagination {

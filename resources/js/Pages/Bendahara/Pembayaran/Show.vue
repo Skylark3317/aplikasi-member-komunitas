@@ -136,13 +136,15 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, getCurrentInstance } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import KeuanganLayout from '@/Layouts/KeuanganLayout.vue';
 
 const props = defineProps({
   payment: Object,
 });
+
+const { proxy } = getCurrentInstance();
 
 const $page = usePage();
 const settings = computed(() => $page.props.settings || {});
@@ -155,9 +157,21 @@ function goBack() {
   window.history.back();
 }
 
-function handleVerify() {
-  if (confirm('Apakah Anda yakin ingin menerima pembayaran ini?')) {
-    router.post(route('keuangan.pembayaran.verify', props.payment.id));
+async function handleVerify() {
+  try {
+    const confirmed = await proxy.$dialog.confirm({
+      title: 'Terima Pembayaran',
+      message: 'Apakah Anda yakin ingin menerima pembayaran ini?',
+      variant: 'success',
+      confirmText: 'Terima',
+      cancelText: 'Batal'
+    });
+    
+    if (confirmed) {
+      router.post(route('keuangan.pembayaran.verify', props.payment.id));
+    }
+  } catch {
+    // User cancelled
   }
 }
 

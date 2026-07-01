@@ -297,7 +297,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, getCurrentInstance } from 'vue';
 import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import MemberLayout from '@/Layouts/MemberLayout.vue';
 
@@ -307,6 +307,8 @@ const props = defineProps({
   settings: Object,
   status: String, // 'none', 'menunggu', 'diverifikasi', 'ditolak'
 });
+
+const { proxy } = getCurrentInstance();
 
 const showAlert = ref(true);
 const fileInput = ref(null);
@@ -377,14 +379,26 @@ function submitPayment() {
   });
 }
 
-function cancelInvoice() {
-  if (confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')) {
-    isCanceling.value = true;
-    router.delete(route('member.premium.cancel_invoice', props.invoice.id), {
-      onFinish: () => {
-        isCanceling.value = false;
-      }
+async function cancelInvoice() {
+  try {
+    const confirmed = await proxy.$dialog.confirm({
+      title: 'Batalkan Pesanan',
+      message: 'Apakah Anda yakin ingin membatalkan pesanan ini?',
+      variant: 'danger',
+      confirmText: 'Ya, Batalkan',
+      cancelText: 'Tidak'
     });
+    
+    if (confirmed) {
+      isCanceling.value = true;
+      router.delete(route('member.premium.cancel_invoice', props.invoice.id), {
+        onFinish: () => {
+          isCanceling.value = false;
+        }
+      });
+    }
+  } catch {
+    // User cancelled
   }
 }
 

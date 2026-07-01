@@ -1,8 +1,8 @@
 <template>
   <div class="admin-wrapper">
     <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="sidebar-brand">
+    <aside class="sidebar animate-fade-in-left">
+      <div class="sidebar-brand animate-fade-in-down animate-delay-200 animate-fill-both">
         <div v-if="settings.community_logo" class="sidebar-img">
           <img :src="`/storage/${settings.community_logo}`" alt="Logo" />
         </div>

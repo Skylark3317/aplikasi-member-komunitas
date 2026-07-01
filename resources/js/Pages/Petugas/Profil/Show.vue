@@ -61,11 +61,75 @@
 </template>
 
 <script setup>
+import { onMounted, nextTick } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import PetugasLayout from '@/Layouts/PetugasLayout.vue';
 
 defineProps({
   user: Object,
+});
+
+// Animations
+onMounted(() => {
+  nextTick(() => {
+    // Top bar animation
+    const topBar = document.querySelector('.top-bar');
+    if (topBar) {
+      topBar.style.opacity = '0';
+      topBar.style.transform = 'translateY(-20px)';
+      setTimeout(() => {
+        topBar.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        topBar.style.opacity = '1';
+        topBar.style.transform = 'translateY(0)';
+      }, 50);
+    }
+
+    // User info animation
+    const userName = document.querySelector('.user-name');
+    const userEmail = document.querySelector('.user-email');
+    if (userName) {
+      userName.style.opacity = '0';
+      userName.style.transform = 'translateX(-20px)';
+      setTimeout(() => {
+        userName.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        userName.style.opacity = '1';
+        userName.style.transform = 'translateX(0)';
+      }, 200);
+    }
+    if (userEmail) {
+      userEmail.style.opacity = '0';
+      userEmail.style.transform = 'translateX(-20px)';
+      setTimeout(() => {
+        userEmail.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        userEmail.style.opacity = '1';
+        userEmail.style.transform = 'translateX(0)';
+      }, 300);
+    }
+
+    // Section title animation
+    const sectionTitle = document.querySelector('.section-title');
+    if (sectionTitle) {
+      sectionTitle.style.opacity = '0';
+      sectionTitle.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        sectionTitle.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        sectionTitle.style.opacity = '1';
+        sectionTitle.style.transform = 'scale(1)';
+      }, 400);
+    }
+
+    // Info rows stagger animation
+    const infoRows = document.querySelectorAll('.info-row');
+    infoRows.forEach((row, index) => {
+      row.style.opacity = '0';
+      row.style.transform = 'translateX(-15px)';
+      setTimeout(() => {
+        row.style.transition = 'all 0.5s ease';
+        row.style.opacity = '1';
+        row.style.transform = 'translateX(0)';
+      }, 500 + index * 80);
+    });
+  });
 });
 </script>
 
@@ -92,14 +156,18 @@ defineProps({
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  transition: filter 0.2s;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   border: 1px solid transparent;
   box-sizing: border-box;
   background: var(--primary-color);
   color: #fff;
   border-color: var(--primary-color);
 }
-.btn-primary:hover { filter: brightness(0.9); }
+.btn-primary:hover { 
+  filter: brightness(0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.3);
+}
 .btn-primary svg { width: 16px; height: 16px; }
 
 .divider { height: 1px; background: #e5e7eb; }
@@ -129,6 +197,15 @@ defineProps({
   padding: 13px 0;
   border-bottom: 1px solid #f3f4f6;
   gap: 16px;
+  transition: all 0.3s ease;
+}
+.info-row:hover {
+  background: #f9fafb;
+  padding-left: 12px;
+  margin-left: -12px;
+  padding-right: 12px;
+  margin-right: -12px;
+  border-radius: 8px;
 }
 .info-row:last-child { border-bottom: none; }
 .info-key { width: 200px; font-size: 13.5px; color: #6b7280; flex-shrink: 0; }

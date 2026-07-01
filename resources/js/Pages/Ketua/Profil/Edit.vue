@@ -108,7 +108,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import KetuaLayout from '@/Layouts/KetuaLayout.vue';
 
@@ -128,6 +128,47 @@ const form = useForm({
 function submit() {
   form.patch(route('ketua.profil.update'));
 }
+
+// Animations
+onMounted(() => {
+  nextTick(() => {
+    // Top bar animation
+    const topBar = document.querySelector('.top-bar');
+    if (topBar) {
+      topBar.style.opacity = '0';
+      topBar.style.transform = 'translateY(-20px)';
+      setTimeout(() => {
+        topBar.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        topBar.style.opacity = '1';
+        topBar.style.transform = 'translateY(0)';
+      }, 50);
+    }
+
+    // Form groups stagger
+    const formGroups = document.querySelectorAll('.field-group');
+    formGroups.forEach((group, index) => {
+      group.style.opacity = '0';
+      group.style.transform = 'translateX(-20px)';
+      setTimeout(() => {
+        group.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        group.style.opacity = '1';
+        group.style.transform = 'translateX(0)';
+      }, 200 + index * 100);
+    });
+
+    // Section title animation
+    const sectionTitle = document.querySelector('.section-title');
+    if (sectionTitle) {
+      sectionTitle.style.opacity = '0';
+      sectionTitle.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        sectionTitle.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        sectionTitle.style.opacity = '1';
+        sectionTitle.style.transform = 'scale(1)';
+      }, 600);
+    }
+  });
+});
 
 </script>
 
@@ -164,7 +205,7 @@ function submit() {
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  transition: filter 0.2s;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   border: 1px solid transparent;
   box-sizing: border-box;
 }
@@ -172,9 +213,16 @@ function submit() {
 .btn-primary { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
 .btn-batal { background: #fff; color: #374151; border-color: #d1d5db; }
 
-.btn-primary:hover:not(:disabled) { filter: brightness(0.9); }
+.btn-primary:hover:not(:disabled) { 
+  filter: brightness(0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 123, 255, 0.3);
+}
 .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-.btn-batal:hover { background: #f3f4f6; }
+.btn-batal:hover { 
+  background: #f3f4f6;
+  transform: translateY(-1px);
+}
 .btn-primary svg { width: 15px; height: 15px; }
 
 .divider { height: 1px; background: #e5e7eb; }

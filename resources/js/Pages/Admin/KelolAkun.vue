@@ -20,18 +20,15 @@
         <div class="search-wrap">
           <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input
-            v-model="form.search"
+            v-model="localSearch"
             type="text"
             placeholder="Cari nama atau email…"
             class="input-search"
-            @keyup.enter="applyFilters"
           />
-          <button v-if="form.search" class="clear-btn" @click="form.search = ''; applyFilters()">
+          <button v-if="localSearch" class="clear-btn" @click="clearSearch">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
-
-        <button class="btn-search" @click="applyFilters">Cari</button>
 
         <div class="filters">
           <!-- Role filter as toggle buttons -->
@@ -58,8 +55,6 @@
             </div>
           </div>
         </div>
-
-        <!-- old standalone button removed (now inline next to input) -->
       </div>
 
       <!-- Table info row -->
@@ -146,7 +141,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed } from 'vue';
+import { reactive, ref, computed, watch } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 
@@ -161,11 +156,14 @@ const form = reactive({
   status: props.filters?.status ?? 'semua',
 });
 
+// Local search state for instant filtering
+const localSearch = ref(form.search);
+
 // whether the user has triggered a search/filter action
 const searchedOnce = ref(!!(props.filters && (props.filters.search || props.filters.role || props.filters.status)));
 
 // show count only after user has searched/filtered at least once
-const showCount = computed(() => searchedOnce.value);
+const showCount = computed(() => searchedOnce.value || localSearch.value);
 
 const roleOptions = [
   { value: 'semua',   label: 'Semua' },
@@ -202,8 +200,23 @@ function toggleSort(key) {
   }
 }
 
+// Filter by local search (instant)
+const searchFiltered = computed(() => {
+  if (!localSearch.value.trim()) return props.users ?? [];
+  const q = localSearch.value.toLowerCase();
+  return (props.users ?? []).filter(user => {
+    return (
+      user.name?.toLowerCase().includes(q) ||
+      user.email?.toLowerCase().includes(q) ||
+      user.role?.toLowerCase().includes(q) ||
+      user.premium_status?.toLowerCase().includes(q) ||
+      user.plan_name?.toLowerCase().includes(q)
+    );
+  });
+});
+
 const sortedUsers = computed(() => {
-  const arr = [...(props.users ?? [])];
+  const arr = [...searchFiltered.value];
   arr.sort((a, b) => {
     let va = a[sortKey.value];
     let vb = b[sortKey.value];
@@ -217,8 +230,15 @@ const sortedUsers = computed(() => {
 });
 
 const isFiltered = computed(() =>
-  form.search || form.role !== 'semua' || form.status !== 'semua'
+  localSearch.value || form.role !== 'semua' || form.status !== 'semua'
 );
+
+// Watch local search to update immediately
+watch(localSearch, () => {
+  if (localSearch.value) {
+    searchedOnce.value = true;
+  }
+});
 
 function applyFilters() {
   // mark that the user has actively applied filters/search
@@ -232,12 +252,13 @@ function applyFilters() {
 }
 
 function clearSearch() {
+  localSearch.value = '';
   form.search = '';
   searchedOnce.value = false;
-  applyFilters();
 }
 
 function resetFilters() {
+  localSearch.value = '';
   form.search = '';
   form.role   = 'semua';
   form.status = 'semua';
@@ -348,20 +369,6 @@ function roleLabel(role) {
   color: #fff;
   font-weight: 600;
 }
-
-.btn-search {
-  background: var(--primary-color);
-  color: #fff;
-  border: none;
-  padding: 8px 20px;
-  border-radius: 7px;
-  font-size: 13.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: filter 0.2s;
-  align-self: flex-end;
-}
-.btn-search:hover { filter: brightness(0.9); }
 
 /* Table meta */
 .table-meta {

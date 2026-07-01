@@ -453,13 +453,15 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, getCurrentInstance, nextTick } from 'vue';
 import { Head, Link, usePage, router } from '@inertiajs/vue3';
 import MemberLayout from '@/Layouts/MemberLayout.vue';
 
 const props = defineProps({
   user: Object,
 });
+
+const { proxy } = getCurrentInstance();
 
 const page = usePage();
 const settings = computed(() => page.props.settings || {});
@@ -598,14 +600,40 @@ const deletionDeadline = computed(() => {
   return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 });
 
-function requestDeletion() {
-  if (!confirm(`Yakin ingin mengajukan hapus akun? Anda akan di-logout dan akun akan dihapus permanen setelah ${deletionDurationText.value} jika tidak login kembali.`)) return;
-  router.post(route('member.hapus-akun.request'));
+async function requestDeletion() {
+  try {
+    const confirmed = await proxy.$dialog.confirm({
+      title: 'Hapus Akun',
+      message: `Yakin ingin mengajukan hapus akun? Anda akan di-logout dan akun akan dihapus permanen setelah ${deletionDurationText.value} jika tidak login kembali.`,
+      variant: 'danger',
+      confirmText: 'Ya, Hapus Akun',
+      cancelText: 'Batal'
+    });
+    
+    if (confirmed) {
+      router.post(route('member.hapus-akun.request'));
+    }
+  } catch {
+    // User cancelled
+  }
 }
 
-function cancelDeletion() {
-  if (!confirm('Batalkan permintaan hapus akun? Akun Anda akan tetap aman.')) return;
-  router.delete(route('member.hapus-akun.cancel'));
+async function cancelDeletion() {
+  try {
+    const confirmed = await proxy.$dialog.confirm({
+      title: 'Batalkan Hapus Akun',
+      message: 'Batalkan permintaan hapus akun? Akun Anda akan tetap aman.',
+      variant: 'warning',
+      confirmText: 'Ya, Batalkan',
+      cancelText: 'Tidak'
+    });
+    
+    if (confirmed) {
+      router.delete(route('member.hapus-akun.cancel'));
+    }
+  } catch {
+    // User cancelled
+  }
 }
 
 function openCardModal() {

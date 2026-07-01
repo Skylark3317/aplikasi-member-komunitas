@@ -179,7 +179,7 @@
 </template>
 
 <script setup>
-import { reactive, computed } from 'vue';
+import { reactive, computed, getCurrentInstance } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 
@@ -190,6 +190,8 @@ const props = defineProps({
   filters:     Object,
   totalCount:  Number,
 });
+
+const { proxy } = getCurrentInstance();
 
 const form = reactive({
   search: props.filters?.search ?? '',
@@ -229,11 +231,23 @@ function goPage(page) {
   }, { preserveState: true });
 }
 
-function confirmRevert(log) {
-  if (confirm('Yakin ingin mengembalikan perubahan dari log ini? Pastikan data masih relevan.')) {
-    router.post(route('superadmin.riwayat-aktivitas.revert', log.id), {}, {
-      preserveScroll: true,
+async function confirmRevert(log) {
+  try {
+    const confirmed = await proxy.$dialog.confirm({
+      title: 'Kembalikan Perubahan',
+      message: 'Yakin ingin mengembalikan perubahan dari log ini? Pastikan data masih relevan.',
+      variant: 'warning',
+      confirmText: 'Kembalikan',
+      cancelText: 'Batal'
     });
+    
+    if (confirmed) {
+      router.post(route('superadmin.riwayat-aktivitas.revert', log.id), {}, {
+        preserveScroll: true,
+      });
+    }
+  } catch {
+    // User cancelled
   }
 }
 

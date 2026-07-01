@@ -4,13 +4,13 @@
 
     <div class="chat-container-layout">
       <!-- Left Panel: Chat List -->
-      <div class="chat-sidebar">
-        <div class="sidebar-header">
+      <div class="chat-sidebar animate-fade-in-left">
+        <div class="sidebar-header animate-fade-in-down animate-delay-100 animate-fill-both">
           <h1 class="sidebar-title">Pertanyaan</h1>
         </div>
 
         <!-- Search Bar -->
-        <div class="search-container">
+        <div class="search-container animate-fade-in-up animate-delay-200 animate-fill-both">
           <div class="search-box">
             <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="11" cy="11" r="8"></circle>
@@ -26,15 +26,15 @@
         </div>
 
         <!-- Filter Tabs (Only show when searchQuery is empty) -->
-        <div v-if="searchQuery.trim() === ''" class="filter-tabs">
+        <div v-if="searchQuery.trim() === ''" class="filter-tabs animate-fade-in-up animate-delay-300 animate-fill-both">
           <button 
-            :class="['filter-tab', activeTab === 'all' ? 'active' : '']" 
+            :class="['filter-tab hover-scale', activeTab === 'all' ? 'active' : '']" 
             @click="activeTab = 'all'"
           >
             Semua
           </button>
           <button 
-            :class="['filter-tab', activeTab === 'unread' ? 'active' : '']" 
+            :class="['filter-tab hover-scale', activeTab === 'unread' ? 'active' : '']" 
             @click="activeTab = 'unread'"
           >
             Belum Dibaca
@@ -224,7 +224,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import PetugasLayout from '@/Layouts/PetugasLayout.vue';
 
@@ -379,6 +379,19 @@ function formatTime(dateStr) {
   // Otherwise show date
   return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
 }
+
+// Add animations on mount
+onMounted(() => {
+  setTimeout(() => {
+    const chatItems = document.querySelectorAll('.chat-item');
+    chatItems.forEach((item, index) => {
+      if (index < 10) { // Animate only first 10 for performance
+        item.style.animationDelay = `${index * 60}ms`;
+        item.classList.add('animate-fade-in-left', 'animate-fill-both');
+      }
+    });
+  }, 100);
+});
 </script>
 
 <style scoped>

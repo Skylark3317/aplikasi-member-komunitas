@@ -227,11 +227,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, getCurrentInstance } from 'vue';
 import { Head, useForm, router } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 
 const props = defineProps({ plans: Array, availableBenefits: Array });
+
+const { proxy } = getCurrentInstance();
 
 const showModal = ref(false);
 const editing = ref(null);
@@ -294,7 +296,7 @@ function closeModal() {
 // function addFeature() removed
 // function removeFeature(i) removed
 
-function submitForm() {
+async function submitForm() {
   const payload = {
     name: form.name,
     description: form.description || null,
@@ -320,13 +322,24 @@ function submitForm() {
   }
 
   if (editing.value) {
-    if (!window.confirm("Apakah Anda yakin ingin menyimpan perubahan pada paket ini?")) {
-      return;
+    try {
+      const confirmed = await proxy.$dialog.confirm({
+        title: 'Simpan Perubahan',
+        message: 'Apakah Anda yakin ingin menyimpan perubahan pada paket ini?',
+        variant: 'warning',
+        confirmText: 'Simpan',
+        cancelText: 'Batal'
+      });
+      
+      if (!confirmed) return;
+      
+      form.transform(() => payload).patch(
+        route('superadmin.paket-premium.update', { plan: editing.value.id }),
+        { onSuccess: () => { showModal.value = false; } }
+      );
+    } catch {
+      // User cancelled
     }
-    form.transform(() => payload).patch(
-      route('superadmin.paket-premium.update', { plan: editing.value.id }),
-      { onSuccess: () => { showModal.value = false; } }
-    );
   } else {
     form.transform(() => payload).post(
       route('superadmin.paket-premium.store'),

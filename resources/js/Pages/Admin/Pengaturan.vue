@@ -26,7 +26,7 @@
       <!-- Form Column -->
       <div class="settings-form-col content-area">
         <!-- Tab Bar -->
-        <div class="tab-bar">
+        <div class="tab-bar" ref="tabBarRef">
           <button v-for="tab in tabs" :key="tab.key"
             :class="['tab-btn', activeTab === tab.key ? 'tab-active' : '']"
             @click="activeTab = tab.key" type="button">
@@ -35,11 +35,11 @@
         </div>
         <form id="settings-form" @submit.prevent="submit" enctype="multipart/form-data">
 
-          <!-- === IDENTITAS === -->
-          <div class="form-card" v-show="activeTab === 'identitas'">
+          <!-- === IDENTITAS & KONTAK === -->
+          <div class="form-card" v-show="activeTab === 'identitas-kontak'">
             <h3 class="form-card-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-              Identitas Komunitas
+              Profil Komunitas
             </h3>
 
           <div class="field-group">
@@ -85,14 +85,8 @@
           </div>
           <span v-if="form.errors.logo" class="error-msg">{{ form.errors.logo }}</span>
           </div>
-          </div><!-- /form-card identitas -->
 
-          <!-- === KONTAK === -->
-          <div class="form-card" v-show="activeTab === 'kontak'">
-            <h3 class="form-card-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.39 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.83a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              Kontak
-            </h3>
+          <p class="form-subsection mt-4">Kontak</p>
 
           <div class="field-group">
             <label class="field-label">Email</label>
@@ -113,14 +107,8 @@
           <textarea v-model="form.address" class="field-textarea" rows="3" />
           <span v-if="form.errors.address" class="error-msg">{{ form.errors.address }}</span>
           </div>
-          </div><!-- /form-card kontak -->
 
-          <!-- === MEDIA SOSIAL === -->
-          <div class="form-card" v-show="activeTab === 'kontak'">
-            <h3 class="form-card-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-              Media Sosial
-            </h3>
+          <p class="form-subsection mt-4">Media Sosial</p>
           <div class="social-grid">
           <div class="field-group">
             <label class="field-label">Tautan Akun X</label>
@@ -147,16 +135,15 @@
           <input v-model="form.social_youtube" type="text" class="field-input" />
           </div>
           </div><!-- /social-grid -->
-          </div><!-- /form-card media sosial -->
+          </div><!-- /form-card identitas-kontak -->
 
-          <!-- === KEANGGOTAAN === -->
-          <div class="form-card" v-show="activeTab === 'keanggotaan'">
+          <!-- === PREMIUM & PEMBAYARAN === -->
+          <div class="form-card" v-show="activeTab === 'premium-pembayaran'">
             <h3 class="form-card-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-              Pengaturan Keanggotaan &amp; Pembayaran
+              Bank Account
             </h3>
             
-          <p class="form-subsection">Informasi Rekening Pembayaran</p>
           <div class="field-group">
             <label class="field-label">Nama Pemilik Rekening</label>
             <input v-model="form.bank_account_name" type="text" class="field-input field-half" />
@@ -170,7 +157,7 @@
             <input v-model="form.bank_name" type="text" class="field-input" />
           </div>
 
-          <p class="form-subsection mt-4">Aturan Keanggotaan</p>
+          <p class="form-subsection mt-4">Membership Rules</p>
           <p class="relocate-hint">
             Jenis paket premium (harga &amp; masa aktif) kini dikelola di halaman
             <Link :href="route('superadmin.paket-premium.index')" class="relocate-link">Paket Premium</Link>.
@@ -192,7 +179,7 @@
         </div>
         </div><!-- /membership-grid -->
 
-        <p class="form-subsection mt-4">Pilihan Benefit Paket Premium</p>
+        <p class="form-subsection mt-4">Premium Benefits</p>
         <p class="field-hint">Daftar ini akan muncul sebagai opsi (checkbox) saat membuat/mengedit paket premium.</p>
         <div class="field-group">
           <div v-for="(benefit, index) in form.available_benefits" :key="index" class="feature-row" style="margin-bottom: 8px; display: flex; gap: 8px;">
@@ -210,59 +197,15 @@
             Tambah Pilihan Benefit
           </button>
         </div>
-      </div><!-- /form-card keanggotaan -->
-
-          <!-- === KARTU MEMBER === -->
-          <div class="form-card" v-show="activeTab === 'kartumember'">
-            <h3 class="form-card-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2" ry="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              Kartu Member
-            </h3>
-
-          <!-- Card Background image -->
-          <div class="field-group">
-            <label class="field-label">Gambar Latar Belakang Kartu Member</label>
-          <div class="img-preview-box">
-            <img v-if="cardBgPreview" :src="cardBgPreview" alt="Latar Belakang Kartu" />
-          </div>
-          <p class="field-hint">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="12" y1="8" x2="12" y2="12"/>
-              <line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            Format JPG atau PNG, ukuran maksimal 1MB
-          </p>
-          <div class="btn-row">
-            <label class="btn-upload">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
-              Unggah background kartu
-              <input type="file" accept=".jpg,.jpeg,.png" @change="onCardBgChange" hidden />
-            </label>
-            <button type="button" class="btn-delete" @click="deleteCardBg">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3 6 5 6 21 6"/>
-                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-              </svg>
-              Hapus background kartu
-            </button>
-          </div>
-          <span v-if="form.errors.card_background" class="error-msg">{{ form.errors.card_background }}</span>
-          </div>
-          </div><!-- /form-card kartumember -->
+      </div><!-- /form-card premium-pembayaran -->
 
           <!-- === LANDING PAGE === -->
-          <div class="form-card" v-show="activeTab === 'landingpage'">
+          <div class="form-card" v-show="activeTab === 'landing-page'">
             <h3 class="form-card-title">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-              Konten Landing Page
+              Colors
             </h3>
 
-          <p class="form-subsection">Tampilan &amp; Warna Utama</p>
           <div class="color-row">
             <div class="field-group">
               <label class="field-label">Warna Primer</label>
@@ -389,27 +332,50 @@
 
           </div><!-- /form-card landing page -->
 
-          <!-- === SYARAT KETENTUAN === -->
-          <div class="form-card" v-show="activeTab === 'syaratketentuan'">
+          <!-- === MEMBER ASSETS === -->
+          <div class="form-card" v-show="activeTab === 'member-assets'">
             <h3 class="form-card-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-              Syarat & Ketentuan
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2" ry="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Kartu Member Design
             </h3>
-            <p class="field-hint" style="margin-bottom:12px">Konten syarat dan ketentuan untuk form registrasi member.</p>
-            <div class="field-group">
-              <label class="field-label">Isi Syarat & Ketentuan</label>
-              <RichTextEditor v-model="form.terms_and_conditions" placeholder="Masukkan konten syarat dan ketentuan di sini..." />
-            </div>
+
+          <!-- Card Background image -->
+          <div class="field-group">
+            <label class="field-label">Gambar Latar Belakang Kartu Member</label>
+          <div class="img-preview-box">
+            <img v-if="cardBgPreview" :src="cardBgPreview" alt="Latar Belakang Kartu" />
+          </div>
+          <p class="field-hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            Format JPG atau PNG, ukuran maksimal 1MB
+          </p>
+          <div class="btn-row">
+            <label class="btn-upload">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+              Unggah background kartu
+              <input type="file" accept=".jpg,.jpeg,.png" @change="onCardBgChange" hidden />
+            </label>
+            <button type="button" class="btn-delete" @click="deleteCardBg">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+              </svg>
+              Hapus background kartu
+            </button>
+          </div>
+          <span v-if="form.errors.card_background" class="error-msg">{{ form.errors.card_background }}</span>
           </div>
 
-          <!-- === TEMPLATE SURAT (CV) === -->
-          <div class="form-card" v-show="activeTab === 'cvtemplate'">
-            <h3 class="form-card-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-              Template Surat Keterangan Keanggotaan
-            </h3>
-
-            <p class="form-subsection">Informasi Kop Surat</p>
+          <p class="form-subsection mt-4">Template Surat Keterangan</p>
+          <p class="form-subsection" style="margin-top: 12px; margin-bottom: 8px;">Informasi Kop Surat</p>
             
             <!-- Community Name for CV -->
             <div class="field-group">
@@ -511,7 +477,20 @@
               </div>
               <span v-if="form.errors.cv_signature_image" class="error-msg">{{ form.errors.cv_signature_image }}</span>
             </div>
-          </div><!-- /form-card cvtemplate -->
+          </div><!-- /form-card member-assets -->
+
+          <!-- === LEGAL === -->
+          <div class="form-card" v-show="activeTab === 'legal'">
+            <h3 class="form-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Syarat & Ketentuan
+            </h3>
+            <p class="field-hint" style="margin-bottom:12px">Konten syarat dan ketentuan untuk form registrasi member.</p>
+            <div class="field-group">
+              <label class="field-label">Isi Syarat & Ketentuan</label>
+              <RichTextEditor v-model="form.terms_and_conditions" placeholder="Masukkan konten syarat dan ketentuan di sini..." />
+            </div>
+          </div><!-- /form-card legal -->
 
         </form>
       </div>
@@ -520,29 +499,37 @@
       <div class="settings-preview-col">
         <div class="preview-sticky">
           <h4 class="preview-title">Live Preview</h4>
-          <div :class="['preview-container', ['cvtemplate'].includes(activeTab) ? 'preview-container--full' : '']">
+          <div :class="['preview-container', ['member-assets'].includes(activeTab) ? 'preview-container--full' : '']">
             <PreviewLandingPage
-              v-if="['identitas', 'kontak', 'landingpage'].includes(activeTab)"
+              v-if="['identitas-kontak', 'landing-page'].includes(activeTab)"
               :settings="form"
               :logoPreview="logoPreview"
               :bgPreview="bgPreview"
               :aboutPreview="aboutPreview"
             />
-            <PreviewMemberCard
-              v-else-if="activeTab === 'kartumember'"
-              :form="form"
-              :cardBgUrl="cardBgPreview"
-            />
             <PreviewMembership
-              v-else-if="activeTab === 'keanggotaan'"
+              v-else-if="activeTab === 'premium-pembayaran'"
               :form="form"
             />
-            <div v-else-if="activeTab === 'syaratketentuan'" style="width: 100%; height: 100%; overflow-y: auto; background-color: #f9fafb; padding: 24px; color: #374151;">
+            <div v-else-if="activeTab === 'legal'" style="width: 100%; height: 100%; overflow-y: auto; background-color: #f9fafb; padding: 24px; color: #374151;">
               <h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: var(--primary-color);">Syarat dan Ketentuan</h1>
               <div class="ql-editor" style="padding:0 !important; font-family: inherit; font-size: 0.875rem;" v-html="form.terms_and_conditions"></div>
             </div>
-            <!-- CV Template Preview: A4 virtual sheet scaled down -->
-            <div v-else-if="activeTab === 'cvtemplate'" class="cv-preview-shell" :ref="onCvShellMounted">
+            <!-- Member Assets Preview: Kartu Member Card + CV Template -->
+            <div v-else-if="activeTab === 'member-assets'" style="width: 100%; height: 100%; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; padding: 16px; background: #f9fafb;">
+              <!-- Kartu Member Preview -->
+              <div style="background: #fff; border-radius: 12px; padding: 16px; border: 1px solid #e5e7eb;">
+                <h5 style="font-size: 0.875rem; font-weight: 600; color: #6b7280; margin: 0 0 12px 0;">Preview Kartu Member</h5>
+                <PreviewMemberCard
+                  :form="form"
+                  :cardBgUrl="cardBgPreview"
+                />
+              </div>
+              
+              <!-- CV Template Preview -->
+              <div style="background: #fff; border-radius: 12px; padding: 16px; border: 1px solid #e5e7eb; flex: 1; min-height: 0;">
+                <h5 style="font-size: 0.875rem; font-weight: 600; color: #6b7280; margin: 0 0 12px 0;">Preview Template Surat</h5>
+                <div class="cv-preview-shell" :ref="onCvShellMounted">
               <div class="cv-preview-page">
                 <!-- Kop Surat -->
                 <div class="cv-kop">
@@ -573,17 +560,19 @@
                     <p class="cv-sig-name">{{ form.cv_signer_name || 'Admin AMK' }}</p>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+              </div><!-- /cv-preview-page -->
+              </div><!-- /cv-preview-shell -->
+              </div><!-- /CV Template Preview Card -->
+            </div><!-- /member-assets preview container -->
+          </div><!-- /preview-container -->
+        </div><!-- /preview-sticky -->
+      </div><!-- /settings-preview-col -->
+    </div><!-- /settings-layout -->
   </AdminLayout>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, getCurrentInstance } from 'vue';
 import { Head, Link, useForm, router, usePage } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import PreviewLandingPage from './PreviewLandingPage.vue';
@@ -593,6 +582,7 @@ import RichTextEditor from '@/Components/RichTextEditor.vue';
 
 const props = defineProps({ settings: Object });
 const $page = usePage();
+const { proxy } = getCurrentInstance();
 
 const s = props.settings ?? {};
 
@@ -667,15 +657,13 @@ const form = useForm({
   delete_cv_signature_image: false,
 });
 
-const activeTab = ref('identitas');
+const activeTab = ref('identitas-kontak');
 const tabs = [
-  { key: 'identitas',   label: 'Identitas' },
-  { key: 'kontak',      label: 'Kontak & Sosial' },
-  { key: 'keanggotaan', label: 'Keanggotaan' },
-  { key: 'kartumember', label: 'Kartu Member' },
-  { key: 'landingpage', label: 'Landing Page' },
-  { key: 'cvtemplate',  label: 'Template Surat' },
-  { key: 'syaratketentuan', label: 'Syarat & Ketentuan' },
+  { key: 'identitas-kontak', label: 'Identitas & Kontak' },
+  { key: 'premium-pembayaran', label: 'Premium & Pembayaran' },
+  { key: 'landing-page', label: 'Landing Page' },
+  { key: 'member-assets', label: 'Member Assets' },
+  { key: 'legal', label: 'Legal' },
 ];
 
 // Image previews
@@ -687,20 +675,46 @@ const cvSignaturePreview = ref(s.cv_signature_image ? `/storage/${s.cv_signature
 
 // Dynamically scale the A4 preview page to fit the shell container
 const cvShellRef = ref(null);
+const tabBarRef = ref(null);
 let cvResizeObserver = null;
+
 function updateCvScale() {
   if (!cvShellRef.value) return;
   const shellW = cvShellRef.value.offsetWidth - 24; // subtract 12px padding each side
   const scale = Math.min(shellW / 595, 1);
   cvShellRef.value.style.setProperty('--cv-scale', scale);
 }
+
+// Handle horizontal scroll with mouse wheel on tab bar
+function handleTabBarScroll(e) {
+  if (!tabBarRef.value) return;
+  // Prevent vertical scroll and scroll horizontally instead
+  if (e.deltaY !== 0) {
+    e.preventDefault();
+    tabBarRef.value.scrollLeft += e.deltaY;
+  }
+}
+
 onMounted(() => {
   if (typeof ResizeObserver !== 'undefined') {
     cvResizeObserver = new ResizeObserver(updateCvScale);
   }
+  
+  // Add wheel event listener to tab bar for horizontal scrolling on next tick
+  setTimeout(() => {
+    if (tabBarRef.value) {
+      tabBarRef.value.addEventListener('wheel', handleTabBarScroll, { passive: false });
+    }
+  }, 0);
 });
+
 onUnmounted(() => {
   if (cvResizeObserver) cvResizeObserver.disconnect();
+  
+  // Remove wheel event listener
+  if (tabBarRef.value) {
+    tabBarRef.value.removeEventListener('wheel', handleTabBarScroll);
+  }
 });
 function onCvShellMounted(el) {
   if (!el) { if (cvResizeObserver && cvShellRef.value) cvResizeObserver.unobserve(cvShellRef.value); return; }
@@ -732,11 +746,25 @@ function onLogoChange(e) {
     e.target.value = '';
   }
 }
-function deleteLogo() {
-  form.logo = null;
-  form.delete_logo = true;
-  logoPreview.value = null;
-  form.errors.logo = null;
+async function deleteLogo() {
+  try {
+    const confirmed = await proxy.$dialog.confirm({
+      title: 'Hapus Logo Komunitas',
+      message: 'Apakah Anda yakin ingin menghapus logo komunitas?',
+      variant: 'warning',
+      confirmText: 'Hapus',
+      cancelText: 'Batal'
+    });
+    
+    if (confirmed) {
+      form.logo = null;
+      form.delete_logo = true;
+      logoPreview.value = null;
+      form.errors.logo = null;
+    }
+  } catch {
+    // User cancelled
+  }
 }
 
 function onBgChange(e) {
@@ -749,11 +777,25 @@ function onBgChange(e) {
     e.target.value = '';
   }
 }
-function deleteBg() {
-  form.bg_image = null;
-  form.delete_bg_image = true;
-  bgPreview.value = null;
-  form.errors.bg_image = null;
+async function deleteBg() {
+  try {
+    const confirmed = await proxy.$dialog.confirm({
+      title: 'Hapus Gambar Background',
+      message: 'Apakah Anda yakin ingin menghapus gambar latar belakang hero section?',
+      variant: 'warning',
+      confirmText: 'Hapus',
+      cancelText: 'Batal'
+    });
+    
+    if (confirmed) {
+      form.bg_image = null;
+      form.delete_bg_image = true;
+      bgPreview.value = null;
+      form.errors.bg_image = null;
+    }
+  } catch {
+    // User cancelled
+  }
 }
 
 function onCardBgChange(e) {
@@ -766,11 +808,25 @@ function onCardBgChange(e) {
     e.target.value = '';
   }
 }
-function deleteCardBg() {
-  form.card_background = null;
-  form.delete_card_background = true;
-  cardBgPreview.value = null;
-  form.errors.card_background = null;
+async function deleteCardBg() {
+  try {
+    const confirmed = await proxy.$dialog.confirm({
+      title: 'Hapus Background Kartu Member',
+      message: 'Apakah Anda yakin ingin menghapus gambar latar belakang kartu member?',
+      variant: 'warning',
+      confirmText: 'Hapus',
+      cancelText: 'Batal'
+    });
+    
+    if (confirmed) {
+      form.card_background = null;
+      form.delete_card_background = true;
+      cardBgPreview.value = null;
+      form.errors.card_background = null;
+    }
+  } catch {
+    // User cancelled
+  }
 }
 
 function onAboutChange(e) {
@@ -783,11 +839,25 @@ function onAboutChange(e) {
     e.target.value = '';
   }
 }
-function deleteAbout() {
-  form.about_image = null;
-  form.delete_about_image = true;
-  aboutPreview.value = null;
-  form.errors.about_image = null;
+async function deleteAbout() {
+  try {
+    const confirmed = await proxy.$dialog.confirm({
+      title: 'Hapus Gambar About Section',
+      message: 'Apakah Anda yakin ingin menghapus gambar about section?',
+      variant: 'warning',
+      confirmText: 'Hapus',
+      cancelText: 'Batal'
+    });
+    
+    if (confirmed) {
+      form.about_image = null;
+      form.delete_about_image = true;
+      aboutPreview.value = null;
+      form.errors.about_image = null;
+    }
+  } catch {
+    // User cancelled
+  }
 }
 
 function onCvSignatureChange(e) {
@@ -800,31 +870,59 @@ function onCvSignatureChange(e) {
     e.target.value = '';
   }
 }
-function deleteCvSignature() {
-  form.cv_signature_image = null;
-  form.delete_cv_signature_image = true;
-  cvSignaturePreview.value = null;
-  form.errors.cv_signature_image = null;
+async function deleteCvSignature() {
+  try {
+    const confirmed = await proxy.$dialog.confirm({
+      title: 'Hapus Tanda Tangan',
+      message: 'Apakah Anda yakin ingin menghapus gambar tanda tangan untuk template surat?',
+      variant: 'warning',
+      confirmText: 'Hapus',
+      cancelText: 'Batal'
+    });
+    
+    if (confirmed) {
+      form.cv_signature_image = null;
+      form.delete_cv_signature_image = true;
+      cvSignaturePreview.value = null;
+      form.errors.cv_signature_image = null;
+    }
+  } catch {
+    // User cancelled
+  }
 }
 
-function submit() {
-  form.post(route('superadmin.pengaturan.update'), {
-    forceFormData: true,
-    onSuccess: () => {
-      const s = $page.props.settings;
-      logoPreview.value = s.community_logo ? `/storage/${s.community_logo}` : null;
-      bgPreview.value = s.bg_image ? `/storage/${s.bg_image}` : null;
-      cardBgPreview.value = s.card_background ? `/storage/${s.card_background}` : null;
-      aboutPreview.value = s.about_image ? `/storage/${s.about_image}` : null;
-      cvSignaturePreview.value = s.cv_signature_image ? `/storage/${s.cv_signature_image}` : null;
-      
-      form.logo = null;
-      form.bg_image = null;
-      form.card_background = null;
-      form.about_image = null;
-      form.cv_signature_image = null;
-    }
-  });
+async function submit() {
+  try {
+    const confirmed = await proxy.$dialog.confirm({
+      title: 'Simpan Perubahan Pengaturan',
+      message: 'Apakah Anda yakin ingin menyimpan semua perubahan pengaturan?',
+      variant: 'info',
+      confirmText: 'Simpan',
+      cancelText: 'Batal'
+    });
+    
+    if (!confirmed) return;
+    
+    form.post(route('superadmin.pengaturan.update'), {
+      forceFormData: true,
+      onSuccess: () => {
+        const s = $page.props.settings;
+        logoPreview.value = s.community_logo ? `/storage/${s.community_logo}` : null;
+        bgPreview.value = s.bg_image ? `/storage/${s.bg_image}` : null;
+        cardBgPreview.value = s.card_background ? `/storage/${s.card_background}` : null;
+        aboutPreview.value = s.about_image ? `/storage/${s.about_image}` : null;
+        cvSignaturePreview.value = s.cv_signature_image ? `/storage/${s.cv_signature_image}` : null;
+        
+        form.logo = null;
+        form.bg_image = null;
+        form.card_background = null;
+        form.about_image = null;
+        form.cv_signature_image = null;
+      }
+    });
+  } catch {
+    // User cancelled
+  }
 }
 
 function addBenefit() {
@@ -891,11 +989,27 @@ function removeBenefit(index) {
   display: flex;
   gap: 0;
   margin: -16px -20px 16px;
-  padding: 0 20px;
+  padding: 0 20px 0;
   overflow-x: auto;
-  scrollbar-width: none;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
 }
-.tab-bar::-webkit-scrollbar { display: none; }
+.tab-bar::-webkit-scrollbar {
+  height: 8px;
+}
+.tab-bar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+.tab-bar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.tab-bar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
 .tab-btn {
   flex-shrink: 0;
   padding: 10px 14px;
@@ -936,7 +1050,23 @@ function removeBenefit(index) {
   border-right: 1px solid #e5e7eb;
   background: #fff;
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.settings-form-col::-webkit-scrollbar {
+  width: 8px;
+}
+.settings-form-col::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+.settings-form-col::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.settings-form-col::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .content-area { padding: 0; }

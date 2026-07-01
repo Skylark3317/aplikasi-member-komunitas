@@ -4,12 +4,12 @@
 
     <!-- Locked: no benefit access -->
     <template v-if="!canAccessChat">
-      <div class="top-bar">
+      <div class="top-bar animate-fade-in">
         <h1 class="page-title">Tanya Jawab Petugas</h1>
       </div>
       <div class="divider" />
       <div class="content-area">
-        <div class="locked-state">
+        <div class="locked-state animate-fade-in-up animate-delay-200 animate-fill-both">
           <div class="locked-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <rect x="3" y="11" width="18" height="11" rx="2"/>
@@ -21,7 +21,7 @@
             Fitur <strong>Tanya Jawab dengan Admin</strong> hanya tersedia bagi member yang berlangganan paket dengan benefit ini.
             Silakan upgrade paket Anda untuk mendapatkan akses.
           </p>
-          <Link :href="route('member.premium.index')" class="btn-upgrade">
+          <Link :href="route('member.premium.index')" class="btn-upgrade hover-lift">
             Lihat Paket Premium
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
           </Link>
@@ -31,11 +31,11 @@
 
     <!-- Chat interface: has benefit access -->
     <template v-else>
-      <div class="chat-container-layout">
+      <div class="chat-container-layout animate-fade-in">
         <!-- Chat Main Room -->
         <div class="chat-main-room">
           <!-- Active Chat Header -->
-          <div class="chat-room-header">
+          <div class="chat-room-header animate-slide-in-down">
             <div class="header-avatar-container">
               <!-- Show community support icon / avatar -->
               <div class="header-avatar-placeholder">
@@ -116,7 +116,7 @@
                 ref="inputField"
                 :disabled="form.processing"
               />
-              <button type="submit" class="chat-room-send-btn" :disabled="form.processing || !form.content.trim()">
+              <button type="submit" class="chat-room-send-btn hover-scale" :disabled="form.processing || !form.content.trim()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="send-icon-svg">
                   <line x1="22" y1="2" x2="11" y2="13"></line>
                   <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>

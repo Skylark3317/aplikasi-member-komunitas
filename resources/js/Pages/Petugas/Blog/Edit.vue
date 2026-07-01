@@ -92,6 +92,7 @@
 </template>
 
 <script setup>
+import { getCurrentInstance, onMounted, nextTick } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import PetugasLayout from '@/Layouts/PetugasLayout.vue';
 import RichTextEditor from '@/Components/RichTextEditor.vue';
@@ -99,6 +100,8 @@ import RichTextEditor from '@/Components/RichTextEditor.vue';
 const props = defineProps({
   post: Object,
 });
+
+const { proxy } = getCurrentInstance();
 
 const form = useForm({
   title: props.post.title,
@@ -111,11 +114,52 @@ function submit() {
   form.patch(route('petugas.blog.update', props.post.id));
 }
 
-function deletePost() {
-  if (confirm('Apakah Anda yakin ingin menghapus blog ini?')) {
-    form.delete(route('petugas.blog.destroy', props.post.id));
+async function deletePost() {
+  try {
+    const confirmed = await proxy.$dialog.confirm({
+      title: 'Hapus Blog',
+      message: 'Apakah Anda yakin ingin menghapus blog ini?',
+      variant: 'danger',
+      confirmText: 'Hapus',
+      cancelText: 'Batal'
+    });
+    
+    if (confirmed) {
+      form.delete(route('petugas.blog.destroy', props.post.id));
+    }
+  } catch {
+    // User cancelled
   }
 }
+
+// Animations
+onMounted(() => {
+  nextTick(() => {
+    // Top bar animation
+    const topBar = document.querySelector('.top-bar');
+    if (topBar) {
+      topBar.style.opacity = '0';
+      topBar.style.transform = 'translateY(-20px)';
+      setTimeout(() => {
+        topBar.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        topBar.style.opacity = '1';
+        topBar.style.transform = 'translateY(0)';
+      }, 50);
+    }
+
+    // Form groups stagger
+    const formGroups = document.querySelectorAll('.form-group');
+    formGroups.forEach((group, index) => {
+      group.style.opacity = '0';
+      group.style.transform = 'translateY(30px) scale(0.98)';
+      setTimeout(() => {
+        group.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        group.style.opacity = '1';
+        group.style.transform = 'translateY(0) scale(1)';
+      }, 200 + index * 120);
+    });
+  });
+});
 </script>
 
 <style scoped>
@@ -173,7 +217,7 @@ function deletePost() {
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  transition: filter 0.2s;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   border: 1px solid transparent;
   box-sizing: border-box;
 }
@@ -182,8 +226,15 @@ function deletePost() {
 .btn-danger { background: #ef4444; color: #fff; border-color: #ef4444; }
 .btn-outline { background: #fff; color: var(--primary-color, #007bff); border-color: var(--primary-color, #007bff); }
 
-.btn-primary:hover, .btn-danger:hover { filter: brightness(0.9); }
-.btn-outline:hover { background: #f0f4ff; }
+.btn-primary:hover, .btn-danger:hover { 
+  filter: brightness(0.9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+.btn-outline:hover { 
+  background: #f0f4ff;
+  transform: translateY(-1px);
+}
 
 .divider { height: 1px; background: #e5e7eb; margin: 0; }
 

@@ -3,7 +3,7 @@
     <Head title="Konten - AMK" />
 
     <!-- Top Bar -->
-    <div class="top-bar">
+    <div class="top-bar animate-fade-in">
       <h1 class="page-title">Konten</h1>
     </div>
     <div class="divider" />
@@ -13,9 +13,9 @@
       <!-- Premium Content Interface -->
       <div class="premium-interface">
         <!-- Always-visible tabs -->
-        <div class="tabs-container">
+        <div class="tabs-container animate-fade-in-up animate-delay-100 animate-fill-both">
           <button
-            :class="['tab-btn', activeTab === 'video' ? 'active' : '', !canAccessVideo ? 'tab-locked' : '']"
+            :class="['tab-btn hover-scale', activeTab === 'video' ? 'active' : '', !canAccessVideo ? 'tab-locked' : '']"
             @click="activeTab = 'video'"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -25,7 +25,7 @@
             </span>
           </button>
           <button
-            :class="['tab-btn', activeTab === 'ebook' ? 'active' : '', !canAccessEbook ? 'tab-locked' : '']"
+            :class="['tab-btn hover-scale', activeTab === 'ebook' ? 'active' : '', !canAccessEbook ? 'tab-locked' : '']"
             @click="activeTab = 'ebook'"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
@@ -39,13 +39,13 @@
         <!-- Tab: Video -->
         <div v-if="activeTab === 'video'">
           <!-- Locked notice for video -->
-          <div v-if="!canAccessVideo" class="tab-locked-notice">
+          <div v-if="!canAccessVideo" class="tab-locked-notice animate-fade-in-up animate-delay-200 animate-fill-both">
             <div class="locked-icon-sm">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             </div>
             <h3 class="locked-notice-title">Akses Video Terkunci</h3>
             <p class="locked-notice-desc">Paket Anda saat ini tidak menyertakan benefit <strong>Akses Video Premium</strong>. Upgrade ke paket yang mencakup benefit ini untuk menonton video eksklusif kami.</p>
-            <Link :href="route('member.premium.index')" class="btn-upgrade-sm">
+            <Link :href="route('member.premium.index')" class="btn-upgrade-sm hover-lift">
               Lihat Paket Premium
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
             </Link>
@@ -87,13 +87,13 @@
         <!-- Tab: Ebook -->
         <div v-if="activeTab === 'ebook'">
           <!-- Locked notice for ebook -->
-          <div v-if="!canAccessEbook" class="tab-locked-notice">
+          <div v-if="!canAccessEbook" class="tab-locked-notice animate-fade-in-up animate-delay-200 animate-fill-both">
             <div class="locked-icon-sm">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             </div>
             <h3 class="locked-notice-title">Akses Ebook Terkunci</h3>
             <p class="locked-notice-desc">Paket Anda saat ini tidak menyertakan benefit <strong>Akses Ebook Berkualitas</strong>. Upgrade ke paket yang mencakup benefit ini untuk mengakses koleksi ebook kami.</p>
-            <Link :href="route('member.premium.index')" class="btn-upgrade-sm">
+            <Link :href="route('member.premium.index')" class="btn-upgrade-sm hover-lift">
               Lihat Paket Premium
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
             </Link>
@@ -138,7 +138,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import MemberLayout from '@/Layouts/MemberLayout.vue';
 
@@ -191,6 +191,18 @@ function formatDate(dateStr) {
   
   return `${formattedDate} • ${hours}:${minutes}`;
 }
+
+// Add animations on mount
+onMounted(() => {
+  setTimeout(() => {
+    // Animate content cards individually
+    const cards = document.querySelectorAll('.content-card');
+    cards.forEach((card, index) => {
+      card.style.animationDelay = `${index * 100}ms`;
+      card.classList.add('animate-fade-in-up', 'animate-fill-both');
+    });
+  }, 100);
+});
 </script>
 
 <style scoped>
@@ -360,13 +372,39 @@ function formatDate(dateStr) {
   flex-direction: column;
   cursor: pointer;
   background: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.content-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.content-card:hover .card-thumbnail img {
+  transform: scale(1.1);
 }
 
 .card-thumbnail {
   width: 100%;
-  border-radius: 8px;
+  border-radius: 8px 8px 0 0;
   overflow: hidden;
-  margin-bottom: 12px;
+  margin-bottom: 0;
+  position: relative;
+}
+
+.card-thumbnail::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.3));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.content-card:hover .card-thumbnail::after {
+  opacity: 1;
 }
 
 .video-thumb {
@@ -387,6 +425,7 @@ function formatDate(dateStr) {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.4s ease;
 }
 
 .card-info {
