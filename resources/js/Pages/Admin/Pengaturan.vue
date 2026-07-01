@@ -94,6 +94,18 @@
             <span v-if="form.errors.email" class="error-msg">{{ form.errors.email }}</span>
           </div>
 
+          <div class="field-group">
+            <label class="field-label">Nama Pengirim Email</label>
+            <input v-model="form.email_sender_name" type="text" class="field-input" placeholder="Nama aplikasi default jika dikosongkan" />
+            <span v-if="form.errors.email_sender_name" class="error-msg">{{ form.errors.email_sender_name }}</span>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Alamat Email Pengirim</label>
+            <input v-model="form.email_sender_address" type="email" class="field-input" placeholder="Email SMTP default jika dikosongkan" />
+            <span v-if="form.errors.email_sender_address" class="error-msg">{{ form.errors.email_sender_address }}</span>
+          </div>
+
         <!-- Nomor Telepon -->
         <div class="field-group">
           <label class="field-label">Nomor Telepon</label>
@@ -610,6 +622,8 @@ const defaultTerms = `<p>Selamat datang di Aplikasi Member Komunitas. Dengan men
 const form = useForm({
   community_name:      s.community_name      ?? '',
   email:               s.email               ?? '',
+  email_sender_name:   s.email_sender_name   ?? '',
+  email_sender_address: s.email_sender_address ?? '',
   phone:               s.phone               ?? '',
   address:             s.address             ?? '',
   social_x:            s.social_x            ?? '',

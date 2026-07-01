@@ -1,6 +1,6 @@
 <script setup>
-import { Form, Link } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { Form, Link, usePage } from "@inertiajs/vue3";
+import { ref, watch, nextTick } from "vue";
 import PillButton from "../../Components/Ui/PillButton.vue";
 import HomeLayout from "../../Layouts/HomeLayout.vue";
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
@@ -24,6 +24,37 @@ function closeTerms() {
     showTerms.value = false;
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+const page = usePage();
+
+watch(
+    () => page.props.errors,
+    (errors) => {
+        if (errors && Object.keys(errors).length > 0) {
+            nextTick(() => {
+                // Urutan field dari atas ke bawah
+                const fields = [
+                    'name', 'email', 'phone', 'gender', 'blood_type', 
+                    'last_education', 'institution', 'department', 
+                    'address', 'password', 'password_confirmation', 'terms'
+                ];
+                const firstErrorField = fields.find(f => errors[f]);
+                
+                if (firstErrorField) {
+                    let el = document.getElementById(firstErrorField) || document.getElementsByName(firstErrorField)[0];
+                    if (!el && firstErrorField === 'gender') el = document.getElementById('gender_male');
+                    if (!el && firstErrorField === 'blood_type') el = document.getElementById('blood_type_a');
+                    
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        el.focus({ preventScroll: true });
+                    }
+                }
+            });
+        }
+    },
+    { deep: true, immediate: true }
+);
 </script>
 
 <template>
@@ -106,8 +137,8 @@ function closeTerms() {
                     <p class="text-danger-500 text-sm" v-if="errors.institution">{{ errors.institution }}</p>
                 </div>
                 <div class="flex flex-col gap-2">
-                    <label class="font-medium" for="department">Departemen</label>
-                    <input class="w-full px-6 py-2 rounded-full ring ring-inset ring-onyx-400 placeholder:text-onyx-400" name="department" id="department" placeholder="Departemen">
+                    <label class="font-medium" for="department">Jurusan</label>
+                    <input class="w-full px-6 py-2 rounded-full ring ring-inset ring-onyx-400 placeholder:text-onyx-400" name="department" id="department" placeholder="Jurusan">
                     <p class="text-danger-500 text-sm" v-if="errors.department">{{ errors.department }}</p>
                 </div>
                 <div class="flex flex-col gap-2">

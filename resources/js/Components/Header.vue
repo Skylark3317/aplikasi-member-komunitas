@@ -1,6 +1,6 @@
 <script setup>
-import { Link, usePage } from "@inertiajs/vue3";
-import { computed, ref, onMounted } from "vue";
+import { Link, usePage, router } from "@inertiajs/vue3";
+import { computed, ref } from "vue";
 
 const page = usePage();
 
@@ -11,16 +11,28 @@ const user = computed(() => page.props.auth?.user);
 
 const mobileNavbarVisible = ref(false);
 
-// Animate navbar on mount
-onMounted(() => {
-    setTimeout(() => {
-        const navItems = document.querySelectorAll('.nav-item-animate');
-        navItems.forEach((item, index) => {
-            item.style.animationDelay = `${index * 80}ms`;
-            item.classList.add('animate-fade-in-down', 'animate-fill-both');
+const scrollToSection = (e, id, url) => {
+    e.preventDefault();
+    const el = document.getElementById(id);
+    if (el) {
+        const headerOffset = 130; 
+        const elementPosition = el.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.scrollY - headerOffset;
+        
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
         });
-    }, 100);
-});
+        
+        mobileNavbarVisible.value = false;
+        
+        if (window.history.pushState) {
+            window.history.pushState(null, null, '#' + id);
+        }
+    } else {
+        router.visit(url);
+    }
+};
 </script>
 
 <template>
@@ -34,12 +46,12 @@ onMounted(() => {
                 <img :src="settings.community_logo ? `${storageUrl}/${settings.community_logo}` : `${appUrl}/images/community-logo.svg`" alt="Logo" width="48" class="animate-pulse-scale">
             </Link>
         </div>
-        <Link v-if="user" class="px-6 py-2 rounded-full ring ring-inset ring-black font-medium hover-scale" :href="route('dashboard')">Dashboard</Link>
-        <Link v-else class="px-6 py-2 rounded-full ring ring-inset ring-black font-medium hover-scale" :href="route('login')">Login</Link>
-        <nav v-if="mobileNavbarVisible" class="absolute top-full left-0 w-full flex flex-col bg-white animate-slide-in-down">
-            <Link class="p-4 font-medium shadow-[0_-0.0625rem_0_var(--color-onyx-200)_inset] hover-brightness" :href="`${route('home')}#about`">TENTANG</Link>
-            <Link class="p-4 font-medium shadow-[0_-0.0625rem_0_var(--color-onyx-200)_inset] hover-brightness" :href="route('blog.index')">BLOG</Link>
-            <Link class="p-4 font-medium shadow-[0_-0.0625rem_0_var(--color-onyx-200)_inset] hover-brightness" :href="`${route('home')}#contact`">KONTAK</Link>
+        <Link v-if="user" class="px-6 py-2 rounded-full ring ring-inset ring-black font-medium" :href="route('dashboard')">Dashboard</Link>
+        <Link v-else class="px-6 py-2 rounded-full ring ring-inset ring-black font-medium" :href="route('login')">Login</Link>
+        <nav v-if="mobileNavbarVisible" class="absolute top-full left-0 w-full flex flex-col bg-white">
+            <a class="p-4 font-medium shadow-[0_-0.0625rem_0_var(--color-onyx-200)_inset] cursor-pointer" :href="`${route('home')}#about`" @click="scrollToSection($event, 'about', `${route('home')}#about`)">TENTANG</a>
+            <Link class="p-4 font-medium shadow-[0_-0.0625rem_0_var(--color-onyx-200)_inset]" :href="route('blog.index')">BLOG</Link>
+            <a class="p-4 font-medium shadow-[0_-0.0625rem_0_var(--color-onyx-200)_inset] cursor-pointer" :href="`${route('home')}#contact`" @click="scrollToSection($event, 'contact', `${route('home')}#contact`)">KONTAK</a>
             <div class="h-14 flex shadow-[0_-0.0625rem_0_var(--color-onyx-200)_inset]">
                 <a class="w-full h-full flex justify-center items-center shadow-[-0.0625rem_0_0_var(--color-onyx-200)_inset] hover-scale" :href="settings.email ? `mailto:${settings.email}` : '#'" target="_blank">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail-icon lucide-mail"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
@@ -87,11 +99,11 @@ onMounted(() => {
             </div>
             <div class="relative h-14 flex justify-center items-center gap-8 px-4 bg-[rgba(0,0,0,0.2)]">
                 <div class="absolute top-0 left-0 w-full h-full bg-primary -z-1" />
-                <Link class="font-medium text-white hover-scale" :href="`${route('home')}#about`">TENTANG</Link>
-                <Link class="font-medium text-white hover-scale" :href="route('blog.index')">BLOG</Link>
-                <Link class="font-medium text-white hover-scale" :href="`${route('home')}#contact`">KONTAK</Link>
-                <Link v-if="user" class="px-6 py-2 rounded-full ring ring-inset ring-white font-medium text-white hover-lift" :href="route('dashboard')">Dashboard</Link>
-                <Link v-else class="px-6 py-2 rounded-full ring ring-inset ring-white font-medium text-white hover-lift" :href="route('login')">Login</Link>
+                <a class="font-medium text-white cursor-pointer" :href="`${route('home')}#about`" @click="scrollToSection($event, 'about', `${route('home')}#about`)">TENTANG</a>
+                <Link class="font-medium text-white" :href="route('blog.index')">BLOG</Link>
+                <a class="font-medium text-white cursor-pointer" :href="`${route('home')}#contact`" @click="scrollToSection($event, 'contact', `${route('home')}#contact`)">KONTAK</a>
+                <Link v-if="user" class="px-6 py-2 rounded-full ring ring-inset ring-white font-medium text-white" :href="route('dashboard')">Dashboard</Link>
+                <Link v-else class="px-6 py-2 rounded-full ring ring-inset ring-white font-medium text-white" :href="route('login')">Login</Link>
             </div>
         </nav>
     </header>

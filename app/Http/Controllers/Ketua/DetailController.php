@@ -48,7 +48,7 @@ class DetailController extends Controller
 
     protected function memberData(Request $request, array $premiumIds): array
     {
-        $query = User::where('role', 'member')->with('memberProfile');
+        $query = User::where('role', 'member')->with('memberProfile.plan');
 
         if ($request->filled('status')) {
             $query->where('is_active', $request->status === 'aktif');
@@ -77,13 +77,16 @@ class DetailController extends Controller
                 'email'      => $u->email,
                 'telepon'    => $u->telephone ?? '-',
                 'institusi'  => $u->memberProfile?->institution ?? '-',
-                'departemen' => $u->memberProfile?->department ?? '-',
+                'jurusan'    => $u->memberProfile?->department ?? '-',
                 'alamat'     => $u->memberProfile?->address ?? '-',
                 'kepakaran'  => is_array($u->memberProfile?->expertise) ? implode(', ', $u->memberProfile->expertise) : '-',
                 'bukti_kepakaran' => is_array($u->memberProfile?->expertise_proof) 
                     ? array_map(fn($p) => \Illuminate\Support\Facades\Storage::url($p), $u->memberProfile->expertise_proof) 
                     : null,
                 'premium'    => in_array($u->id, $premiumIds) ? 'Premium' : 'Regular',
+                'paket_premium' => in_array($u->id, $premiumIds) && $u->memberProfile && $u->memberProfile->plan
+                                    ? $u->memberProfile->plan->name 
+                                    : '-',
                 'aktif'      => $u->is_active ? 'Aktif' : 'Nonaktif',
                 'kelengkapan'=> $u->profileCompletionPercent() . '%',
                 '_sort_kelengkapan' => $u->profileCompletionPercent(),
@@ -99,9 +102,10 @@ class DetailController extends Controller
             ['key' => 'email',      'label' => 'Email',      'sortable' => true],
             ['key' => 'telepon',    'label' => 'Telepon',    'sortable' => false],
             ['key' => 'institusi',  'label' => 'Institusi',  'sortable' => true],
-            ['key' => 'departemen', 'label' => 'Departemen', 'sortable' => true],
+            ['key' => 'jurusan',    'label' => 'Jurusan',    'sortable' => true],
             ['key' => '_sort_kelengkapan', 'label' => 'Kelengkapan', 'sortable' => true, 'display' => 'kelengkapan', 'badge' => true],
             ['key' => 'premium',    'label' => 'Membership', 'sortable' => true, 'badge' => true],
+            ['key' => 'paket_premium', 'label' => 'Paket Premium', 'sortable' => true],
             ['key' => 'aktif',      'label' => 'Status',      'sortable' => true, 'badge' => true],
             ['key' => '_sort_bergabung', 'label' => 'Bergabung', 'sortable' => true, 'display' => 'bergabung'],
             ['key' => 'expire_date', 'label' => 'Masa Aktif Premium', 'sortable' => false],

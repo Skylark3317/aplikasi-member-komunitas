@@ -100,13 +100,23 @@ class User extends Authenticatable implements MustVerifyEmail
             return 'none';
         }
 
-        $profile = $this->memberProfile;
         $latestInvoice = $this->invoices()->latest()->first();
 
-        if (!$latestInvoice && !$profile) {
-            return 'none';
+        if ($latestInvoice) {
+            $payment = $latestInvoice->payment;
+            
+            // Prioritaskan status tagihan yang belum selesai
+            if (!$payment) {
+                return 'pending_invoice';
+            }
+            if ($payment->status === 'menunggu') {
+                return 'pending_verification';
+            }
         }
 
+        $profile = $this->memberProfile;
+
+        // Jika tidak ada tagihan yang tertunda, cek status profil
         if ($profile && $profile->status === 'active') {
             if (now()->lt($profile->expire_date)) {
                 return 'active';
@@ -114,22 +124,11 @@ class User extends Authenticatable implements MustVerifyEmail
             return 'expired';
         }
 
+        // Jika profil tidak aktif, cek apakah tagihan terakhir ditolak
         if ($latestInvoice) {
             $payment = $latestInvoice->payment;
-            if (!$payment) {
-                return 'pending_invoice';
-            }
-            
-            if ($payment->status === 'menunggu') {
-                return 'pending_verification';
-            }
-            
-            if ($payment->status === 'ditolak') {
+            if ($payment && $payment->status === 'ditolak') {
                 return 'rejected';
-            }
-            
-            if ($payment->status === 'diverifikasi') {
-                return 'active';
             }
         }
 

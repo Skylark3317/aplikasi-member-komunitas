@@ -81,9 +81,9 @@ class PremiumController extends Controller
             'address'     => 'nullable|string',
         ]);
 
-        $institution = $request->institution ?: 'AMK';
-        $department = $request->department ?: 'Premium Member';
-        $address = $request->address ?: 'Online';
+        $institution = $request->institution;
+        $department = $request->department;
+        $address = $request->address ?? '-';
 
         // Tentukan paket yang dipilih. Bila tidak dikirim (mis. aksi default),
         // gunakan paket aktif pertama agar alur tetap berjalan.

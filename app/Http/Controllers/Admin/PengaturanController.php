@@ -31,6 +31,8 @@ class PengaturanController extends Controller
         $request->validate([
             'community_name'      => 'sometimes|required|string|max:255',
             'email'               => 'sometimes|required|email',
+            'email_sender_name'   => 'nullable|string|max:255',
+            'email_sender_address'=> 'nullable|email|max:255',
             'phone'               => 'sometimes|required|string|max:20',
             'address'             => 'nullable|string|max:500',
             'membership_alert_days' => 'sometimes|required|integer|min:1',
@@ -63,7 +65,7 @@ class PengaturanController extends Controller
         ]);
 
         $fields = [
-            'community_name', 'email', 'phone', 'address',
+            'community_name', 'email', 'email_sender_name', 'email_sender_address', 'phone', 'address',
             'social_x', 'social_facebook', 'social_linkedin',
             'social_skype', 'social_instagram', 'social_youtube',
             'bank_account_name', 'bank_account_number', 'bank_name',
