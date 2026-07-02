@@ -76,25 +76,17 @@ class PembayaranController extends Controller
             $expiry = now()->addMonths($durationMonths);
         }
 
-        $profile = \App\Models\MemberProfile::where('member_id', $payer->id)->first();
+	$profile = \App\Models\MemberProfile::where('member_id', $payer->id)->first();
+	if (!$profile) {
+	    abort(404);
+	}
         
-        if ($profile) {
-            $profile->update([
-                'status'        => 'active',
-                'expire_date'   => $expiry ?? now()->addYears(100),
-                'plan_id'       => $plan?->id,
-                'plan_snapshot' => $plan ? $plan->toArray() : null,
-            ]);
-        } else {
-            \App\Models\MemberProfile::create([
-                'member_id'     => $payer->id,
-                'status'        => 'active',
-                'expire_date'   => $expiry ?? now()->addYears(100),
-                'plan_id'       => $plan?->id,
-                'plan_snapshot' => $plan ? $plan->toArray() : null,
-                'address'       => '-',
-            ]);
-        }
+        $profile->update([
+            'status'        => 'active',
+            'expire_date'   => $expiry ?? now()->addYears(100),
+            'plan_id'       => $plan?->id,
+            'plan_snapshot' => $plan ? $plan->toArray() : null,
+        ]);
 
         // Send email notification to member
         try {

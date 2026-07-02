@@ -76,14 +76,7 @@ class PremiumController extends Controller
 
         $request->validate([
             'plan_id'     => 'nullable|exists:membership_plans,id',
-            'institution' => 'nullable|string|max:255',
-            'department'  => 'nullable|string|max:255',
-            'address'     => 'nullable|string',
         ]);
-
-        $institution = $request->institution;
-        $department = $request->department;
-        $address = $request->address ?? '-';
 
         // Tentukan paket yang dipilih. Bila tidak dikirim (mis. aksi default),
         // gunakan paket aktif pertama agar alur tetap berjalan.
@@ -98,25 +91,10 @@ class PremiumController extends Controller
             return back()->with('error', 'Belum ada paket premium yang tersedia saat ini.');
         }
 
-        // Create or update MemberProfile
         $profile = MemberProfile::where('member_id', $user->id)->first();
-        if (!$profile) {
-            MemberProfile::create([
-                'member_id'     => $user->id,
-                'institution'   => $institution,
-                'department'    => $department,
-                'address'       => $address,
-                'status'        => 'nonactive',
-                'expire_date'   => now(), // temporary
-                'member_number' => MemberProfile::generateMemberNumber(),
-            ]);
-        } else {
-            $profile->update([
-                'institution'   => $institution,
-                'department'    => $department,
-                'address'       => $address,
-            ]);
-        }
+	if (!$profile) {
+	    abort(404);
+	}
 
         // Generate Invoice dari paket yang dipilih
         $fee = (float) $plan->price;
