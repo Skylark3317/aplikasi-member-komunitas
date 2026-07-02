@@ -36,7 +36,7 @@ const scrollToSection = (e, id, url) => {
 </script>
 
 <template>
-    <header class="lg:hidden h-14 sticky top-0 z-1 flex justify-between items-center pr-5 bg-white shadow-[0_-0.0625rem_0_var(--color-onyx-200)_inset] animate-slide-in-down">
+    <header class="lg:hidden h-14 sticky top-0 z-1 flex justify-between items-center pr-5 bg-white shadow-[0_-0.0625rem_0_var(--color-onyx-200)_inset]">
         <div class="h-full flex">
             <button class="h-full aspect-square flex justify-center items-center shadow-[-0.0625rem_0_0_var(--color-onyx-200)_inset] hover-scale" @click="mobileNavbarVisible = !mobileNavbarVisible">
                 <svg v-if="mobileNavbarVisible" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -68,7 +68,7 @@ const scrollToSection = (e, id, url) => {
             </div>
         </nav>
     </header>
-    <header class="hidden lg:block sticky top-0 z-1 animate-slide-in-down">
+    <header class="hidden lg:block sticky top-0 z-1">
         <nav class="flex flex-col relative">
             <div class="h-14 flex justify-center px-4 bg-white">
                 <div class="w-full max-w-[1080px] h-full flex justify-between relative">
