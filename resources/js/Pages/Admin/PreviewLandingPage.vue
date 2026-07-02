@@ -230,6 +230,7 @@ const cssVars = computed(() => ({
   line-height: 1.5;
   color: #111;
 }
+.lp-root > * { pointer-events: none !important; }
 .lp-root::-webkit-scrollbar { width: 3px; }
 .lp-root::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
 

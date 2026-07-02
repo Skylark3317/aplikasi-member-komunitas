@@ -383,6 +383,13 @@ function viewLarge(url) {
   max-width: calc(100vw - 200px);
 }
 
+@media (max-width: 1024px) {
+  :deep(.admin-main) {
+    max-width: 100vw;
+    height: calc(100vh - 52px);
+  }
+}
+
 /* ── Header ── */
 .page-header {
   flex-shrink: 0;
@@ -667,5 +674,60 @@ thead {
 }
 .proof-preview-box-sm .proof-doc:hover {
   background: #fef2f2;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .page-header {
+    padding: 12px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .header-left { gap: 8px; }
+  .header-right {
+    width: 100%;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .page-title { font-size: 15px; }
+  .export-btn { font-size: 12px; padding: 6px 10px; }
+  .search-wrap { flex: 1; min-width: 0; }
+  .search-input { font-size: 13px; }
+
+  .content-area { padding: 16px; }
+
+  .filters-bar { padding: 12px; gap: 10px; }
+  .filter-input {
+    min-width: 100px;
+    height: 32px;
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+  .date-input { min-width: 120px; }
+  .clear-filters-btn { height: 32px; font-size: 12px; padding: 4px 10px; }
+  
+  .th, .td {
+    padding: 10px 12px;
+    font-size: 12.5px;
+  }
+  
+  /* Pagination Centered & No Scrollbar */
+  .pagination {
+    padding: 12px 8px;
+    flex-wrap: nowrap;
+    justify-content: center;
+  }
+  .pg-btn {
+    min-width: 24px;
+    height: 24px;
+    font-size: 11px;
+    padding: 0 4px;
+    flex-shrink: 0;
+  }
+  .pg-info {
+    font-size: 10px;
+    white-space: nowrap;
+  }
 }
 </style>

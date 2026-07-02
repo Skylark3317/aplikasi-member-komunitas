@@ -15,11 +15,16 @@
         @vite(['resources/js/app.js', 'resources/css/app.css', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
 
-        <!-- Dynamic Colors -->
+        <!-- Dynamic Colors & Logo -->
         @php
             $primaryColor = \App\Models\Setting::get('primary_color', '#007FFF');
             $surfaceColor = \App\Models\Setting::get('surface_color', '#E5F2FF');
+            $logoPath = \App\Models\Setting::get('community_logo');
+            $faviconUrl = $logoPath ? asset('storage/' . $logoPath) : asset('favicon.ico');
         @endphp
+        
+        <!-- Dynamic Favicon -->
+        <link rel="icon" href="{{ $faviconUrl }}">
         <style>
             :root {
                 --primary-color: {{ $primaryColor }};

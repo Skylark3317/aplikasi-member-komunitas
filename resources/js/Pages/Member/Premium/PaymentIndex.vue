@@ -328,4 +328,15 @@ function getStatusLabel(invoice) {
   background: #f3f4f6;
   color: #111827;
 }
+
+/* ── Responsive ── */
+@media (max-width: 767px) {
+  .top-bar { padding: 12px 16px; }
+  .content-area { padding: 16px; }
+  .table-wrapper { overflow-x: auto; }
+  .payment-table { min-width: 560px; }
+  .payment-table th,
+  .payment-table td { padding: 12px 14px; font-size: 12.5px; }
+}
+
 </style>

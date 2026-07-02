@@ -196,7 +196,7 @@ function submit() {
   cursor: pointer;
   transition: background 0.2s;
 }
-.btn-primary:hover:not(:disabled) { background: var(--primary-color); }
+.btn-primary:hover:not(:disabled) { filter: brightness(0.9); }
 .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .divider { height: 1px; background: #e5e7eb; }

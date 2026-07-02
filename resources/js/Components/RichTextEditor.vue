@@ -30,6 +30,7 @@ const internalContent = ref(props.modelValue || '');
 const options = {
   theme: 'snow',
   placeholder: props.placeholder,
+  bounds: '.rich-text-wrapper',
   modules: {
     toolbar: [
       [{ header: [1, 2, 3, false] }],
@@ -59,7 +60,6 @@ function onUpdate(content) {
   border: 1px solid #d1d5db;
   border-radius: 8px;
   background: #fff;
-  overflow: hidden;
 }
 
 /* Customize Quill Styles to match your UI */
@@ -68,6 +68,7 @@ function onUpdate(content) {
   border-bottom: 1px solid #d1d5db !important;
   padding: 8px 12px !important;
   background: #f9fafb;
+  border-radius: 8px 8px 0 0;
 }
 
 .ql-container.ql-snow {
@@ -75,8 +76,16 @@ function onUpdate(content) {
   min-height: 300px;
   font-size: 14.5px;
   font-family: 'Inter', sans-serif;
+  border-radius: 0 0 8px 8px;
 }
 
+/* Ensure tooltip can appear properly */
+.ql-tooltip {
+  z-index: 50 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* If tooltip is at the very bottom, Quill sets top and left. We can make it flip up using bounds if configured, or just let it overflow */
 .ql-editor {
   padding: 16px 20px !important;
   line-height: 1.6;

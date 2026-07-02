@@ -403,7 +403,9 @@ onMounted(() => {
 
 /* Sidebar styling */
 .chat-sidebar {
-  width: 380px;
+  width: 320px;
+  min-width: 220px;
+  max-width: 360px;
   background: #ffffff;
   border-right: 1px solid #e2e8f0;
   display: flex;
@@ -412,18 +414,18 @@ onMounted(() => {
 }
 
 .sidebar-header {
-  padding: 20px 24px 12px;
+  padding: 14px 18px 10px;
 }
 
 .sidebar-title {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   color: #0f172a;
 }
 
 /* Search Box */
 .search-container {
-  padding: 0 24px 16px;
+  padding: 0 16px 12px;
 }
 
 .search-box {
@@ -443,10 +445,10 @@ onMounted(() => {
 
 .search-input {
   width: 100%;
-  padding: 10px 14px 10px 42px;
+  padding: 8px 12px 8px 38px;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 13px;
   background: #f8fafc;
   color: #0f172a;
   transition: all 0.2s ease;
@@ -462,15 +464,15 @@ onMounted(() => {
 /* Filter Tabs */
 .filter-tabs {
   display: flex;
-  gap: 8px;
-  padding: 0 24px 16px;
+  gap: 6px;
+  padding: 0 16px 12px;
   border-bottom: 1px solid #f1f5f9;
 }
 
 .filter-tab {
-  padding: 6px 16px;
+  padding: 5px 13px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #64748b;
   background: #f1f5f9;
@@ -478,7 +480,7 @@ onMounted(() => {
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .filter-tab:hover {
@@ -544,8 +546,8 @@ onMounted(() => {
 .chat-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px 24px;
+  gap: 10px;
+  padding: 12px 16px;
   cursor: pointer;
   border-bottom: 1px solid #f1f5f9;
   transition: background 0.15s ease;
@@ -557,8 +559,8 @@ onMounted(() => {
 
 /* Avatar styling */
 .chat-avatar-container {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
@@ -756,5 +758,58 @@ onMounted(() => {
   font-weight: 700;
   border-radius: 2px;
   padding: 0 2px;
+}
+
+/* ── Responsive (HP & tablet kecil < 1024px) ── */
+@media (max-width: 1024px) {
+  /* Full height minus mobile topbar */
+  .chat-container-layout {
+    height: calc(100vh - 52px);
+  }
+
+  /* Chat list takes full width */
+  .chat-sidebar {
+    width: 100%;
+    border-right: none;
+  }
+
+  /* Hide welcome panel on mobile — user goes to Show.vue when selecting a chat */
+  .chat-welcome-panel {
+    display: none;
+  }
+
+  /* Compact sidebar header */
+  .sidebar-header {
+    padding: 10px 16px;
+  }
+  .sidebar-title {
+    font-size: 16px;
+  }
+
+  /* Compact search */
+  .search-container {
+    padding: 8px 12px;
+  }
+
+  /* Compact filter tabs */
+  .filter-tabs {
+    padding: 4px 12px 8px;
+    gap: 6px;
+  }
+  .filter-tab {
+    font-size: 12.5px;
+    padding: 5px 12px;
+  }
+
+  /* Slightly tighter chat items */
+  .chat-item {
+    padding: 10px 14px;
+  }
+  .chat-item-name {
+    font-size: 14px;
+  }
+  .chat-item-preview {
+    font-size: 12.5px;
+  }
 }
 </style>

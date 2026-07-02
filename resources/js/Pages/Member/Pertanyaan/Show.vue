@@ -90,11 +90,13 @@
                       <span class="bubble-time">{{ formatTimeOnly(msg.created_at) }}</span>
                       <!-- Status checkmark for current user's messages (member's messages) -->
                       <span v-if="msg.sender_id === currentUser.id" class="tick-wrapper">
-                        <svg v-if="msg.is_read" class="tick-svg blue-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                          <polyline points="20 6 9 17 4 12"></polyline>
+                        <svg v-if="msg.is_read" class="tick-svg blue-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="18 6 11 15 7 11"></polyline>
+                          <path d="M22 6l-7 9-1.5-1.5"></path>
                         </svg>
-                        <svg v-else class="tick-svg gray-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                          <polyline points="20 6 9 17 4 12"></polyline>
+                        <svg v-else class="tick-svg gray-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="18 6 11 15 7 11"></polyline>
+                          <path d="M22 6l-7 9-1.5-1.5"></path>
                         </svg>
                       </span>
                     </div>
@@ -444,14 +446,6 @@ watch(() => props.conversation.messages, () => {
   color: rgba(0, 0, 0, 0.8);
 }
 
-.msg-outgoing .tick-svg.blue-tick {
-  color: #000000;
-}
-
-.msg-outgoing .tick-svg.gray-tick {
-  color: rgba(0, 0, 0, 0.6);
-}
-
 /* Inside-bubble Sender Name (for Admins) */
 .bubble-sender-name {
   font-size: 12px;
@@ -499,7 +493,7 @@ watch(() => props.conversation.messages, () => {
 }
 
 .blue-tick {
-  color: #53bdeb;
+  color: var(--primary-color, #007bff);
 }
 
 /* Footer & Input */
@@ -560,4 +554,35 @@ watch(() => props.conversation.messages, () => {
   width: 16px;
   height: 16px;
 }
+
+/* ── Responsive ── */
+@media (max-width: 767px) {
+  .top-bar { padding: 12px 16px; }
+  .content-area { padding: 16px; }
+
+  .chat-container-layout {
+    height: calc(100vh - 52px); /* subtract mobile topbar */
+  }
+
+  .chat-room-header {
+    padding: 10px 16px;
+  }
+
+  .chat-messages-area {
+    padding: 12px;
+  }
+
+  .message-bubble-row {
+    max-width: 88%;
+  }
+
+  .chat-room-footer {
+    padding: 10px 12px;
+  }
+
+  .chat-room-input {
+    font-size: 14px;
+  }
+}
+
 </style>

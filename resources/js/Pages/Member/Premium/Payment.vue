@@ -552,6 +552,26 @@ function formatDueDate(dateStr) {
   box-sizing: border-box;
 }
 
+@media (max-width: 767px) {
+  .top-bar {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .content-area {
+    padding: 16px;
+  }
+  .steps-tracker {
+    padding: 14px 20px;
+  }
+  .step-label {
+    font-size: 12px;
+  }
+  .step-line {
+    margin: 0 8px;
+  }
+}
+
 .payment-flow-wrapper {
   max-width: 900px;
   margin: 0 auto;

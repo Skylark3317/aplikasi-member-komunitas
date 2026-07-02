@@ -156,7 +156,7 @@ onMounted(() => {
                 <div class="w-full flex flex-col lg:flex-row gap-px">
                     <!-- Stat Card 1: Slide from Left -->
                     <div 
-                        class="stat-card-individual w-full bg-[rgba(255,255,255,0.2)] text-white flex flex-col gap-4 p-8 items-center backdrop-blur hover-lift" 
+                        class="stat-card-individual w-full bg-[rgba(255,255,255,0.2)] text-white flex flex-col gap-4 p-8 items-center backdrop-blur" 
                         style="--animation-delay: 0ms; opacity: 0; transform: translateX(-50px);"
                     >
                         <div class="p-4 rounded-lg bg-[rgba(255,255,255,0.2)] animate-pulse-scale">
@@ -169,7 +169,7 @@ onMounted(() => {
                     
                     <!-- Stat Card 2: Slide from Bottom -->
                     <div 
-                        class="stat-card-individual w-full bg-[rgba(255,255,255,0.2)] text-white flex flex-col gap-4 p-8 items-center backdrop-blur hover-lift" 
+                        class="stat-card-individual w-full bg-[rgba(255,255,255,0.2)] text-white flex flex-col gap-4 p-8 items-center backdrop-blur" 
                         style="--animation-delay: 150ms; opacity: 0; transform: translateY(50px);"
                     >
                         <div class="p-4 rounded-lg bg-[rgba(255,255,255,0.2)] animate-pulse-scale">
@@ -182,7 +182,7 @@ onMounted(() => {
                     
                     <!-- Stat Card 3: Slide from Bottom -->
                     <div 
-                        class="stat-card-individual w-full bg-[rgba(255,255,255,0.2)] text-white flex flex-col gap-4 p-8 items-center backdrop-blur hover-lift" 
+                        class="stat-card-individual w-full bg-[rgba(255,255,255,0.2)] text-white flex flex-col gap-4 p-8 items-center backdrop-blur" 
                         style="--animation-delay: 300ms; opacity: 0; transform: translateY(50px);"
                     >
                         <div class="p-4 rounded-lg bg-[rgba(255,255,255,0.2)] animate-pulse-scale">
@@ -195,7 +195,7 @@ onMounted(() => {
                     
                     <!-- Stat Card 4: Slide from Right -->
                     <div 
-                        class="stat-card-individual w-full bg-[rgba(255,255,255,0.2)] text-white flex flex-col gap-4 p-8 items-center backdrop-blur hover-lift" 
+                        class="stat-card-individual w-full bg-[rgba(255,255,255,0.2)] text-white flex flex-col gap-4 p-8 items-center backdrop-blur" 
                         style="--animation-delay: 450ms; opacity: 0; transform: translateX(50px);"
                     >
                         <div class="p-4 rounded-lg bg-[rgba(255,255,255,0.2)] animate-pulse-scale">
@@ -226,7 +226,7 @@ onMounted(() => {
                     <div 
                         v-for="(post, index) in posts" 
                         :key="post.id" 
-                        class="post-card-individual flex flex-col gap-6 justify-between p-6 bg-white hover-lift" 
+                        class="post-card-individual flex flex-col gap-6 justify-between p-6 bg-white" 
                         :style="{
                             '--animation-delay': `${index * 80}ms`,
                             opacity: 0,

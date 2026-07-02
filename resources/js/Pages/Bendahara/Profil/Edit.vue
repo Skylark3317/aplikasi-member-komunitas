@@ -249,4 +249,12 @@ function submit() {
   margin-top: 8px;
 }
 .hint-row svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .top-bar { padding: 12px 16px; gap: 8px; }
+  .page-title { font-size: 16px; }
+  .btn-primary, .btn-batal { font-size: 12px; padding: 7px 12px; height: auto; }
+  .content-area { padding: 16px; max-width: 100%; }
+}
 </style>

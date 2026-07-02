@@ -56,6 +56,7 @@
             <div v-if="paginatedContents.length === 0" class="empty-state">Belum ada konten video.</div>
             <div v-else class="content-grid video-grid">
               <div v-for="item in paginatedContents" :key="item.id" class="content-card" @click="openViewer(item)">
+                <div class="card-hover-bg"></div>
                 <div class="card-thumbnail video-thumb">
                   <img v-if="item.thumbnail_url" :src="`/storage/${item.thumbnail_url}`" alt="Thumbnail" />
                   <div v-else class="placeholder-thumb"></div>
@@ -104,6 +105,7 @@
             <div v-if="paginatedContents.length === 0" class="empty-state">Belum ada konten ebook.</div>
             <div v-else class="content-grid ebook-grid">
               <div v-for="item in paginatedContents" :key="item.id" class="content-card" @click="openViewer(item)">
+                <div class="card-hover-bg"></div>
                 <div class="card-thumbnail ebook-thumb">
                   <img v-if="item.thumbnail_url" :src="`/storage/${item.thumbnail_url}`" alt="Thumbnail" />
                   <div v-else class="placeholder-thumb"></div>
@@ -233,6 +235,15 @@ onMounted(() => {
   box-sizing: border-box;
 }
 
+@media (max-width: 767px) {
+  .top-bar {
+    padding: 12px 16px;
+  }
+  .content-area {
+    padding: 16px;
+  }
+}
+
 /* ── Premium Interface (Image 2 & 3) ── */
 .tabs-container {
   display: flex;
@@ -357,12 +368,18 @@ onMounted(() => {
 }
 
 @media (max-width: 1100px) {
-  .video-grid { grid-template-columns: repeat(2, 1fr); }
   .ebook-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-@media (max-width: 750px) {
-  .video-grid { grid-template-columns: 1fr; }
+@media (max-width: 767px) {
+  .video-grid { grid-template-columns: repeat(2, 1fr); }
+  .ebook-grid { grid-template-columns: repeat(3, 1fr); }
+  .tabs-container { flex-wrap: wrap; }
+  .tab-btn { font-size: 12.5px; padding: 7px 14px; }
+}
+
+@media (max-width: 480px) {
+  .video-grid { grid-template-columns: repeat(2, 1fr); }
   .ebook-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
@@ -371,48 +388,50 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  background: #fff;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: transparent;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible;
+  padding: 10px;
+  position: relative;
 }
 
-.content-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+/* Expanding background layer */
+.card-hover-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--surface-color, #f3f4f6);
+  border-radius: 8px;
+  opacity: 0;
+  transform: scale(0.95);
+  z-index: 0;
+  pointer-events: none;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.35s ease;
 }
 
-.content-card:hover .card-thumbnail img {
-  transform: scale(1.1);
+.content-card:hover .card-hover-bg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.card-thumbnail,
+.card-info {
+  position: relative;
+  z-index: 1;
 }
 
 .card-thumbnail {
   width: 100%;
-  border-radius: 8px 8px 0 0;
+  border-radius: 6px;
   overflow: hidden;
-  margin-bottom: 0;
   position: relative;
 }
 
-.card-thumbnail::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.3));
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.content-card:hover .card-thumbnail::after {
-  opacity: 1;
-}
-
 .video-thumb {
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
 }
 
 .ebook-thumb {
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 10 / 16;
 }
 
 .placeholder-thumb {
@@ -425,18 +444,18 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
+  display: block;
 }
 
 .card-info {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-top: 12px;
+  padding-top: 8px;
 }
 
 .card-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #111;
   margin: 0;

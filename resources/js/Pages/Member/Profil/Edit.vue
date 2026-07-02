@@ -570,36 +570,21 @@ onMounted(() => {
     // Top bar entrance
     const topBar = document.querySelector('.top-bar');
     if (topBar) {
-      topBar.style.opacity = '0';
-      topBar.style.transform = 'translateY(-20px)';
       setTimeout(() => {
-        topBar.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        topBar.style.opacity = '1';
-        topBar.style.transform = 'translateY(0)';
       }, 50);
     }
 
     // Form sections stagger
     const sections = document.querySelectorAll('.form-section');
     sections.forEach((section, index) => {
-      section.style.opacity = '0';
-      section.style.transform = 'translateY(30px) scale(0.98)';
       setTimeout(() => {
-        section.style.transition = 'all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        section.style.opacity = '1';
-        section.style.transform = 'translateY(0) scale(1)';
       }, 200 + index * 150);
     });
 
     // Form groups stagger
     const formGroups = document.querySelectorAll('.form-group');
     formGroups.forEach((group, index) => {
-      group.style.opacity = '0';
-      group.style.transform = 'translateX(-15px)';
       setTimeout(() => {
-        group.style.transition = 'all 0.5s ease';
-        group.style.opacity = '1';
-        group.style.transform = 'translateX(0)';
       }, 600 + index * 50);
     });
   });
@@ -1082,4 +1067,31 @@ onMounted(() => {
   gap: 6px;
   margin-top: 4px;
 }
+
+/* ── Responsive ── */
+@media (max-width: 767px) {
+  .top-bar { padding: 12px 16px; }
+  .content-area { padding: 16px; }
+  
+  .form-section { padding: 20px; }
+  
+  .form-row { grid-template-columns: 1fr; }
+  
+  /* Keep topbar horizontal, just smaller */
+  .btn-back { padding: 6px 12px; font-size: 12px; }
+  .btn-save-top { padding: 8px 12px; font-size: 12px; }
+  .page-title { font-size: 16px; }
+
+  /* Keep avatar upload horizontal, make it smaller */
+  .avatar-upload-row { gap: 16px; }
+  .profile-avatar-wrapper { width: 80px; height: 80px; }
+  .avatar-btn-row { gap: 8px; flex-wrap: wrap; }
+  .btn-avatar-action { padding: 6px 10px; font-size: 11.5px; }
+  
+  .section-title { font-size: 15px; }
+  .section-desc { font-size: 12px; }
+  .form-label { font-size: 12.5px; }
+  .form-input, .form-textarea, .form-select { font-size: 13.5px; padding: 8px 12px; }
+}
+
 </style>

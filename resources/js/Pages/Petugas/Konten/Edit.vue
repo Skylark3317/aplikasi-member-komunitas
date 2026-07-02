@@ -59,7 +59,7 @@
         <div class="form-group">
           <label class="form-label">Thumbnail</label>
           
-          <div class="thumbnail-preview-box">
+          <div :class="['thumbnail-preview-box', form.type === 'video' ? 'preview-video' : 'preview-ebook']">
             <img v-if="thumbnailPreview" :src="thumbnailPreview" alt="Thumbnail Preview" />
             <div v-else-if="content.thumbnail_url" class="thumbnail-current">
               <img :src="`/storage/${content.thumbnail_url}`" alt="Current Thumbnail" />
@@ -307,8 +307,6 @@ async function deleteContent() {
 }
 
 .thumbnail-preview-box {
-  width: 160px;
-  height: 200px;
   border-radius: 8px;
   border: 1px solid #e5e7eb;
   overflow: hidden;
@@ -316,6 +314,16 @@ async function deleteContent() {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  transition: all 0.3s ease;
+}
+.preview-video {
+  width: 256px;
+  height: 144px; /* 16:9 */
+}
+.preview-ebook {
+  width: 125px;
+  height: 200px; /* 10:16 */
 }
 .thumbnail-preview-box img {
   width: 100%;
@@ -381,4 +389,13 @@ async function deleteContent() {
 
 .hidden-input { display: none; }
 .error-text { font-size: 13px; color: #ef4444; }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .top-bar { padding: 12px 16px; gap: 8px; flex-wrap: wrap; }
+  .page-title { font-size: 16px; }
+  .header-actions { gap: 6px; }
+  .btn-outline, .btn-primary, .btn-danger { font-size: 12px; padding: 7px 10px; height: auto; }
+  .content-area { padding: 16px; }
+}
 </style>

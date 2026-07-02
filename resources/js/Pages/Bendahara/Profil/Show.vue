@@ -142,4 +142,14 @@ defineProps({
   font-weight: 500;
 }
 .badge-aktif { background: #d1fae5; color: #059669; }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .top-bar { padding: 12px 16px; }
+  .page-title { font-size: 16px; }
+  .btn-primary { font-size: 12px; padding: 7px 12px; height: auto; }
+  .content-area { padding: 16px; }
+  .info-key { width: 130px; font-size: 12.5px; }
+  .info-val { font-size: 12.5px; }
+}
 </style>

@@ -233,6 +233,6 @@ class PengaturanController extends Controller
             );
         }
 
-        return back()->with('success', 'Pengaturan berhasil disimpan.');
+        return Inertia::location(route('superadmin.pengaturan'));
     }
 }

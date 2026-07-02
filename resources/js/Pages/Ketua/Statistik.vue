@@ -171,4 +171,21 @@ function handleCetak() { window.print(); }
   .stats-grid { display: flex !important; flex-direction: column !important; gap: 24px !important; width: 100% !important; }
   .stats-grid > * { width: 100% !important; max-width: 100% !important; box-sizing: border-box; }
 }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .top-bar {
+    padding: 16px 20px 12px;
+  }
+  .page-title {
+    font-size: 18px;
+  }
+  .content-area {
+    padding: 16px;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
 </style>

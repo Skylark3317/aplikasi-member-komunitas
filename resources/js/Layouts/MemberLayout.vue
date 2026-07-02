@@ -1,7 +1,25 @@
 <template>
   <div class="admin-wrapper">
+    <!-- Mobile Topbar (hamburger) -->
+    <div class="mobile-topbar">
+      <button class="hamburger-btn" @click="sidebarOpen = !sidebarOpen" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <div class="mobile-brand">
+        <img v-if="settings.community_logo" :src="`/storage/${settings.community_logo}`" alt="Logo" class="mobile-logo-img" />
+        <span v-else class="sidebar-logo-text">AMK</span>
+      </div>
+    </div>
+
+    <!-- Overlay (mobile only) -->
+    <div v-if="sidebarOpen" class="sidebar-overlay" @click="sidebarOpen = false"></div>
+
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside :class="['sidebar', sidebarOpen ? 'sidebar-open' : '']">
       <div class="sidebar-brand">
         <div v-if="settings.community_logo" class="sidebar-img">
           <img :src="`/storage/${settings.community_logo}`" alt="Logo" />
@@ -14,6 +32,7 @@
         <Link
           :href="route('member.konten.index')"
           :class="['nav-item', isActive('member.konten') ? 'active' : '']"
+          @click="sidebarOpen = false"
         >
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
@@ -27,6 +46,7 @@
         <Link
           :href="route('member.pertanyaan.index')"
           :class="['nav-item', isActive('member.pertanyaan') ? 'active' : '']"
+          @click="sidebarOpen = false"
         >
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -38,6 +58,7 @@
         <Link
           :href="route('member.premium.payment')"
           :class="['nav-item', isActive('member.pembayaran') ? 'active' : '']"
+          @click="sidebarOpen = false"
         >
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <rect x="2" y="5" width="20" height="14" rx="2" ry="2"/>
@@ -50,6 +71,7 @@
         <Link
           :href="route('home')"
           :class="['nav-item', isActive('home') ? 'active' : '']"
+          @click="sidebarOpen = false"
         >
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -61,7 +83,7 @@
 
       <!-- Gabung Member Premium (only if not premium) -->
       <div v-if="!$page.props.auth.user.is_premium" class="sidebar-premium-btn-wrapper">
-        <Link :href="route('member.premium.index')" class="btn-sidebar-premium">
+        <Link :href="route('member.premium.index')" class="btn-sidebar-premium" @click="sidebarOpen = false">
           <svg class="lightning-icon" viewBox="0 0 24 24" fill="currentColor">
             <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
           </svg>
@@ -91,7 +113,7 @@
 
         <!-- Popup menu -->
         <div v-if="showPopup" class="user-popup" @click.stop>
-          <Link :href="route('member.profil.show')" class="popup-item" @click="showPopup = false">
+          <Link :href="route('member.profil.show')" class="popup-item" @click="showPopup = false; sidebarOpen = false">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
@@ -131,6 +153,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 const $page = usePage();
 const showPopup = ref(false);
 const userBtn = ref(null);
+const sidebarOpen = ref(false);
 
 const settings = computed(() => $page.props.settings || {});
 const memberProfile = computed(() => $page.props.memberProfile);
@@ -407,8 +430,109 @@ onBeforeUnmount(() => document.removeEventListener('click', closePopup));
   margin-left: 220px;
   flex: 1;
   min-height: 100vh;
+  min-width: 0;
   display: flex;
   flex-direction: column;
+}
+
+/* ── Mobile Topbar (hidden on desktop) ── */
+.mobile-topbar {
+  display: none;
+}
+
+/* ── Overlay ── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 40;
+}
+
+/* ─────────────────────────────────────
+   RESPONSIVE / MOBILE
+───────────────────────────────────── */
+@media (max-width: 767px) {
+  /* Show mobile topbar */
+  .mobile-topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 52px;
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0 16px;
+    z-index: 45;
+  }
+
+  .hamburger-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    color: #374151;
+  }
+  .hamburger-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+  .hamburger-btn:hover { background: #f3f4f6; }
+
+  .mobile-brand {
+    display: flex;
+    align-items: center;
+  }
+  .mobile-logo-img {
+    max-height: 32px;
+    object-fit: contain;
+  }
+
+  /* Sidebar off-canvas */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 240px;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 50;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.12);
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+
+  /* Show overlay */
+  .sidebar-overlay {
+    display: block;
+  }
+
+  /* Main content takes full width and compensates for topbar */
+  .admin-main {
+    margin-left: 0;
+    padding-top: 52px;
+  }
+
+  /* Membership alert stacks */
+  .membership-alert {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+  .alert-action {
+    align-self: flex-start;
+  }
 }
 
 /* ── Alert ── */

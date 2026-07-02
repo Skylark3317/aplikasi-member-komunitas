@@ -106,6 +106,7 @@ function formatNumber(num) {
   justify-content: center;
   padding: 20px;
 }
+.preview-membership-wrapper > * { pointer-events: none !important; }
 .preview-membership-wrapper::-webkit-scrollbar { width: 4px; }
 .preview-membership-wrapper::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 

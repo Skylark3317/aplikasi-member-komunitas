@@ -545,33 +545,37 @@
               :form="form"
             />
             <div v-else-if="activeTab === 'legal'" style="width: 100%; height: 100%; overflow-y: auto; background-color: #f9fafb; padding: 24px; color: #374151;">
-              <h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: var(--primary-color);">Syarat dan Ketentuan</h1>
-              <div class="ql-editor" style="padding:0 !important; font-family: inherit; font-size: 0.875rem;" v-html="form.terms_and_conditions"></div>
+              <div style="pointer-events: none;">
+                <h1 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: var(--primary-color);">Syarat dan Ketentuan</h1>
+                <div class="ql-editor" style="padding:0 !important; font-family: inherit; font-size: 0.875rem;" v-html="form.terms_and_conditions"></div>
+              </div>
             </div>
             <!-- Member Assets Preview: Kartu Member Card + CV Template -->
-            <div v-else-if="activeTab === 'member-assets'" class="flex gap-6 h-full overflow-y-auto px-4 py-6 bg-slate-50">
+            <div v-else-if="activeTab === 'member-assets'" class="flex flex-col gap-10 h-full overflow-y-auto px-4 py-6 bg-slate-50">
               <!-- Kartu Member Preview Box -->
-              <div class="flex-1 flex flex-col items-start">
+              <div class="w-full flex flex-col items-start">
                 <h5 class="text-sm font-semibold text-gray-700 mb-4 px-4 pb-3 border-b border-gray-100 w-full flex items-center gap-2">
                   <span class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_0_2px_rgba(34,197,94,0.25)]"></span>
                   Preview Kartu Member
                 </h5>
-                <div class="w-full px-4" style="pointer-events: none;">
-                  <PreviewMemberCard
-                    :form="form"
-                    :cardBgUrl="cardBgPreview"
-                  />
+                <div class="w-full px-4" style="pointer-events: none; display: flex; justify-content: center;">
+                  <div style="width: 100%; max-width: 595px;">
+                    <PreviewMemberCard
+                      :form="form"
+                      :cardBgUrl="cardBgPreview"
+                    />
+                  </div>
                 </div>
               </div>
               
               <!-- CV Template Preview Box -->
-              <div class="flex-1 flex flex-col items-start">
+              <div class="w-full flex flex-col items-start">
                 <h5 class="text-sm font-semibold text-gray-700 mb-4 px-4 pb-3 border-b border-gray-100 w-full flex items-center gap-2">
                   <span class="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_0_2px_rgba(34,197,94,0.25)]"></span>
                   Preview Template Surat
                 </h5>
-                <div class="w-full px-4 overflow-y-auto" style="max-height: calc(100vh - 200px);">
-                  <div class="cv-preview-shell">
+                <div class="w-full px-4 flex justify-center">
+                  <div class="cv-preview-shell" style="pointer-events: none;">
                     <div class="cv-preview-page">
                 <!-- Kop Surat -->
                 <div class="cv-kop">

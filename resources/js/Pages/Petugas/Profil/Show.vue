@@ -75,12 +75,7 @@ onMounted(() => {
     // Top bar animation
     const topBar = document.querySelector('.top-bar');
     if (topBar) {
-      topBar.style.opacity = '0';
-      topBar.style.transform = 'translateY(-20px)';
       setTimeout(() => {
-        topBar.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        topBar.style.opacity = '1';
-        topBar.style.transform = 'translateY(0)';
       }, 50);
     }
 
@@ -88,45 +83,25 @@ onMounted(() => {
     const userName = document.querySelector('.user-name');
     const userEmail = document.querySelector('.user-email');
     if (userName) {
-      userName.style.opacity = '0';
-      userName.style.transform = 'translateX(-20px)';
       setTimeout(() => {
-        userName.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        userName.style.opacity = '1';
-        userName.style.transform = 'translateX(0)';
       }, 200);
     }
     if (userEmail) {
-      userEmail.style.opacity = '0';
-      userEmail.style.transform = 'translateX(-20px)';
       setTimeout(() => {
-        userEmail.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        userEmail.style.opacity = '1';
-        userEmail.style.transform = 'translateX(0)';
       }, 300);
     }
 
     // Section title animation
     const sectionTitle = document.querySelector('.section-title');
     if (sectionTitle) {
-      sectionTitle.style.opacity = '0';
-      sectionTitle.style.transform = 'scale(0.95)';
       setTimeout(() => {
-        sectionTitle.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        sectionTitle.style.opacity = '1';
-        sectionTitle.style.transform = 'scale(1)';
       }, 400);
     }
 
     // Info rows stagger animation
     const infoRows = document.querySelectorAll('.info-row');
     infoRows.forEach((row, index) => {
-      row.style.opacity = '0';
-      row.style.transform = 'translateX(-15px)';
       setTimeout(() => {
-        row.style.transition = 'all 0.5s ease';
-        row.style.opacity = '1';
-        row.style.transform = 'translateX(0)';
       }, 500 + index * 80);
     });
   });
@@ -219,4 +194,14 @@ onMounted(() => {
   font-weight: 500;
 }
 .badge-aktif { background: #d1fae5; color: #059669; }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .top-bar { padding: 12px 16px; }
+  .page-title { font-size: 16px; }
+  .btn-primary { font-size: 12px; padding: 7px 12px; height: auto; }
+  .content-area { padding: 16px; }
+  .info-key { width: 130px; font-size: 12.5px; }
+  .info-val { font-size: 12.5px; }
+}
 </style>

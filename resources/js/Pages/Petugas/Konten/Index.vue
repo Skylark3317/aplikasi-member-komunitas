@@ -40,6 +40,7 @@
           :href="route('petugas.konten.edit', item.id)"
           class="content-card"
         >
+          <div class="card-hover-bg"></div>
           <!-- Thumbnail -->
           <div :class="['card-thumbnail', activeTab === 'video' ? 'video-thumb' : 'ebook-thumb']">
             <img v-if="item.thumbnail_url" :src="`/storage/${item.thumbnail_url}`" alt="Thumbnail" />
@@ -143,24 +144,14 @@ onMounted(() => {
   // Top bar animation
   const topBar = document.querySelector('.top-bar');
   if (topBar) {
-    topBar.style.opacity = '0';
-    topBar.style.transform = 'translateY(-20px)';
     setTimeout(() => {
-      topBar.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
-      topBar.style.opacity = '1';
-      topBar.style.transform = 'translateY(0)';
     }, 100);
   }
 
   // Tabs animation
   const tabs = document.querySelectorAll('.tab-btn');
   tabs.forEach((tab, index) => {
-    tab.style.opacity = '0';
-    tab.style.transform = 'scale(0.8)';
     setTimeout(() => {
-      tab.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
-      tab.style.opacity = '1';
-      tab.style.transform = 'scale(1)';
     }, 200 + index * 80);
   });
 
@@ -177,12 +168,7 @@ watch([activeTab, currentPage], () => {
 function animateCards() {
   const cards = document.querySelectorAll('.content-card');
   cards.forEach((card, index) => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(30px) scale(0.95)';
     setTimeout(() => {
-      card.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
-      card.style.opacity = '1';
-      card.style.transform = 'translateY(0) scale(1)';
     }, index * 100);
   });
 }
@@ -301,11 +287,10 @@ function animateCards() {
 }
 
 @media (max-width: 1200px) {
-  .video-grid { grid-template-columns: repeat(2, 1fr); }
   .ebook-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 900px) {
-  .video-grid { grid-template-columns: 1fr; }
+  .video-grid { grid-template-columns: repeat(2, 1fr); }
   .ebook-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
@@ -313,47 +298,52 @@ function animateCards() {
   display: flex;
   flex-direction: column;
   position: relative;
-  background: #fff;
-  transition: all 0.3s ease;
+  background: transparent;
   cursor: pointer;
   text-decoration: none;
   color: inherit;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible;
+  padding: 10px;
 }
 
-.content-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+/* Expanding background layer */
+.card-hover-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--surface-color, #f3f4f6);
+  border-radius: 8px;
+  opacity: 0;
+  transform: scale(0.95);
+  z-index: 0;
+  pointer-events: none;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.35s ease;
+}
+
+.content-card:hover .card-hover-bg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.card-thumbnail,
+.card-info {
+  position: relative;
+  z-index: 1;
 }
 
 .card-thumbnail {
   width: 100%;
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
-  margin-bottom: 12px;
   position: relative;
 }
 
-.card-thumbnail::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.3));
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.content-card:hover .card-thumbnail::after {
-  opacity: 1;
-}
-
 .video-thumb {
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
 }
 
 .ebook-thumb {
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 10 / 16;
 }
 
 .placeholder-thumb {
@@ -366,21 +356,18 @@ function animateCards() {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
-}
-
-.content-card:hover .card-thumbnail img {
-  transform: scale(1.1);
+  display: block;
 }
 
 .card-info {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  padding-top: 8px;
 }
 
 .card-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #111;
   margin: 0;
@@ -393,7 +380,7 @@ function animateCards() {
 }
 
 .card-meta {
-  font-size: 13px;
+  font-size: 12px;
   color: #9ca3af;
 }
 
@@ -470,5 +457,13 @@ function animateCards() {
 
 .page-num-btn.active:hover {
   filter: brightness(1.1);
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .top-bar { padding: 12px 16px; gap: 8px; }
+  .page-title { font-size: 16px; }
+  .btn-primary { font-size: 12px; padding: 7px 12px; height: auto; }
+  .content-area { padding: 16px; }
 }
 </style>

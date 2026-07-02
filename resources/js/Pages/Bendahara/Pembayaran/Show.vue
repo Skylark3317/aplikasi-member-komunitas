@@ -414,4 +414,19 @@ function formatCurrency(amount) {
   max-height: 90%;
   border-radius: 8px;
 }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .top-bar { padding: 16px 20px 12px; }
+  .page-title { font-size: 16px; }
+  .header-actions { flex-direction: column; gap: 8px; }
+  .btn-cancel, .btn-reject, .btn-accept { font-size: 13px; height: 34px; padding: 6px 12px; }
+  
+  .content-area { padding: 16px; }
+  .block-title { font-size: 16px; margin-bottom: 16px; }
+  .info-row { flex-direction: column; gap: 6px; }
+  .info-label { width: auto; font-size: 12px; color: #6b7280; }
+  .info-value { font-size: 14px; }
+  .section-block { margin-bottom: 32px; }
+}
 </style>

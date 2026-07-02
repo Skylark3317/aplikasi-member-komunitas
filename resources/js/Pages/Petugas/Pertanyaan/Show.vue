@@ -203,6 +203,12 @@
       <div class="chat-main-room">
         <!-- Active Chat Header -->
         <div class="chat-room-header">
+          <!-- Back button (mobile only) -->
+          <Link :href="route('petugas.pertanyaan.index')" class="btn-back-mobile" title="Kembali">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+          </Link>
           <div class="header-avatar-container">
             <img 
               v-if="conversation.submitter.avatar_url" 
@@ -276,11 +282,13 @@
                     <span class="bubble-time">{{ formatTimeOnly(msg.created_at) }}</span>
                     <!-- Status checkmark for current user's messages -->
                     <span v-if="msg.sender_id === currentUser.id" class="tick-wrapper">
-                      <svg v-if="msg.is_read" class="tick-svg blue-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <polyline points="20 6 9 17 4 12"></polyline>
+                      <svg v-if="msg.is_read" class="tick-svg blue-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 6 11 15 7 11"></polyline>
+                        <path d="M22 6l-7 9-1.5-1.5"></path>
                       </svg>
-                      <svg v-else class="tick-svg gray-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <polyline points="20 6 9 17 4 12"></polyline>
+                      <svg v-else class="tick-svg gray-tick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 6 11 15 7 11"></polyline>
+                        <path d="M22 6l-7 9-1.5-1.5"></path>
                       </svg>
                     </span>
                   </div>
@@ -317,7 +325,7 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick, watch } from 'vue';
-import { Head, useForm, usePage, router } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage, router } from '@inertiajs/vue3';
 import PetugasLayout from '@/Layouts/PetugasLayout.vue';
 
 const props = defineProps({
@@ -590,7 +598,9 @@ watch(() => props.conversation.id, () => {
 
 /* Sidebar styling */
 .chat-sidebar {
-  width: 380px;
+  width: 300px;
+  min-width: 200px;
+  max-width: 340px;
   background: #ffffff;
   border-right: 1px solid #e2e8f0;
   display: flex;
@@ -599,18 +609,18 @@ watch(() => props.conversation.id, () => {
 }
 
 .sidebar-header {
-  padding: 20px 24px 12px;
+  padding: 14px 18px 10px;
 }
 
 .sidebar-title {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   color: #0f172a;
 }
 
 /* Search Box */
 .search-container {
-  padding: 0 24px 16px;
+  padding: 0 16px 12px;
 }
 
 .search-box {
@@ -630,10 +640,10 @@ watch(() => props.conversation.id, () => {
 
 .search-input {
   width: 100%;
-  padding: 10px 14px 10px 42px;
+  padding: 8px 12px 8px 38px;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 13px;
   background: #f8fafc;
   color: #0f172a;
   transition: all 0.2s ease;
@@ -649,15 +659,15 @@ watch(() => props.conversation.id, () => {
 /* Filter Tabs */
 .filter-tabs {
   display: flex;
-  gap: 8px;
-  padding: 0 24px 16px;
+  gap: 6px;
+  padding: 0 16px 12px;
   border-bottom: 1px solid #f1f5f9;
 }
 
 .filter-tab {
-  padding: 6px 16px;
+  padding: 5px 13px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #64748b;
   background: #f1f5f9;
@@ -665,7 +675,7 @@ watch(() => props.conversation.id, () => {
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   transition: all 0.15s ease;
 }
 
@@ -717,8 +727,8 @@ watch(() => props.conversation.id, () => {
 .chat-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px 24px;
+  gap: 10px;
+  padding: 10px 16px;
   cursor: pointer;
   border-bottom: 1px solid #f1f5f9;
   transition: background 0.15s ease;
@@ -734,8 +744,8 @@ watch(() => props.conversation.id, () => {
 
 /* Avatar styling */
 .chat-avatar-container {
-  width: 48px;
-  height: 48px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
@@ -1033,11 +1043,11 @@ watch(() => props.conversation.id, () => {
 }
 
 .msg-outgoing .tick-svg.blue-tick {
-  color: #000000;
+  color: var(--primary-color, #007bff);
 }
 
 .msg-outgoing .tick-svg.gray-tick {
-  color: rgba(0, 0, 0, 0.6);
+  color: #8696a0;
 }
 
 /* Inside-bubble Sender Name (for other Admins) */
@@ -1087,7 +1097,7 @@ watch(() => props.conversation.id, () => {
 }
 
 .blue-tick {
-  color: #53bdeb; /* WhatsApp blue double checkmark color style */
+  color: var(--primary-color, #007bff);
 }
 
 /* Footer & Input */
@@ -1185,5 +1195,72 @@ watch(() => props.conversation.id, () => {
 
 .highlighted-message .bubble-content-box {
   animation: message-flash 2.5s ease-out;
+}
+
+/* ── Back button (mobile only) ── */
+.btn-back-mobile {
+  display: none; /* hidden on desktop */
+  align-items: center;
+  justify-content: center;
+  color: #0f172a;
+  padding: 4px 4px 4px 0;
+  margin-right: 4px;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+.btn-back-mobile svg {
+  width: 22px;
+  height: 22px;
+  stroke: #0f172a;
+}
+
+/* ── Responsive (HP & tablet kecil < 1024px) ── */
+@media (max-width: 1024px) {
+  /* Full screen layout */
+  .chat-container-layout {
+    height: calc(100vh - 52px);
+  }
+
+  /* Hide left sidebar — navigasi WA: daftar chat di Index.vue, room di Show.vue */
+  .chat-sidebar {
+    display: none;
+  }
+
+  /* Chat room takes full width */
+  .chat-main-room {
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Show back button on mobile */
+  .btn-back-mobile {
+    display: flex;
+  }
+
+  /* Compact header */
+  .chat-room-header {
+    padding: 8px 14px;
+    height: auto;
+    gap: 10px;
+  }
+
+  .header-avatar-container {
+    width: 36px;
+    height: 36px;
+  }
+
+  .header-name { font-size: 14px; }
+  .header-sub  { font-size: 11px; }
+
+  /* Messages */
+  .chat-messages-area {
+    padding: 12px 10px;
+  }
+
+  /* Input area */
+  .chat-input-area {
+    padding: 8px 10px;
+  }
 }
 </style>

@@ -43,48 +43,50 @@
       </div>
 
       <div class="card table-card">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Nomor Invoice</th>
-              <th>Paket</th>
-              <th>Member</th>
-              <th>Atas Nama Pengirim</th>
-              <th>Tanggal Tagihan</th>
-              <th>Tanggal Pembayaran</th>
-              <th>Jumlah</th>
-              <th>Status</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="payment in payments.data" :key="payment.id">
-              <td>{{ payment.invoice.number }}</td>
-              <td>{{ payment.invoice.plan ? payment.invoice.plan.name : '-' }}</td>
-              <td>{{ payment.payer.name }}</td>
-              <td>{{ payment.account_holder_name }}</td>
-              <td>{{ formatDate(payment.invoice.created_at) }}</td>
-              <td>{{ formatDate(payment.date) }}</td>
-              <td>{{ formatCurrency(payment.amount) }}</td>
-              <td>
-                <span :class="['status-badge', payment.status]">
-                  {{ payment.status === 'menunggu' ? 'Menunggu verifikasi' : (payment.status === 'diverifikasi' ? 'Diverifikasi' : 'Ditolak') }}
-                </span>
-              </td>
-              <td>
-                <Link :href="route('keuangan.pembayaran.show', payment.id)" class="action-btn">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                    <circle cx="12" cy="12" r="3"/>
-                  </svg>
-                </Link>
-              </td>
-            </tr>
-            <tr v-if="payments.data.length === 0">
-              <td colspan="9" class="empty-state">Tidak ada data pembayaran.</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nomor Invoice</th>
+                <th>Paket</th>
+                <th>Member</th>
+                <th>Atas Nama Pengirim</th>
+                <th>Tanggal Tagihan</th>
+                <th>Tanggal Pembayaran</th>
+                <th>Jumlah</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="payment in payments.data" :key="payment.id">
+                <td>{{ payment.invoice.number }}</td>
+                <td>{{ payment.invoice.plan ? payment.invoice.plan.name : '-' }}</td>
+                <td>{{ payment.payer.name }}</td>
+                <td>{{ payment.account_holder_name }}</td>
+                <td>{{ formatDate(payment.invoice.created_at) }}</td>
+                <td>{{ formatDate(payment.date) }}</td>
+                <td>{{ formatCurrency(payment.amount) }}</td>
+                <td>
+                  <span :class="['status-badge', payment.status]">
+                    {{ payment.status === 'menunggu' ? 'Menunggu verifikasi' : (payment.status === 'diverifikasi' ? 'Diverifikasi' : 'Ditolak') }}
+                  </span>
+                </td>
+                <td>
+                  <Link :href="route('keuangan.pembayaran.show', payment.id)" class="action-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  </Link>
+                </td>
+              </tr>
+              <tr v-if="payments.data.length === 0">
+                <td colspan="9" class="empty-state">Tidak ada data pembayaran.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
         <!-- Pagination -->
         <div class="pagination" v-if="payments.links.length > 3">
@@ -294,6 +296,11 @@ function formatCurrency(amount) {
   overflow: hidden;
 }
 
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -445,5 +452,42 @@ function formatCurrency(amount) {
 
 .page-num-btn.active:hover {
   filter: brightness(1.1);
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .top-bar { padding: 16px 20px 12px; }
+  .page-title { font-size: 18px; }
+  .content-area { padding: 16px; }
+
+  .search-card { padding: 16px; gap: 16px; }
+  .search-input-group { flex-direction: column; gap: 10px; }
+  .btn-primary { width: 100%; }
+
+  .filter-section { flex-direction: column; gap: 12px; }
+  .filter-group { min-width: 100%; }
+
+  .data-table th, .data-table td {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+  
+  .pagination {
+    flex-wrap: nowrap;
+    justify-content: center;
+    padding: 16px 8px;
+    gap: 4px;
+  }
+  .page-nav-btn {
+    font-size: 11px;
+    padding: 4px;
+    white-space: nowrap;
+  }
+  .page-num-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
 }
 </style>

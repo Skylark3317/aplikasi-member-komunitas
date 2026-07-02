@@ -506,4 +506,57 @@ const pageRange = computed(() => {
 .th-num, .td-num {
   width: 48px; text-align: center;
 }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .top-bar { padding: 16px 20px 12px; }
+  .page-title { font-size: 18px; }
+  .content-area { padding: 16px; }
+  
+  .filters-bar {
+    padding: 12px;
+    gap: 12px;
+  }
+  .filter-input {
+    min-width: 100px;
+    height: 32px;
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+  .date-input {
+    min-width: 120px;
+  }
+  .clear-filters-btn {
+    height: 32px;
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+  
+  .table-header { padding: 16px; }
+  .table-title { font-size: 14px; }
+  .data-table th, .data-table td {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+  .status-badge, .plan-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+  .pagination {
+    padding: 12px 8px;
+    flex-wrap: nowrap;
+    justify-content: center;
+  }
+  .pg-btn {
+    min-width: 24px;
+    height: 24px;
+    font-size: 11px;
+    padding: 0 4px;
+    flex-shrink: 0;
+  }
+  .pg-info {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+}
 </style>

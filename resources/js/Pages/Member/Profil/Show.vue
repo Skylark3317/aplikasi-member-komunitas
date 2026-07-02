@@ -1879,4 +1879,78 @@ function downloadCardAsImage() {
   margin-top: 8px;
 }
 .btn-cancel-deletion:hover { background: #fef9c3; }
+
+/* ── Responsive ── */
+@media (max-width: 767px) {
+  .top-bar { padding: 12px 16px; }
+  .content-area { padding: 16px; }
+  .profile-header-card { padding: 20px; }
+  .profile-section-card { padding: 20px; }
+  
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .banner-text {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .banner-checklist {
+    flex-wrap: wrap;
+  }
+  
+  .flex-row-desktop {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .stats-boxes-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .profile-avatar-wrapper {
+    width: 100px;
+    height: 100px;
+  }
+  .user-fullname {
+    font-size: 20px;
+  }
+  
+  /* Make buttons smaller but keep inline */
+  .btn-edit-profil {
+    font-size: 11.5px;
+    padding: 6px 12px;
+  }
+  
+  /* Reduce font sizes */
+  .banner-title { font-size: 14px; }
+  .banner-sub { font-size: 12.5px; }
+  .box-title { font-size: 15px; }
+  .detail-label { font-size: 12px; }
+  .detail-value { font-size: 13.5px; }
+  .stat-label { font-size: 12px; }
+  .stat-value { font-size: 16px; }
+  
+  .btn-request-deletion, .btn-cancel-deletion {
+    font-size: 11.5px;
+    padding: 8px 14px;
+  }
+  
+  /* Buttons Kartu Member & Surat Keanggotaan */
+  .action-buttons-wrapper {
+    gap: 8px;
+  }
+  .btn-profil-action {
+    font-size: 11px;
+    padding: 8px;
+    flex: 1; /* side by side evenly */
+    white-space: nowrap;
+    text-align: center;
+  }
+  .btn-profil-action .btn-icon {
+    width: 14px;
+    height: 14px;
+  }
+}
 </style>

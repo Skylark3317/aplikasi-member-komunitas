@@ -103,11 +103,7 @@
   a { color: inherit; }
 
   /* ─── Modern Animations ─────────────────────────────────── */
-  
-  /* Base Transition Settings */
-  * {
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
+  /* @keyframes and animation utility classes are kept for landing page use */
 
   /* Fade Animations */
   @keyframes fadeIn {
@@ -360,50 +356,28 @@
     animation-fill-mode: forwards;
   }
 
-  /* Hover Transitions */
-  .hover-lift {
+  /* Hover Transitions — scoped to landing page (HomeLayout) only */
+  .font-fira-sans .hover-lift {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
-
-  .hover-lift:hover {
+  .font-fira-sans .hover-lift:hover {
     transform: translateY(-4px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   }
-
-  .hover-scale {
+  .font-fira-sans .hover-scale {
     transition: transform 0.3s ease;
   }
-
-  .hover-scale:hover {
+  .font-fira-sans .hover-scale:hover {
     transform: scale(1.05);
   }
-
-  .hover-glow {
-    transition: box-shadow 0.3s ease;
-  }
-
-  .hover-glow:hover {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-  }
-
-  .hover-brightness {
+  .font-fira-sans .hover-brightness {
     transition: filter 0.3s ease;
   }
-
-  .hover-brightness:hover {
+  .font-fira-sans .hover-brightness:hover {
     filter: brightness(1.1);
   }
 
-  /* Smooth Transitions for Common Elements */
-  button, a, input, select, textarea {
-    transition: all 0.2s ease;
-  }
-
-  .card, .form-card, .content-area {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  /* Page Transition */
+  /* Page Transition — landing page only */
   .page-enter-active {
     animation: fadeInUp 0.4s ease-out;
   }
@@ -420,7 +394,7 @@
     animation: shimmer 2s infinite;
   }
 
-  /* Scroll Reveal (will be triggered by JS) */
+  /* Scroll Reveal — used on the landing page (Home.vue) only */
   .scroll-reveal {
     opacity: 0;
     transform: translateY(30px);
@@ -432,7 +406,7 @@
     transform: translateY(0);
   }
 
-  /* Individual Card Animations (Repeatable) */
+  /* Individual Card Animations — used on the landing page (Home.vue) only */
   .stat-card-individual {
     transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
     transition-delay: var(--animation-delay, 0ms);
@@ -453,7 +427,7 @@
     transform: translate(0, 0) scale(1) rotate(0) !important;
   }
 
-  /* Blog Post Card Animations (Repeatable) */
+  /* Blog Post Card Animations — used on the landing page (Home.vue) only */
   .blog-post-card {
     transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     transition-delay: var(--animation-delay, 0ms);
@@ -498,4 +472,18 @@
     border-bottom: none !important;
     padding: 0 !important;
   }
+}
+
+/* =====================================================
+   GLOBAL ANIMATION KILL
+   Disables ALL CSS animations & transitions for every
+   page EXCEPT the landing page (HomeLayout = .font-fira-sans).
+   This covers: Login, Register, Admin, Petugas, Member,
+   Ketua, Bendahara — sidebars, content, dialogs, etc.
+   ===================================================== */
+*:not(.font-fira-sans *):not(.font-fira-sans):not(.spinner):not(.animate-spin):not(.card-hover-bg),
+*:not(.font-fira-sans *):not(.font-fira-sans):not(.spinner):not(.animate-spin):not(.card-hover-bg)::before,
+*:not(.font-fira-sans *):not(.font-fira-sans):not(.spinner):not(.animate-spin):not(.card-hover-bg)::after {
+  animation: none !important;
+  transition: none !important;
 }

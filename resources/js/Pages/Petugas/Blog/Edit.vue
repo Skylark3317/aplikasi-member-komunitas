@@ -138,24 +138,14 @@ onMounted(() => {
     // Top bar animation
     const topBar = document.querySelector('.top-bar');
     if (topBar) {
-      topBar.style.opacity = '0';
-      topBar.style.transform = 'translateY(-20px)';
       setTimeout(() => {
-        topBar.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        topBar.style.opacity = '1';
-        topBar.style.transform = 'translateY(0)';
       }, 50);
     }
 
     // Form groups stagger
     const formGroups = document.querySelectorAll('.form-group');
     formGroups.forEach((group, index) => {
-      group.style.opacity = '0';
-      group.style.transform = 'translateY(30px) scale(0.98)';
       setTimeout(() => {
-        group.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        group.style.opacity = '1';
-        group.style.transform = 'translateY(0) scale(1)';
       }, 200 + index * 120);
     });
   });
